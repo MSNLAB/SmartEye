@@ -1,67 +1,49 @@
-import json
 import cv2
-from flask import Flask, request, make_response, Response, render_template, jsonify
+from flask import Flask, request, make_response, Response, render_template
 import objectdetection
-# base64编解码
 import base64
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
-
-# print(__name__)
 app = Flask(__name__)
 
-@app.route('/hello', methods=['GET', 'POST'])
-def hello_world():
+@app.route('/main', methods=['GET', 'POST'])
+def main():
 
-    # 传输算法名称
+    # get selected algorithm name
     register_dict = request.form
-
     name = register_dict['name']
-    image_str = register_dict['image']
 
+    # get image information and decode
+    image_str = register_dict['image']
     img_decode_ = image_str.encode('ascii')
     img_decode = base64.b64decode(img_decode_)
+    # save the information as .jpg file
     with open('girl.jpg', 'wb') as f:
         f.write(img_decode)
-
+    #object detection
+    t1 = time.time()
+    #of course, there are some preproccess action should be done
     objectdetection.object_detection_api('./girl.jpg', threshold=0.8)
+    t2 = time.time()
+    print('%s' % (t2 - t1))
+    print('#' * 50)
     with open('meelo.jpg', 'rb') as f:
         img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
         img_str = img_byte.decode('ascii')
     response = make_response(img_str)
     return response
 
-    # img_ = open("meelo.jpg", encoding='utf-8', errors='ignore').read()
-    # print(type(img_))
-    # response = Response(img_, mimetype="image/jpeg")
-
-    # with open("meelo.jpg", "rb") as f:
-    #     b64image = base64.b64encode(f.read())
-    # img_data = base64.b64decode(b64image)
-
-    # response.headers.set('Content-Type', "image/jpeg")  # 设置content-type
-    # response.headers.set(
-    #     'Content-Disposition', 'attachment')  # 告诉浏览器进行下载
-    # response.headers.set('Cache-Control', 'max-age=86400')  # 缓存超时时间
-
 
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
 
-# 备选1
-# img = cv2.imdecode(img_np_, cv2.COLOR_RGB2BGR)  # 转为opencv格式
-# cv2.imshow('frame', img)
-# cv2.waitKey()
-# upload_file = request.get_data()
-#     req = json.loads(upload_file)
-#     if upload_file:
-#         name = req['name']
-#         print(name)
-#         img_str = req['image']  # 得到unicode的字符串
-#         img_decode_ = img_str.encode('ascii')  # 从unicode变成ascii编码
-#         img_decode = base64.b64decode(img_decode_)  # 解base64编码，得图片的二进制
-#         img_np_ = np.frombuffer(img_decode, np.uint8)
-#         print(img_np_.shape)
+
+
+
+
+
+
