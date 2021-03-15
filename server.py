@@ -5,8 +5,20 @@ import base64
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import decision_engine
 
 app = Flask(__name__)
+
+@app.route('/initial', methods=['GET', 'POST'])
+def initial():
+
+    initial_dict = request.form
+    # service_delay = initial_dict['service_delay']
+    # requirements = initial_dict['requirements']
+    # netcondition =initial_dict['netcondition']
+
+    image_size, selected_model = decision_engine.decision_engine(initial_dict)
+    response = make_response(image_size)
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
