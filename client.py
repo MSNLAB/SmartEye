@@ -52,12 +52,12 @@ class client:
         # print(picture_list)
         for picture in picture_list:
             picture_path = folder_path + "\\" + picture
-            image_size_adjust.image_size_adjust(image_size=self.image_size, input_file=input_file)
+            image_size_adjust.image_size_adjust(image_size=self.image_size, input_file=picture_path)
             with open(picture_path, 'rb') as f:
                 img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
                 img_str = img_byte.decode('ascii')
             dict = {
-                'name': 'Germey',
+                # 'name': 'Germey',
                 'image': img_str
             }
             data = bytes(parse.urlencode(dict), encoding='utf8')

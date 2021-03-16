@@ -11,13 +11,13 @@ def image_size_adjust(image_size, input_file):
     :param input_file: images which needs to be adjust
     :return:
     """
-    print(image_size)
+    # print(image_size)
     image = Image.open(input_file)
     if image.size == image_size:
         return
-    print(image.size)
+    # print(image.size)
     result = image.resize(image_size, Image.ANTIALIAS)
-    result.save('gile1.jpg')
+    result.save(input_file)
     # print(result.size)
 
 
