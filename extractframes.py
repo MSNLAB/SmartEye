@@ -12,7 +12,7 @@ def extract_frames(input_file):
 
     folder_pre_path = os.path.dirname(input_file)
     folder_name = os.path.basename(input_file).split(".")[0]
-    folder_path = folder_pre_path + "\\" +folder_name
+    folder_path = folder_pre_path + "\\" + folder_name
     # print(folder_pre_path)
     # print(folder_name)
     print(folder_path)

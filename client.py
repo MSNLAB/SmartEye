@@ -3,7 +3,8 @@ import base64
 import time
 import extractframes
 import os
-import image_size_adjust
+import preproccess
+import mmap
 
 
 #url = 'http://39.99.145.157:5000/hello'
@@ -13,10 +14,13 @@ class client:
     """
 
 
-    def __init__(self, url):
+    def __init__(self):
 
         # self.input_file = input_file
-        self.url = url
+        print("mark")
+        self.initial_url = "http://39.99.145.157:5000/initial"
+        self.picture_url = "http://39.99.145.157:5000/pictures_handler"
+        self.video_file_url = "http://39.99.145.157:5000/video_file_handler"
         self.service_delay = 0
         self.requirements = 0
         self.netcondition = 0
@@ -32,13 +36,15 @@ class client:
             # 'Host': 'httpbin.org'
         }
         data = bytes(parse.urlencode(dict), encoding='utf8')
-        req = request.Request(url=self.url, data=data, headers=headers, method='POST')
+        req = request.Request(url=self.initial_url, data=data, headers=headers, method='POST')
 
         response = request.urlopen(req)
         self.image_size = response.read().decode('utf-8')
+        # print('mark2')
+        print(self.image_size)
 
-    def proccess(self, input_file):
-
+    # picture interface
+    def proccess_picture(self, input_file):
 
         headers = {
             # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
@@ -52,7 +58,7 @@ class client:
         # print(picture_list)
         for picture in picture_list:
             picture_path = folder_path + "\\" + picture
-            image_size_adjust.image_size_adjust(image_size=self.image_size, input_file=picture_path)
+            preproccess.image_size_adjust(image_size=self.image_size, input_file=picture_path)
             with open(picture_path, 'rb') as f:
                 img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
                 img_str = img_byte.decode('ascii')
@@ -61,7 +67,7 @@ class client:
                 'image': img_str
             }
             data = bytes(parse.urlencode(dict), encoding='utf8')
-            req = request.Request(url=self.url, data=data, headers=headers, method='POST')
+            req = request.Request(url=self.picture_url, data=data, headers=headers, method='POST')
 
             response = request.urlopen(req)
             img = response.read().decode('utf-8')
@@ -73,6 +79,25 @@ class client:
                 f.write(img_decode)
 
 
+    # video file interface
+    def proccess_video_file(self, input_file):
+
+        f = open(input_file, 'rb')
+        mmapped_file_as_string = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        dict = {
+            'video_file': mmapped_file_as_string
+        }
+        data = bytes(parse.urlencode(dict), encoding='utf8')
+        req = request.Request(url=self.video_file_url, data=data)
+        req.add_header("Content-Type", "application/zip")
+        response = request.urlopen(req)
+        print(response.read().decode('utf-8'))
+        # close everything
+        mmapped_file_as_string.close()
+        f.close()
+
+
+
 
 
         # print('%s' % (t2 - t1))
@@ -80,7 +105,7 @@ class client:
 
 if __name__ == '__main__':
 
-    url = 'http://39.99.145.157:5000/hello'
+
     input_file = "D:\\Ubuntu_1804.2019.522.0_x64\\rootfs\home\wxz\Documents\\video2edge\85652500-1-192.mp4"
-    client = client(url)
-    client.proccess(input_file)
+    client = client()
+    client.proccess_video_file(input_file)

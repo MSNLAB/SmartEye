@@ -21,6 +21,25 @@ def image_size_adjust(image_size, input_file):
     # print(result.size)
 
 
+def video_bitrate_adjust(input_file, bitrate):
+    """
+    adjust the input_file's bitrate according to the parameter bitrate
+
+    :param input_file: video file path
+    :param bitrate: the bitrate value of video transfered to
+    :return:
+    """
+    pass
+
+
+def video_resolution_adjust(input_file, resolution):
+    """
+    adjust the input_file's resolution according to the parameter resolution
+    :param input_file: video file path
+    :param resolution: the resolution value of video transfered to
+    :return:
+    """
+    pass
 
 if __name__ == '__main__':
 

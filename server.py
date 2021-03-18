@@ -17,11 +17,13 @@ def initial():
     # requirements = initial_dict['requirements']
     # netcondition =initial_dict['netcondition']
 
-    image_size, selected_model = decision_engine.decision_engine(initial_dict)
-    response = make_response(image_size)
+    image_size, selected_model = decision_engine.decision_engine(**initial_dict)
 
-@app.route('/main', methods=['GET', 'POST'])
-def main():
+    response = make_response(str(image_size))
+    return response
+
+@app.route('/pictures_handler', methods=['GET', 'POST'])
+def pictures_handler():
 
     # get selected algorithm name
     register_dict = request.form
@@ -47,6 +49,16 @@ def main():
     response = make_response(img_str)
     return response
 
+
+@app.route('/video_file_handler', methods=['GET', 'POST'])
+def video_file_handler():
+    register_dict = request.form
+    video_file = register_dict['video_file']
+    with open('girl.mp4', 'wb') as f:
+        f.write(video_file)
+    # message = register_dict.values()
+    response = make_response('ok')
+    return response
 
 
 
