@@ -1,9 +1,9 @@
 from PIL import Image
+import os
 
 
 def image_size_adjust(image_size, input_file):
     """
-
     according to the image_size stored in message responsed by the server,
     client adjusts the image size of image which will be sent to the server
 
@@ -11,14 +11,13 @@ def image_size_adjust(image_size, input_file):
     :param input_file: images which needs to be adjust
     :return:
     """
-    # print(image_size)
+
     image = Image.open(input_file)
     if image.size == image_size:
         return
-    # print(image.size)
     result = image.resize(image_size, Image.ANTIALIAS)
     result.save(input_file)
-    # print(result.size)
+
 
 
 def video_bitrate_adjust(input_file, bitrate):
@@ -29,7 +28,10 @@ def video_bitrate_adjust(input_file, bitrate):
     :param bitrate: the bitrate value of video transfered to
     :return:
     """
-    pass
+    result = input_file
+    cmd = ("ffmpeg -i " + input_file + " -b:v " + bitrate +
+           " -maxrate 2M " + " -bufsize 2M " + result)
+    os.system(cmd)
 
 
 def video_resolution_adjust(input_file, resolution):
@@ -39,7 +41,10 @@ def video_resolution_adjust(input_file, resolution):
     :param resolution: the resolution value of video transfered to
     :return:
     """
-    pass
+    result = input_file
+    cmd = "ffmpeg -i " + input_file + " -vf scale=" + resolution + " " + result
+    os.system(cmd)
+
 
 if __name__ == '__main__':
 

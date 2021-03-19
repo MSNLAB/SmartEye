@@ -54,8 +54,11 @@ def pictures_handler():
 def video_file_handler():
     register_dict = request.form
     video_file = register_dict['video_file']
+    img_decode_ = video_file.encode('ascii')
+    img_decode = base64.b64decode(img_decode_)
+    # print(video_file)
     with open('girl.mp4', 'wb') as f:
-        f.write(video_file)
+        f.write(img_decode)
     # message = register_dict.values()
     response = make_response('ok')
     return response

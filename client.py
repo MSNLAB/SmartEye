@@ -35,6 +35,7 @@ class client:
             # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             # 'Host': 'httpbin.org'
         }
+
         data = bytes(parse.urlencode(dict), encoding='utf8')
         req = request.Request(url=self.initial_url, data=data, headers=headers, method='POST')
 
@@ -82,19 +83,20 @@ class client:
     # video file interface
     def proccess_video_file(self, input_file):
 
-        f = open(input_file, 'rb')
-        mmapped_file_as_string = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        with open(input_file, 'rb') as f:
+            img_byte = base64.b64encode(f.read())
+            img_str = img_byte.decode('ascii')
+            # video_file = f.read()
         dict = {
-            'video_file': mmapped_file_as_string
+            'video_file': img_str
         }
         data = bytes(parse.urlencode(dict), encoding='utf8')
-        req = request.Request(url=self.video_file_url, data=data)
-        req.add_header("Content-Type", "application/zip")
+        # print(data)
+        req = request.Request(url=self.video_file_url, data=data, method='POST')
+        # req.add_header("Content-Type", "application/zip")
         response = request.urlopen(req)
         print(response.read().decode('utf-8'))
-        # close everything
-        mmapped_file_as_string.close()
-        f.close()
+
 
 
 
