@@ -5,19 +5,20 @@ import base64
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import decision_engine
+from decision_engine import dedecision_engine
 
 app = Flask(__name__)
 
 @app.route('/initial', methods=['GET', 'POST'])
 def initial():
 
+# 1. 如何得到服务延迟和网络状况
     initial_dict = request.form
     # service_delay = initial_dict['service_delay']
     # requirements = initial_dict['requirements']
     # netcondition =initial_dict['netcondition']
 
-    image_size, selected_model = decision_engine.decision_engine(**initial_dict)
+    image_size, selected_model = dedecision_engine(**initial_dict)
 
     response = make_response(str(image_size))
     return response
@@ -52,6 +53,7 @@ def pictures_handler():
 
 @app.route('/video_file_handler', methods=['GET', 'POST'])
 def video_file_handler():
+
     register_dict = request.form
     video_file = register_dict['video_file']
     img_decode_ = video_file.encode('ascii')

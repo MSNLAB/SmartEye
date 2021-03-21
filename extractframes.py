@@ -14,7 +14,7 @@ def extract_frames(input_file):
     folder_name = os.path.basename(input_file).split(".")[0]
     folder_path = folder_pre_path + "\\" + folder_name
     # print(folder_pre_path)
-    # print(folder_name)
+    print(folder_name)
     print(folder_path)
     if not os.path.isdir(folder_path):
         # print(1)

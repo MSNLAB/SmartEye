@@ -4,7 +4,7 @@ import time
 import extractframes
 import os
 import preproccess
-import mmap
+# import mmap
 
 
 #url = 'http://39.99.145.157:5000/hello'
@@ -17,7 +17,6 @@ class client:
     def __init__(self):
 
         # self.input_file = input_file
-        print("mark")
         self.initial_url = "http://39.99.145.157:5000/initial"
         self.picture_url = "http://39.99.145.157:5000/pictures_handler"
         self.video_file_url = "http://39.99.145.157:5000/video_file_handler"
@@ -40,9 +39,12 @@ class client:
         req = request.Request(url=self.initial_url, data=data, headers=headers, method='POST')
 
         response = request.urlopen(req)
-        self.image_size = response.read().decode('utf-8')
+        if self.requirements == "image":
+            self.image_size = response.read().decode('utf-8')
+        else:
+            self.b_r_tuple = response.read().decode('utf-8')
         # print('mark2')
-        print(self.image_size)
+        # print(self.image_size)
 
     # picture interface
     def proccess_picture(self, input_file):
@@ -51,10 +53,10 @@ class client:
             # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             # 'Host': 'httpbin.org'
         }
-        # t1 = time.time()
+
         # read pictures one by one from the picture folder
         folder_path = extractframes.extract_frames(input_file)
-        # t2 = time.time()
+
         picture_list = os.listdir(folder_path)
         # print(picture_list)
         for picture in picture_list:
@@ -83,15 +85,14 @@ class client:
     # video file interface
     def proccess_video_file(self, input_file):
 
+        preproccess.video_resolution_and_bitrate_adjust(input_file, self.b_r_tuple)
         with open(input_file, 'rb') as f:
             img_byte = base64.b64encode(f.read())
             img_str = img_byte.decode('ascii')
-            # video_file = f.read()
         dict = {
             'video_file': img_str
         }
         data = bytes(parse.urlencode(dict), encoding='utf8')
-        # print(data)
         req = request.Request(url=self.video_file_url, data=data, method='POST')
         # req.add_header("Content-Type", "application/zip")
         response = request.urlopen(req)
@@ -108,6 +109,10 @@ class client:
 if __name__ == '__main__':
 
 
-    input_file = "D:\\Ubuntu_1804.2019.522.0_x64\\rootfs\home\wxz\Documents\\video2edge\85652500-1-192.mp4"
+    input_file = "./98368268-1-208.mp4"
     client = client()
+    t1 = time.time()
     client.proccess_video_file(input_file)
+    t2 = time.time()
+
+    print(t2 - t1)
