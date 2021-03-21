@@ -5,24 +5,28 @@ import extractframes
 import os
 import preproccess
 # import mmap
+import subprocess
 
 
-#url = 'http://39.99.145.157:5000/hello'
+# url = 'http://39.99.145.157:5000/hello'
 class client:
     """
     Serve as the AR client
     """
 
+    def __init__(self, file_kind):
+        """
 
-    def __init__(self):
-
+        :param file_kind: the kind of input file: image, video
+        """
         # self.input_file = input_file
         self.initial_url = "http://39.99.145.157:5000/initial"
         self.picture_url = "http://39.99.145.157:5000/pictures_handler"
         self.video_file_url = "http://39.99.145.157:5000/video_file_handler"
+
         self.service_delay = 0
-        self.requirements = 0
-        self.netcondition = 0
+        self.requirements = file_kind
+        self.netcondition = self.initial_network_condition()
 
         # send initial condition to the server
         dict = {
@@ -96,8 +100,22 @@ class client:
         req = request.Request(url=self.video_file_url, data=data, method='POST')
         # req.add_header("Content-Type", "application/zip")
         response = request.urlopen(req)
-        print(response.read().decode('utf-8'))
+        re = response.read().decode('utf-8')
 
+
+    def initial_network_condition(self):
+
+        cmd = "ping 39.99.145.157 -n 4"
+        s = subprocess.getoutput(cmd)
+        # print('a')
+        last_line = s.split("\n")[-1]
+        avg = last_line.split("=")[-1][:-2]
+        return avg
+        # print(avg)
+        # print(s)
+        # with open('initial_condition.txt', 'r') as f:
+        #     avg_time = f.read()
+        # print(avg_time)
 
 
 
@@ -110,9 +128,9 @@ if __name__ == '__main__':
 
 
     input_file = "./98368268-1-208.mp4"
-    client = client()
+    client = client('video')
     t1 = time.time()
-    client.proccess_video_file(input_file)
+    # client.proccess_video_file(input_file)
     t2 = time.time()
 
-    print(t2 - t1)
+    # print(t2 - t1)

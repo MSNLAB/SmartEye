@@ -9,18 +9,19 @@ from decision_engine import dedecision_engine
 
 app = Flask(__name__)
 
+
 @app.route('/initial', methods=['GET', 'POST'])
 def initial():
 
-# 1. 如何得到服务延迟和网络状况
+
     initial_dict = request.form
     # service_delay = initial_dict['service_delay']
     # requirements = initial_dict['requirements']
     # netcondition =initial_dict['netcondition']
 
-    image_size, selected_model = dedecision_engine(**initial_dict)
+    send_back_msg, selected_model = dedecision_engine(**initial_dict)
 
-    response = make_response(str(image_size))
+    response = make_response(str(send_back_msg))
     return response
 
 @app.route('/pictures_handler', methods=['GET', 'POST'])

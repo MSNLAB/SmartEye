@@ -22,7 +22,7 @@ class dedecision_engine:
         self.model_list = []
         if self.requirements == "image":
             return self.decide_image_size()
-        else:
+        elif self.requirements == 'video':
             return self.decide_bitrate_and_resolution()
 
 
