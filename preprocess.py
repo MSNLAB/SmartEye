@@ -20,6 +20,7 @@ def image_size_adjust(image_size, input_file):
     result = image.resize(image_size, Image.ANTIALIAS)
     result.save(input_file)
 
+
 def video_resolution_and_bitrate_adjust(input_file, b_r_tuple):
     """
     adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
@@ -55,9 +56,6 @@ def video_resolution_and_bitrate_adjust(input_file, b_r_tuple):
 #     os.system(cmd)
 
 
-
-
-
 # def get_info(input_file, get_info):
 #
 #     json_file_name = os.path.basename(input_file).split(".")[0]
@@ -74,8 +72,6 @@ def video_resolution_and_bitrate_adjust(input_file, b_r_tuple):
 #         return origin_bitrate
 #     else:
 #         return origin_resolution
-
-
 
 
 if __name__ == '__main__':

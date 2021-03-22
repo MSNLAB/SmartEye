@@ -5,7 +5,7 @@ import base64
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from decision_engine import dedecision_engine
+from decision_engine import DecisionEngine
 
 app = Flask(__name__)
 
@@ -13,16 +13,16 @@ app = Flask(__name__)
 @app.route('/initial', methods=['GET', 'POST'])
 def initial():
 
-
     initial_dict = request.form
     # service_delay = initial_dict['service_delay']
     # requirements = initial_dict['requirements']
-    # netcondition =initial_dict['netcondition']
+    # net_condition =initial_dict['net_condition']
 
-    send_back_msg, selected_model = dedecision_engine(**initial_dict)
+    send_back_msg, selected_model = DecisionEngine(**initial_dict)
 
     response = make_response(str(send_back_msg))
     return response
+
 
 @app.route('/pictures_handler', methods=['GET', 'POST'])
 def pictures_handler():
@@ -38,9 +38,9 @@ def pictures_handler():
     # save the information as .jpg file
     with open('girl.jpg', 'wb') as f:
         f.write(img_decode)
-    #object detection
+    # object detection
     t1 = time.time()
-    #of course, there are some preproccess action should be done
+    # of course, there are some preproccess action should be done
     objectdetection.object_detection_api('./girl.jpg', threshold=0.8)
     t2 = time.time()
     print('%s' % (t2 - t1))
@@ -65,7 +65,6 @@ def video_file_handler():
     # message = register_dict.values()
     response = make_response('ok')
     return response
-
 
 
 if __name__ == '__main__':

@@ -3,36 +3,41 @@ import base64
 import time
 import extractframes
 import os
-import preproccess
+import preprocess
 # import mmap
 import subprocess
 
 
+initial_url = "http://39.99.145.157:5000/initial"
+picture_url = "http://39.99.145.157:5000/pictures_handler"
+video_file_url = "http://39.99.145.157:5000/video_file_handler"
+
 # url = 'http://39.99.145.157:5000/hello'
-class client:
+
+
+class Client:
     """
     Serve as the AR client
     """
 
-    def __init__(self, file_kind):
+    def __init__(self, service_type):
         """
-
-        :param file_kind: the kind of input file: image, video
+        :param service_type: the kind of input file: image, video
         """
         # self.input_file = input_file
-        self.initial_url = "http://39.99.145.157:5000/initial"
-        self.picture_url = "http://39.99.145.157:5000/pictures_handler"
-        self.video_file_url = "http://39.99.145.157:5000/video_file_handler"
+        self.initial_url = initial_url
+        self.picture_url = picture_url
+        self.video_file_url = video_file_url
 
         self.service_delay = 0
-        self.requirements = file_kind
-        self.netcondition = self.initial_network_condition()
+        self.service_type = service_type
+        self.net_condition = self.initial_network_condition()
 
         # send initial condition to the server
         dict = {
             'service_delay': self.service_delay,
-            'requirements': self.requirements,
-            'netcondition': self.netcondition
+            'requirements': self.service_type,
+            'net_condition': self.net_condition
         }
         headers = {
             # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
@@ -43,7 +48,7 @@ class client:
         req = request.Request(url=self.initial_url, data=data, headers=headers, method='POST')
 
         response = request.urlopen(req)
-        if self.requirements == "image":
+        if self.service_type == "image":
             self.image_size = response.read().decode('utf-8')
         else:
             self.b_r_tuple = response.read().decode('utf-8')
@@ -51,7 +56,7 @@ class client:
         # print(self.image_size)
 
     # picture interface
-    def proccess_picture(self, input_file):
+    def process_picture(self, input_file):
 
         headers = {
             # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
@@ -65,7 +70,7 @@ class client:
         # print(picture_list)
         for picture in picture_list:
             picture_path = folder_path + "\\" + picture
-            preproccess.image_size_adjust(image_size=self.image_size, input_file=picture_path)
+            preprocess.image_size_adjust(image_size=self.image_size, input_file=picture_path)
             with open(picture_path, 'rb') as f:
                 img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
                 img_str = img_byte.decode('ascii')
@@ -85,11 +90,10 @@ class client:
             with open(result_path, 'wb') as f:
                 f.write(img_decode)
 
-
     # video file interface
-    def proccess_video_file(self, input_file):
+    def process_video_file(self, input_file):
 
-        preproccess.video_resolution_and_bitrate_adjust(input_file, self.b_r_tuple)
+        preprocess.video_resolution_and_bitrate_adjust(input_file, self.b_r_tuple)
         with open(input_file, 'rb') as f:
             img_byte = base64.b64encode(f.read())
             img_str = img_byte.decode('ascii')
@@ -101,7 +105,6 @@ class client:
         # req.add_header("Content-Type", "application/zip")
         response = request.urlopen(req)
         re = response.read().decode('utf-8')
-
 
     def initial_network_condition(self):
 
@@ -117,20 +120,15 @@ class client:
         #     avg_time = f.read()
         # print(avg_time)
 
-
-
-
-
         # print('%s' % (t2 - t1))
         # print('#' * 50)
 
+
 if __name__ == '__main__':
 
-
     input_file = "./98368268-1-208.mp4"
-    client = client('video')
+    client = Client('video')
     t1 = time.time()
-    # client.proccess_video_file(input_file)
+    # client.process_video_file(input_file)
     t2 = time.time()
-
     # print(t2 - t1)

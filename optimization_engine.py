@@ -1,6 +1,6 @@
 
 
-class optimization_engine:
+class OptimizationEngine:
     """
     key point is the opportunity to execute the optimization mechanism.
     there are two parts: computation model, image size
@@ -9,4 +9,4 @@ class optimization_engine:
         what about some 500×500 image have already been handled?
     """
     def __init__(self):
-       pass
+        pass

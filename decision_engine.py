@@ -1,7 +1,6 @@
 
-# 怎么根据服务延迟和网络状况做出相应的决定
 
-class dedecision_engine:
+class DecisionEngine:
     """
     decide the basic information of image and video:
         the size of single image,
@@ -17,22 +16,21 @@ class dedecision_engine:
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
         self.service_delay = initial_dict['service_delay']
-        self.requirements = initial_dict['requirements']
-        self.netcondition = initial_dict['netcondition']
+        self.service_type = initial_dict['requirements']
+        self.net_condition = initial_dict['net_condition']
         self.model_list = []
-        if self.requirements == "image":
+        if self.service_type == "image":
             return self.decide_image_size()
-        elif self.requirements == 'video':
+        elif self.service_type == 'video':
             return self.decide_bitrate_and_resolution()
-
 
     def decide_image_size(self):
         """
         decide the image size and computation model according to the content of initial_dict
         :return: image size and computation model
         """
-        #关于决定图像尺寸和计算模型的条件还需要考虑和调研，比如 网速在什么范围内适合传输（500，500）尺寸的图像，使用复杂度为多少的计算模型
-        #要不要写成一个类， 什么时候该写成类，还是得学习
+        # 关于决定图像尺寸和计算模型的条件还需要考虑和调研，比如 网速在什么范围内适合传输（500，500）尺寸的图像，使用复杂度为多少的计算模型
+        # 要不要写成一个类， 什么时候该写成类，还是得学习
         image_size_dict = {}
 
         image_size = (500, 500)
@@ -49,9 +47,6 @@ class dedecision_engine:
         resolution_dict = {}
 
         return bitrate_dict, resolution_dict, self.model_list
-
-
-
 
 
 if __name__ == '__main__':
