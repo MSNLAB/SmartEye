@@ -48,7 +48,10 @@ def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold
     for i in range(len(boxes)):
         cv2.rectangle(img, boxes[i][0], boxes[i][1],color=(0, 255, 0), thickness=rect_th) # Draw Rectangle with the coordinates
         cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0,255,0),thickness=text_th) # Write the prediction class
-        scipy.misc.imsave('meelo.jpg', img)
+    handled_file_path = ''
+    scipy.misc.imsave(handled_file_path, img)
+
+    return handled_file_path
 
 
 

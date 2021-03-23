@@ -1,10 +1,9 @@
-import json
-
 from PIL import Image
 import os
+import subprocess
 
 
-def image_size_adjust(image_size, input_file):
+def image_size_adjust(input_file, image_size):
     """
     according to the image_size stored in message responsed by the server,
     client adjusts the image size of image which will be sent to the server
@@ -13,27 +12,32 @@ def image_size_adjust(image_size, input_file):
     :param input_file: images which needs to be adjust
     :return:
     """
-
     image = Image.open(input_file)
     if image.size == image_size:
         return
     result = image.resize(image_size, Image.ANTIALIAS)
     result.save(input_file)
+    path = ''
+    return path
 
 
-def video_resolution_and_bitrate_adjust(input_file, b_r_tuple):
+def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
     """
     adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
     :param input_file: video file path
     :param b_r_tuple: the max b_r_tuple value of video transfered to
     :return:
     """
-
     result = input_file
-    cmd = ("ffmpeg -i " + input_file + " -vf scale=" + b_r_tuple[1] +
-        " -b:v " + b_r_tuple[0] + " -maxrate " + b_r_tuple[0] +
+    cmd = ("ffmpeg -i " + input_file + " -vf scale=" + b_r_dict['resolution'] +
+        " -b:v " + b_r_dict['bitrate'] + " -maxrate " + b_r_dict['bitrate'] +
         " -bufsize 2M " + result)
-    os.system(cmd)
+    # os.system(cmd)
+    # try:
+    # except:
+    p = subprocess.Popen(cmd)
+    p.returncode
+
 
 
 # def video_bitrate_adjust(input_file, bitrate):

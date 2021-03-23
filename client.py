@@ -6,6 +6,9 @@ import os
 import preprocess
 # import mmap
 import subprocess
+import make_request
+from decision_engine import DecisionEngine
+from transfer_files_tool import save_file, transfer_file_to_str
 
 
 initial_url = "http://39.99.145.157:5000/initial"
@@ -33,77 +36,37 @@ class Client:
         self.service_type = service_type
         self.net_condition = self.initial_network_condition()
 
+        self.msg_dict, selected_model = DecisionEngine(service_delay=self.service_delay,
+                                                       service_type=self.service_type, net_condition=self.net_condition)
+
         # send initial condition to the server
-        dict = {
-            'service_delay': self.service_delay,
-            'requirements': self.service_type,
-            'net_condition': self.net_condition
-        }
-        headers = {
-            # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
-            # 'Host': 'httpbin.org'
-        }
+        response = make_request.make_request(self.initial_url, selected_model=selected_model)
 
-        data = bytes(parse.urlencode(dict), encoding='utf8')
-        req = request.Request(url=self.initial_url, data=data, headers=headers, method='POST')
-
-        response = request.urlopen(req)
-        if self.service_type == "image":
-            self.image_size = response.read().decode('utf-8')
-        else:
-            self.b_r_tuple = response.read().decode('utf-8')
+        # if self.service_type == "image":
+        #     self.image_size = response.read().decode('utf-8')
+        # else:
+        #     self.b_r_tuple = response.read().decode('utf-8')
         # print('mark2')
         # print(self.image_size)
 
     # picture interface
     def process_picture(self, input_file):
 
-        headers = {
-            # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
-            # 'Host': 'httpbin.org'
-        }
+        path = preprocess.image_size_adjust(image_size=self.image_size, input_file=input_file)
+        img_str = transfer_file_to_str(path)
+        response = make_request.make_request(self.picture_url, img_data=img_str)
 
-        # read pictures one by one from the picture folder
-        folder_path = extractframes.extract_frames(input_file)
-
-        picture_list = os.listdir(folder_path)
-        # print(picture_list)
-        for picture in picture_list:
-            picture_path = folder_path + "\\" + picture
-            preprocess.image_size_adjust(image_size=self.image_size, input_file=picture_path)
-            with open(picture_path, 'rb') as f:
-                img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
-                img_str = img_byte.decode('ascii')
-            dict = {
-                # 'name': 'Germey',
-                'image': img_str
-            }
-            data = bytes(parse.urlencode(dict), encoding='utf8')
-            req = request.Request(url=self.picture_url, data=data, headers=headers, method='POST')
-
-            response = request.urlopen(req)
-            img = response.read().decode('utf-8')
-            img_decode_ = img.encode('ascii')
-            img_decode = base64.b64decode(img_decode_)
-
-            result_path = folder_path + "\\" + "result-%05d.jpg"
-            with open(result_path, 'wb') as f:
-                f.write(img_decode)
+        img = response.read().decode('utf-8')
+        save_file(img)
 
     # video file interface
     def process_video_file(self, input_file):
 
-        preprocess.video_resolution_and_bitrate_adjust(input_file, self.b_r_tuple)
+        preprocess.video_resolution_and_bitrate_adjust(input_file, self.msg_dict)
         with open(input_file, 'rb') as f:
-            img_byte = base64.b64encode(f.read())
-            img_str = img_byte.decode('ascii')
-        dict = {
-            'video_file': img_str
-        }
-        data = bytes(parse.urlencode(dict), encoding='utf8')
-        req = request.Request(url=self.video_file_url, data=data, method='POST')
-        # req.add_header("Content-Type", "application/zip")
-        response = request.urlopen(req)
+            video_byte = base64.b64encode(f.read())
+            video_str = video_byte.decode('ascii')
+        response = make_request.make_request(self.video_file_url, video_str)
         re = response.read().decode('utf-8')
 
     def initial_network_condition(self):

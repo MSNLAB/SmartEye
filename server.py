@@ -1,3 +1,5 @@
+import os
+
 import cv2
 from flask import Flask, request, make_response, Response, render_template
 import objectdetection
@@ -6,65 +8,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from decision_engine import DecisionEngine
+import extractframes
+from transfer_files_tool import save_file, transfer_file_to_str
 
 app = Flask(__name__)
+global selected_model
 
 
-@app.route('/initial', methods=['GET', 'POST'])
-def initial():
+class Server:
 
-    initial_dict = request.form
-    # service_delay = initial_dict['service_delay']
-    # requirements = initial_dict['requirements']
-    # net_condition =initial_dict['net_condition']
+    @app.route('/initial', methods=['GET', 'POST'])
+    def initial(self):
+        initial_dict = request.form
+        selected_model = initial_dict['selected_model']
+        # response = make_response(str(send_back_msg))
+        # return response
 
-    send_back_msg, selected_model = DecisionEngine(**initial_dict)
+    @app.route('/pictures_handler', methods=['GET', 'POST'])
+    def pictures_handler(self):
 
-    response = make_response(str(send_back_msg))
-    return response
+        register_dict = request.form
+        origin_file_path = save_file(register_dict['image'])
+        # t1 = time.time()
+        handled_file_path = objectdetection.object_detection_api(origin_file_path, threshold=0.8)
+        # t2 = time.time()
+        # print('%s' % (t2 - t1))
+        # print('#' * 50)
+        img_str = transfer_file_to_str(handled_file_path)
+        response = make_response(img_str)
+        return response
 
+    @app.route('/video_file_handler', methods=['GET', 'POST'])
+    def video_file_handler(self):
 
-@app.route('/pictures_handler', methods=['GET', 'POST'])
-def pictures_handler():
-
-    # get selected algorithm name
-    register_dict = request.form
-    name = register_dict['name']
-
-    # get image information and decode
-    image_str = register_dict['image']
-    img_decode_ = image_str.encode('ascii')
-    img_decode = base64.b64decode(img_decode_)
-    # save the information as .jpg file
-    with open('girl.jpg', 'wb') as f:
-        f.write(img_decode)
-    # object detection
-    t1 = time.time()
-    # of course, there are some preproccess action should be done
-    objectdetection.object_detection_api('./girl.jpg', threshold=0.8)
-    t2 = time.time()
-    print('%s' % (t2 - t1))
-    print('#' * 50)
-    with open('meelo.jpg', 'rb') as f:
-        img_byte = base64.b64encode(f.read())  # 二进制读取后变base64编码
-        img_str = img_byte.decode('ascii')
-    response = make_response(img_str)
-    return response
-
-
-@app.route('/video_file_handler', methods=['GET', 'POST'])
-def video_file_handler():
-
-    register_dict = request.form
-    video_file = register_dict['video_file']
-    img_decode_ = video_file.encode('ascii')
-    img_decode = base64.b64decode(img_decode_)
-    # print(video_file)
-    with open('girl.mp4', 'wb') as f:
-        f.write(img_decode)
-    # message = register_dict.values()
-    response = make_response('ok')
-    return response
+        register_dict = request.form
+        origin_file_path = save_file(register_dict['video'])
+        folder_path = extractframes.extract_frames(origin_file_path)
+        picture_list = os.listdir(folder_path)
+        for picture in picture_list:
+            picture_path = folder_path + "\\" + picture
+        response = make_response('ok')
+        return response
 
 
 if __name__ == '__main__':

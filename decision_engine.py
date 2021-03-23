@@ -1,3 +1,4 @@
+import preprocess
 
 
 class DecisionEngine:
@@ -20,33 +21,47 @@ class DecisionEngine:
         self.net_condition = initial_dict['net_condition']
         self.model_list = []
         if self.service_type == "image":
-            return self.decide_image_size()
+            image_size = self.decide_image_size()
+            selected_model = self.decide_model()
+            return image_size, selected_model
         elif self.service_type == 'video':
-            return self.decide_bitrate_and_resolution()
+            msg_dict = self.decide_bitrate_and_resolution()
+            selected_model = self.decide_model()
+            return msg_dict, selected_model
 
     def decide_image_size(self):
         """
-        decide the image size and computation model according to the content of initial_dict
-        :return: image size and computation model
+        decide the image size according to the content of initial_dict
+        :return: image size dict
         """
         # 关于决定图像尺寸和计算模型的条件还需要考虑和调研，比如 网速在什么范围内适合传输（500，500）尺寸的图像，使用复杂度为多少的计算模型
         # 要不要写成一个类， 什么时候该写成类，还是得学习
         image_size_dict = {}
 
         image_size = (500, 500)
-        model = 1
+        return_dict = {
+            'image_size': image_size
+        }
 
-        return image_size, model
+        return return_dict
 
     def decide_bitrate_and_resolution(self):
         """
-        decide the image size and computation model according to the content of initial_dict
-        :return:
+        decide the image size according to the content of initial_dict
+        :return: bitrate and resolution dict
         """
-        bitrate_dict = {}
-        resolution_dict = {}
+        return_dict = {'bitrate': '',
+                       'resolution': ''}
 
-        return bitrate_dict, resolution_dict, self.model_list
+        return return_dict
+
+    def decide_model(self):
+        """
+        decide the computation model according to the content of initial_dict
+        :return: selected model
+        """
+        model = 1
+        return model
 
 
 if __name__ == '__main__':
