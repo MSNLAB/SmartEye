@@ -1,5 +1,6 @@
 import os
 import time
+import subprocess
 
 
 
@@ -14,8 +15,8 @@ def extract_frames(input_file):
     folder_name = os.path.basename(input_file).split(".")[0]
     folder_path = folder_pre_path + "\\" + folder_name
     # print(folder_pre_path)
-    print(folder_name)
-    print(folder_path)
+    # print(folder_name)
+    # print(folder_path)
     if not os.path.isdir(folder_path):
         # print(1)
         os.mkdir(folder_path, 777)
@@ -24,7 +25,7 @@ def extract_frames(input_file):
     cmd = ("ffmpeg -i " + input_file + " -r 5 -f image2 " +
           folder_path + "\\" + folder_name + "-%05d.jpg")
 
-    os.system(cmd)
+    p = subprocess.Popen(cmd)
     return folder_path
 
 if __name__ == '__main__':

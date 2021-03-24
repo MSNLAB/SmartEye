@@ -1,7 +1,8 @@
 from urllib import request, parse
+import time
 
 
-def make_request(url, **msg_dict):
+def make_request(url, initial=False, **msg_dict):
     """
 
     :param url:
@@ -14,10 +15,16 @@ def make_request(url, **msg_dict):
         # 'Host': 'httpbin.org'
     }
     data = bytes(parse.urlencode(msg_dict), encoding='utf8')
+    t1 = time.time()
     req = request.Request(url=url, data=data, headers=headers, method='POST')
-
     response = request.urlopen(req)
-    return response
+    if initial:
+        t2 = time.time()
+        return response, (t2 - t1)
+    else:
+        return response
+
+
 
 
 if __name__ == "__main__":

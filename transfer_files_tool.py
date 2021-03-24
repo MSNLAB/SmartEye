@@ -21,7 +21,6 @@ def save_file(file_str, picture_path):
     return file_name
 
 
-
 def transfer_file_to_str(file_path):
     """
     transfer image to a string

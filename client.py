@@ -14,6 +14,7 @@ from transfer_files_tool import save_file, transfer_file_to_str
 initial_url = "http://39.99.145.157:5000/initial"
 picture_url = "http://39.99.145.157:5000/pictures_handler"
 video_file_url = "http://39.99.145.157:5000/video_file_handler"
+test_package_path = "./test.zip"
 
 # url = 'http://39.99.145.157:5000/hello'
 
@@ -32,9 +33,10 @@ class Client:
         self.picture_url = picture_url
         self.video_file_url = video_file_url
 
-        self.service_delay = 0
+        self.service_delay = self.initial_network_condition()
         self.service_type = service_type
-        self.net_condition = self.initial_network_condition()
+        # kb/s
+        self.net_condition = os.path.getsize(test_package_path) / (float(1024) * self.service_delay)
 
         self.msg_dict, selected_model = DecisionEngine(service_delay=self.service_delay,
                                                        service_type=self.service_type, net_condition=self.net_condition)
@@ -75,20 +77,19 @@ class Client:
 
     def initial_network_condition(self):
 
-        cmd = "ping 39.99.145.157 -n 4"
-        s = subprocess.getoutput(cmd)
-        # print('a')
-        last_line = s.split("\n")[-1]
-        avg = last_line.split("=")[-1][:-2]
-        return avg
-        # print(avg)
-        # print(s)
-        # with open('initial_condition.txt', 'r') as f:
-        #     avg_time = f.read()
-        # print(avg_time)
+        test_str = transfer_file_to_str(test_package_path)
+        response, service_delay = make_request.make_request(self.initial_url, True, img_data=test_str)
+        result = response.read().decode('utf-8')
+        # if result == 'ok':
 
-        # print('%s' % (t2 - t1))
-        # print('#' * 50)
+        # cmd = "ping 39.99.145.157 -n 4"
+        # s = subprocess.getoutput(cmd)
+        # # print('a')
+        # last_line = s.split("\n")[-1]
+        # avg = last_line.split("=")[-1][:-2]
+        # return avg
+        return service_delay
+
 
 
 if __name__ == '__main__':
