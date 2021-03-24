@@ -1,20 +1,24 @@
 import base64
+import os
 
 
-def save_file(file_str):
+def save_file(file_str, picture_path):
     """
     save files from a file_str
     :param file_dict:
     :return:
     """
+    origin_file_path = os.path.dirname(picture_path)
+    file_pre_name = os.path.basename(picture_path).split('.')[0]
+    suffix = os.path.basename(picture_path).split('.')[1]
+    file_name = origin_file_path + '\\' + file_pre_name + '_handled.' + suffix
     img_decode_ = file_str.encode('ascii')
     img_decode = base64.b64decode(img_decode_)
     # save the information as .jpg file
-    origin_file_path = ''
-    with open(origin_file_path, 'wb') as f:
+    with open(file_name, 'wb') as f:
         f.write(img_decode)
 
-    return origin_file_path
+    return file_name
 
 
 

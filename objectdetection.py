@@ -4,6 +4,7 @@ from torchvision import transforms as T
 import cv2
 import scipy.misc
 import matplotlib.pyplot as plt
+import os
 
 model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()
@@ -46,12 +47,22 @@ def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Convert to RGB
     # return str(boxes), str(pred_cls), img
     for i in range(len(boxes)):
-        cv2.rectangle(img, boxes[i][0], boxes[i][1],color=(0, 255, 0), thickness=rect_th) # Draw Rectangle with the coordinates
-        cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0,255,0),thickness=text_th) # Write the prediction class
-    handled_file_path = ''
-    scipy.misc.imsave(handled_file_path, img)
+        # Draw Rectangle with the coordinates
+        cv2.rectangle(img, boxes[i][0], boxes[i][1],color=(0, 255, 0), thickness=rect_th)
+        # Write the prediction class
+        cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
 
-    return handled_file_path
+    folder_path = os.path.dirname(img_path)
+    file_suffix = os.path.basename(img_path).split(".")[1]
+    file_pre_name = os.path.basename(img_path).split(".")[0]
+    new_folder_path = folder_path + '\\' + file_pre_name
+    if not os.path.isdir(new_folder_path):
+        os.mkdir(new_folder_path)
+    file_path = folder_path + "\\" + new_folder_path + '\\' + file_pre_name + "_handled" + '.' + file_suffix
+    # handled_file_path = ''
+    scipy.misc.imsave(file_path, img)
+
+    return file_path
 
 
 

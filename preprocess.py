@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def image_size_adjust(input_file, image_size):
+def image_size_adjust(input_file, **msg_dict):
     """
     according to the image_size stored in message responsed by the server,
     client adjusts the image size of image which will be sent to the server
@@ -13,12 +13,15 @@ def image_size_adjust(input_file, image_size):
     :return:
     """
     image = Image.open(input_file)
-    if image.size == image_size:
-        return
-    result = image.resize(image_size, Image.ANTIALIAS)
-    result.save(input_file)
-    path = ''
-    return path
+    if image.size == msg_dict['image_size']:
+        return input_file
+    folder_path = os.path.dirname(input_file)
+    file_suffix = os.path.basename(input_file).split(".")[1]
+    file_pre_name = os.path.basename(input_file).split(".")[0]
+    file_path = (folder_path + "\\" + file_pre_name + "_" + str(msg_dict['image_size']) + '.' + file_suffix)
+    result = image.resize(msg_dict['image_size'], Image.ANTIALIAS)
+    result.save(file_path)
+    return file_path
 
 
 def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
@@ -28,15 +31,17 @@ def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
     :param b_r_tuple: the max b_r_tuple value of video transfered to
     :return:
     """
-    result = input_file
-    cmd = ("ffmpeg -i " + input_file + " -vf scale=" + b_r_dict['resolution'] +
-        " -b:v " + b_r_dict['bitrate'] + " -maxrate " + b_r_dict['bitrate'] +
-        " -bufsize 2M " + result)
-    # os.system(cmd)
-    # try:
-    # except:
-    p = subprocess.Popen(cmd)
-    p.returncode
+    folder_path = os.path.dirname(input_file)
+    file_pre_name = os.path.basename(input_file).split(".")[0]
+    file_suffix = os.path.basename(input_file).split(".")[1]
+    file_path = (folder_path + "\\" + file_pre_name + "_" + b_r_dict['bitrate']
+                 + "_" + b_r_dict['resolution'] + "." + file_suffix)
+    cmd = ("ffmpeg -i " + input_file + " -vf scale=" + b_r_dict['resolution']
+           + " -b:v " + b_r_dict['bitrate'] + " -maxrate " + b_r_dict['bitrate']
+           + " -bufsize 2M " + file_path)
+
+    subprocess.Popen(cmd)
+    # p.returncode
 
 
 

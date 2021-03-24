@@ -52,22 +52,26 @@ class Client:
     # picture interface
     def process_picture(self, input_file):
 
-        path = preprocess.image_size_adjust(image_size=self.image_size, input_file=input_file)
-        img_str = transfer_file_to_str(path)
+        picture_path = preprocess.image_size_adjust(image_size=self.msg_dict, input_file=input_file)
+        img_str = transfer_file_to_str(picture_path)
         response = make_request.make_request(self.picture_url, img_data=img_str)
 
         img = response.read().decode('utf-8')
-        save_file(img)
+        save_file(img, picture_path)
 
     # video file interface
     def process_video_file(self, input_file):
 
-        preprocess.video_resolution_and_bitrate_adjust(input_file, self.msg_dict)
-        with open(input_file, 'rb') as f:
-            video_byte = base64.b64encode(f.read())
-            video_str = video_byte.decode('ascii')
-        response = make_request.make_request(self.video_file_url, video_str)
-        re = response.read().decode('utf-8')
+        try:
+            preprocess.video_resolution_and_bitrate_adjust(input_file, self.msg_dict)
+        except:
+            pass
+        else:
+            with open(input_file, 'rb') as f:
+                video_byte = base64.b64encode(f.read())
+                video_str = video_byte.decode('ascii')
+            response = make_request.make_request(self.video_file_url, video_str)
+            re = response.read().decode('utf-8')
 
     def initial_network_condition(self):
 
