@@ -18,7 +18,7 @@ def save_file(picture_path=None, **msg_dict):
         origin_file_path = os.path.dirname(picture_path)
         file_pre_name = os.path.basename(picture_path).split('.')[0]
         suffix = os.path.basename(picture_path).split('.')[1]
-        file_name = origin_file_path + '\\' + file_pre_name + '_handled.' + suffix
+        file_name = origin_file_path + '/' + file_pre_name + '_handled.' + suffix
     # client end
     else:
         if not os.path.isdir(server_save_path):
@@ -46,6 +46,7 @@ def transfer_file_to_str(file_path):
         'file_name': file_name,
         'file_str': img_str
     }
+
     return msg_dict
 
 

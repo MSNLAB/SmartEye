@@ -17,17 +17,18 @@ class DecisionEngine:
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
         self.service_delay = initial_dict['service_delay']
-        self.service_type = initial_dict['requirements']
+        self.service_type = initial_dict['service_type']
         self.net_condition = initial_dict['net_condition']
         self.model_list = []
-        if self.service_type == "image":
-            image_size = self.decide_image_size()
-            selected_model = self.decide_model()
-            return image_size, selected_model
-        elif self.service_type == 'video':
-            msg_dict = self.decide_bitrate_and_resolution()
-            selected_model = self.decide_model()
-            return msg_dict, selected_model
+
+        # if self.service_type == "image":
+        #     image_size = self.decide_image_size()
+        #     selected_model = self.decide_model()
+        #     return image_size, selected_model
+        # elif self.service_type == 'video':
+        #     msg_dict = self.decide_bitrate_and_resolution()
+        #     selected_model = self.decide_model()
+        #     return msg_dict, selected_model
 
     def decide_image_size(self):
         """
@@ -50,8 +51,8 @@ class DecisionEngine:
         decide the image size according to the content of initial_dict
         :return: bitrate and resolution dict
         """
-        return_dict = {'bitrate': '',
-                       'resolution': ''}
+        return_dict = {'bitrate': '1000k',
+                       'resolution': '1920:1080'}
 
         return return_dict
 

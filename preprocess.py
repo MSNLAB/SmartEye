@@ -12,14 +12,17 @@ def image_size_adjust(input_file, **msg_dict):
     :param input_file: images which needs to be adjust
     :return:
     """
+    # print(msg_dict)
+    # print(tuple(msg_dict['image_size']))
     image = Image.open(input_file)
     if image.size == msg_dict['image_size']:
         return input_file
+
     folder_path = os.path.dirname(input_file)
     file_suffix = os.path.basename(input_file).split(".")[1]
     file_pre_name = os.path.basename(input_file).split(".")[0]
-    file_path = (folder_path + "\\" + file_pre_name + "_" + str(msg_dict['image_size']) + '.' + file_suffix)
-    result = image.resize(msg_dict['image_size'], Image.ANTIALIAS)
+    file_path = (folder_path + "/" + file_pre_name + "_" + str(msg_dict['image_size'][0]) + '.' + file_suffix)
+    result = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
     result.save(file_path)
     return file_path
 
@@ -28,19 +31,21 @@ def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
     """
     adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
     :param input_file: video file path
-    :param b_r_tuple: the max b_r_tuple value of video transfered to
+    :param b_r_dict: the max b_r_tuple value of video transfered to
     :return:
     """
+
     folder_path = os.path.dirname(input_file)
     file_pre_name = os.path.basename(input_file).split(".")[0]
     file_suffix = os.path.basename(input_file).split(".")[1]
-    file_path = (folder_path + "\\" + file_pre_name + "_" + b_r_dict['bitrate']
+    file_path = (folder_path + "/" + file_pre_name + "_" + b_r_dict['bitrate']
                  + "_" + b_r_dict['resolution'] + "." + file_suffix)
     cmd = ("ffmpeg -i " + input_file + " -vf scale=" + b_r_dict['resolution']
            + " -b:v " + b_r_dict['bitrate'] + " -maxrate " + b_r_dict['bitrate']
            + " -bufsize 2M " + file_path)
 
     subprocess.Popen(cmd)
+    return file_path
     # p.returncode
 
 
