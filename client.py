@@ -1,7 +1,7 @@
 from urllib import request, parse
 import base64
 import time
-import extractframes
+import video_handle_tool
 import os
 import preprocess
 # import mmap
@@ -55,8 +55,8 @@ class Client:
     def process_picture(self, input_file):
 
         picture_path = preprocess.image_size_adjust(image_size=self.msg_dict, input_file=input_file)
-        img_str = transfer_file_to_str(picture_path)
-        response = make_request.make_request(self.picture_url, img_data=img_str)
+        msg_dict = transfer_file_to_str(picture_path)
+        response = make_request.make_request(self.picture_url, msg_dict)
 
         img = response.read().decode('utf-8')
         save_file(img, picture_path)
@@ -69,11 +69,10 @@ class Client:
         except:
             pass
         else:
-            with open(input_file, 'rb') as f:
-                video_byte = base64.b64encode(f.read())
-                video_str = video_byte.decode('ascii')
-            response = make_request.make_request(self.video_file_url, video_str)
-            re = response.read().decode('utf-8')
+            msg_dict = transfer_file_to_str(input_file)
+            response = make_request.make_request(self.video_file_url, msg_dict)
+            video = response.read().decode('utf-8')
+            save_file(video, input_file)
 
     def initial_network_condition(self):
 

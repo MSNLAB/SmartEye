@@ -53,12 +53,12 @@ def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold
         cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
 
     folder_path = os.path.dirname(img_path)
-    file_suffix = os.path.basename(img_path).split(".")[1]
-    file_pre_name = os.path.basename(img_path).split(".")[0]
-    new_folder_path = folder_path + '\\' + file_pre_name
+    file_name = os.path.basename(img_path)
+    file_pre_name = file_name.split('.')[0]
+    new_folder_path = folder_path + '\\' + file_pre_name + '_processed'
     if not os.path.isdir(new_folder_path):
         os.mkdir(new_folder_path)
-    file_path = folder_path + "\\" + new_folder_path + '\\' + file_pre_name + "_handled" + '.' + file_suffix
+    file_path = folder_path + "\\" + new_folder_path + '\\' + file_name
     # handled_file_path = ''
     scipy.misc.imsave(file_path, img)
 

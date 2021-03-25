@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from decision_engine import DecisionEngine
-import extractframes
+import video_handle_tool
 from transfer_files_tool import save_file, transfer_file_to_str
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ class Server:
     def pictures_handler(self):
 
         register_dict = request.form
-        origin_file_path = save_file(register_dict['image'])
+        origin_file_path = save_file(register_dict)
         # t1 = time.time()
         handled_file_path = objectdetection.object_detection_api(origin_file_path, threshold=0.8)
         # t2 = time.time()
@@ -43,12 +43,17 @@ class Server:
     def video_file_handler(self):
 
         register_dict = request.form
-        origin_file_path = save_file(register_dict['video'])
-        folder_path = extractframes.extract_frames(origin_file_path)
+        file__pre_name = register_dict['file_name'].split('.')[0]
+        origin_file_path = save_file(register_dict)
+        folder_path = video_handle_tool.extract_frames(origin_file_path)
         picture_list = os.listdir(folder_path)
         for picture in picture_list:
             picture_path = folder_path + "\\" + picture
-        response = make_response('ok')
+            objectdetection.object_detection_api(picture_path)
+        processed_files_folder = folder_path + '\\' + file__pre_name + '_processed\\' + file__pre_name + "-%05d.jpg"
+        video_path = video_handle_tool.compose_video(processed_files_folder, origin_file_path)
+        img_str = transfer_file_to_str(video_path)
+        response = make_response(img_str)
         return response
 
 
