@@ -8,12 +8,10 @@ def image_size_adjust(input_file, **msg_dict):
     according to the image_size stored in message responsed by the server,
     client adjusts the image size of image which will be sent to the server
 
-    :param image_size: image size, support 100×100 poxels， 500x500 pixels
+    :param msg_dict: image size, support 100×100 poxels， 500x500 pixels
     :param input_file: images which needs to be adjust
-    :return:
+    :return: file save path
     """
-    # print(msg_dict)
-    # print(tuple(msg_dict['image_size']))
     image = Image.open(input_file)
     if image.size == msg_dict['image_size']:
         return input_file
@@ -32,9 +30,8 @@ def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
     adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
     :param input_file: video file path
     :param b_r_dict: the max b_r_tuple value of video transfered to
-    :return:
+    :return: file save path
     """
-
     folder_path = os.path.dirname(input_file)
     file_pre_name = os.path.basename(input_file).split(".")[0]
     file_suffix = os.path.basename(input_file).split(".")[1]
@@ -46,8 +43,6 @@ def video_resolution_and_bitrate_adjust(input_file, **b_r_dict):
 
     subprocess.Popen(cmd)
     return file_path
-    # p.returncode
-
 
 
 # def video_bitrate_adjust(input_file, bitrate):

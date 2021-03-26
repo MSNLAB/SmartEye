@@ -5,9 +5,9 @@ import time
 def make_request(url, **msg_dict):
     """
 
-    :param url:
-    :param dict:
-    :return:
+    :param url: server url
+    :param msg_dict: data dict passing to server
+    :return: response object and service delay
     """
     print(msg_dict.keys())
     headers = {

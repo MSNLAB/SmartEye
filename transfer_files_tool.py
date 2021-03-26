@@ -6,11 +6,10 @@ server_save_path = './offloading_file/'
 
 def save_file(picture_path=None, **msg_dict):
     """
-    save files from a file_str
-    :param msg_dict:
-    :return:
+    :param picture_path: original path of the picture, which is handled by the server
+    :param msg_dict: this is a dictionary parameter including file_name and file_str
+    :return: save path
     """
-
     img_decode_ = msg_dict["file_str"].encode('ascii')
     img_decode = base64.b64decode(img_decode_)
     # server end
@@ -36,7 +35,7 @@ def transfer_file_to_str(file_path):
     """
     transfer image to a string
     :param file_path: file path
-    :return: image string
+    :return: msg_dict including file name and file str encoded by base64 package
     """
     file_name = os.path.basename(file_path)
     with open(file_path, 'rb') as f:
