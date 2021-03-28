@@ -10,6 +10,7 @@ import subprocess
 import make_request
 from decision_engine import DecisionEngine
 from transfer_files_tool import save_file, transfer_file_to_str
+import create_ramdom_file
 
 
 initial_url = "http://39.99.145.157:5000/initial"
@@ -40,20 +41,22 @@ class Client:
                                          service_type=self.service_type, net_condition=self.net_condition)
         if self.service_type == "image":
             self.msg_dict = decision_engine.decide_image_size()
-            selected_model = decision_engine.decide_model()
+            self.selected_model = decision_engine.decide_model()
+            # response = make_request.make_request(self.picture_url, selected_model=selected_model)
 
         elif self.service_type == 'video':
             self.msg_dict = decision_engine.decide_bitrate_and_resolution()
-            selected_model = decision_engine.decide_model()
+            self.selected_model = decision_engine.decide_model()
+            # response = make_request.make_request(self.video_file_url, selected_model=selected_model)
 
         # send initial condition to the server
-        response = make_request.make_request(self.initial_url, selected_model=selected_model)
 
     # picture interface
     def process_picture(self, input_file):
 
         picture_path = preprocess.image_size_adjust(input_file, image_size=self.msg_dict['image_size'])
         msg_dict = transfer_file_to_str(picture_path)
+        msg_dict["select_dict"] = self.selected_model
         response = make_request.make_request(self.picture_url, **msg_dict)  # unpack
         msg_str = response[0].read().decode('utf-8')
         msg_dict = json.loads(msg_str)
@@ -68,15 +71,17 @@ class Client:
             pass
         else:
             msg_dict = transfer_file_to_str(file_path)
+            msg_dict["select_dict"] = self.selected_model
             response = make_request.make_request(self.video_file_url, **msg_dict)
             video = response.read().decode('utf-8')
             save_file(video, input_file)
 
     def initial_network_condition(self):
 
+        # file_name = create_ramdom_file.create_file()
         test_str = transfer_file_to_str(test_package_path)
         response, service_delay = make_request.make_request(self.initial_url, img_data=test_str)
-        print(response)
+        # print(response)
         result = response.read().decode('utf-8')
         if result == 'ok':
             print('ok')

@@ -5,9 +5,7 @@ import cv2
 import scipy.misc
 import matplotlib.pyplot as plt
 import os
-
-model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
-model.eval()
+from torchvision.models.detection import *
 
 COCO_INSTANCE_CATEGORY_NAMES = [
     '__background__', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
@@ -25,10 +23,19 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 ]
 
 
-def get_prediction(img_path, threshold):
+def generate_model(selected_model):
+
+    model = eval(selected_model)(pretrained=True)
+    model.eval()
+
+    return model
+
+
+def get_prediction(img_path, threshold, selected_model):
     img = Image.open(img_path) # Load the image
     transform = T.Compose([T.ToTensor()]) # Defing PyTorch Transform
     img = transform(img) # Apply the transform to the image
+    model = generate_model(selected_model)
     pred = model([img]) # Pass the image to the model
     pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())] # Get the Prediction Score
     pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())] # Bounding boxes
@@ -39,9 +46,9 @@ def get_prediction(img_path, threshold):
     return pred_boxes, pred_class
 
 
-def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold=0.8):
+def object_detection_api(img_path, selected_model, ect_th=15, text_th=7, text_size=5, threshold=0.8):
 
-    boxes, pred_cls = get_prediction(img_path, threshold) # Get predictions
+    boxes, pred_cls = get_prediction(img_path, threshold, selected_model) # Get predictions
     img = cv2.imread(img_path) # Read image with cv2
     # print(img)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Convert to RGB
@@ -65,7 +72,6 @@ def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold
     return file_path
 
 
-
     # print(type(img))
     # plt.figure(figsize=(20,30)) # display the output image
     # plt.imshow(img)
@@ -74,4 +80,8 @@ def object_detection_api(img_path, rect_th=15, text_th=7, text_size=5, threshold
     # plt.show()
     # return img
 
+
+if __name__ == '__main__':
+    model = generate_model('fasterrcnn_resnet50_fpn')
+    print(model)
 
