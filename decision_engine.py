@@ -19,7 +19,8 @@ class DecisionEngine:
         self.service_delay = initial_dict['service_delay']
         self.service_type = initial_dict['service_type']
         self.net_condition = initial_dict['net_condition']
-        self.model_list = []
+        self.model_list = ['fasterrcnn_mobilenet_v3_large_320_fpn', 'fasterrcnn_mobilenet_v3_large_fpn',
+                           'fasterrcnn_resnet50_fpn', 'maskrcnn_resnet50_fpn', 'retinanet_resnet50_fpn']
 
         # if self.service_type == "image":
         #     image_size = self.decide_image_size()
