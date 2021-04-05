@@ -24,9 +24,10 @@ class Client:
     Serve as the AR client
     """
 
-    def __init__(self, service_type):
+    def __init__(self, *requirement_type):
         """
-        :param service_type: the kind of input file: image, video
+        :param requirement_type: a Dual tuple including file_type(video or image) and
+                                 service type(image classification or object detection)
         """
         # self.input_file = input_file
         self.initial_url = initial_url
@@ -34,19 +35,20 @@ class Client:
         self.video_file_url = video_file_url
 
         self.service_delay = self.initial_network_condition()
-        self.service_type = service_type
+
+        self.requirement_type = requirement_type
         # kb/s
         self.net_condition = os.path.getsize(test_package_path) / (float(1024) * self.service_delay)
         decision_engine = DecisionEngine(service_delay=self.service_delay,
-                                         service_type=self.service_type, net_condition=self.net_condition)
-        if self.service_type == "image":
+                                         requirement_type=self.requirement_type, net_condition=self.net_condition)
+        if self.requirement_type[0] == "image":
             self.msg_dict = decision_engine.decide_image_size()
-            self.selected_model = decision_engine.decide_model()
+            self.selected_model = decision_engine.decide_model(self.requirement_type[1])
             # response = make_request.make_request(self.picture_url, selected_model=selected_model)
 
-        elif self.service_type == 'video':
+        elif self.requirement_type[0] == 'video':
             self.msg_dict = decision_engine.decide_bitrate_and_resolution()
-            self.selected_model = decision_engine.decide_model()
+            self.selected_model = decision_engine.decide_model(self.requirement_type[1])
             # response = make_request.make_request(self.video_file_url, selected_model=selected_model)
 
         # send initial condition to the server
@@ -98,7 +100,7 @@ class Client:
 if __name__ == '__main__':
 
     input_file = "./85652500-1-192.mp4"
-    client = Client('video')
+    client = Client('video', 'object detection')
     t1 = time.time()
     client.process_video_file(input_file)
     t2 = time.time()

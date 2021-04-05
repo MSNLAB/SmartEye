@@ -17,10 +17,11 @@ class DecisionEngine:
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
         self.service_delay = initial_dict['service_delay']
-        self.service_type = initial_dict['service_type']
+        self.requirement_type = initial_dict['requirement_type']
         self.net_condition = initial_dict['net_condition']
-        self.model_list = ['fasterrcnn_mobilenet_v3_large_320_fpn', 'fasterrcnn_mobilenet_v3_large_fpn',
-                           'fasterrcnn_resnet50_fpn', 'maskrcnn_resnet50_fpn', 'retinanet_resnet50_fpn']
+        self.object_detection_models = ['fasterrcnn_mobilenet_v3_large_320_fpn', 'fasterrcnn_mobilenet_v3_large_fpn',
+                                        'fasterrcnn_resnet50_fpn', 'maskrcnn_resnet50_fpn', 'retinanet_resnet50_fpn']
+        self.image_classification_models = []
 
         # if self.service_type == "image":
         #     image_size = self.decide_image_size()
@@ -57,7 +58,7 @@ class DecisionEngine:
 
         return return_dict
 
-    def decide_model(self):
+    def decide_model(self, service_type):
         """
         decide the computation model according to the content of initial_dict
         :return: selected model
