@@ -61,8 +61,11 @@ class Client:
         msg_dict["select_dict"] = self.selected_model
         response = make_request.make_request(self.picture_url, **msg_dict)  # unpack
         msg_str = response[0].read().decode('utf-8')
-        msg_dict = json.loads(msg_str)
-        save_file(picture_path, **msg_dict)
+        if self.requirement_type[1] == "image classification":
+            print(msg_str)
+        else:
+            msg_dict = json.loads(msg_str)
+            save_file(picture_path, **msg_dict)
 
     # video file interface
     def process_video_file(self, input_file):
@@ -76,7 +79,10 @@ class Client:
             msg_dict["select_dict"] = self.selected_model
             response = make_request.make_request(self.video_file_url, **msg_dict)
             video = response.read().decode('utf-8')
-            save_file(video, input_file)
+            if self.selected_model == "image classification":
+                print(video)
+            else:
+                save_file(video, input_file)
 
     def initial_network_condition(self):
 
@@ -87,13 +93,6 @@ class Client:
         result = response.read().decode('utf-8')
         if result == 'ok':
             print('ok')
-
-        # cmd = "ping 39.99.145.157 -n 4"
-        # s = subprocess.getoutput(cmd)
-        # # print('a')
-        # last_line = s.split("\n")[-1]
-        # avg = last_line.split("=")[-1][:-2]
-        # return avg
         return service_delay
 
 

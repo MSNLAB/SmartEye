@@ -19,10 +19,9 @@ global selected_model
 
 @app.route('/initial', methods=['GET', 'POST'])
 def initial(self):
-    # initial_dict = request.form
-    # selected_model = initial_dict['selected_model']
-    # response = make_response(str(send_back_msg))
-    # return response
+    """
+    do nothing just for testing
+    """
     return 'ok'
 
 
