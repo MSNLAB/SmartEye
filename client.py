@@ -37,8 +37,10 @@ class Client:
         self.service_delay = self.initial_network_condition()
 
         self.requirement_type = requirement_type
+        # print(self.requirement_type)
         # kb/s
         self.net_condition = os.path.getsize(test_package_path) / (float(1024) * self.service_delay)
+        # print(self.net_condition)
         decision_engine = DecisionEngine(service_delay=self.service_delay,
                                          requirement_type=self.requirement_type, net_condition=self.net_condition)
         if self.requirement_type[0] == "image":
@@ -58,8 +60,8 @@ class Client:
 
         picture_path = preprocess.image_size_adjust(input_file, image_size=self.msg_dict['image_size'])
         msg_dict = transfer_file_to_str(picture_path)
-        msg_dict["select_dict"] = self.selected_model
-        response = make_request.make_request(self.picture_url, **msg_dict)  # unpack
+        msg_dict["selected_model"] = self.selected_model
+        response = make_request.make_request(self.picture_url, **msg_dict)
         msg_str = response[0].read().decode('utf-8')
         if self.requirement_type[1] == "image classification":
             print(msg_str)
@@ -98,9 +100,10 @@ class Client:
 
 if __name__ == '__main__':
 
-    input_file = "./85652500-1-192.mp4"
-    client = Client('video', 'object detection')
+    input_file = "./girl.jpg"
+
+    client = Client('image', 'image classification')
     t1 = time.time()
-    client.process_video_file(input_file)
+    client.process_picture(input_file)
     t2 = time.time()
-    # print(t2 - t1)
+    print(t2 - t1)

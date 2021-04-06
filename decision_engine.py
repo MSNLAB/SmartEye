@@ -19,18 +19,26 @@ class DecisionEngine:
         self.service_delay = initial_dict['service_delay']
         self.requirement_type = initial_dict['requirement_type']
         self.net_condition = initial_dict['net_condition']
-        self.object_detection_models = ['fasterrcnn_mobilenet_v3_large_320_fpn', 'fasterrcnn_mobilenet_v3_large_fpn',
-                                        'fasterrcnn_resnet50_fpn', 'maskrcnn_resnet50_fpn', 'retinanet_resnet50_fpn']
-        self.image_classification_models = []
-
-        # if self.service_type == "image":
-        #     image_size = self.decide_image_size()
-        #     selected_model = self.decide_model()
-        #     return image_size, selected_model
-        # elif self.service_type == 'video':
-        #     msg_dict = self.decide_bitrate_and_resolution()
-        #     selected_model = self.decide_model()
-        #     return msg_dict, selected_model
+        self.object_detection_models = [
+            'fasterrcnn_mobilenet_v3_large_320_fpn',
+            'fasterrcnn_mobilenet_v3_large_fpn',
+            'fasterrcnn_resnet50_fpn',
+            'maskrcnn_resnet50_fpn',
+            'retinanet_resnet50_fpn'
+            ]
+        self.image_classification_models = [
+            'alexnet',
+            'densenet',
+            'densenet121',
+            'densenet161',
+            'densenet169',
+            'densenet201',
+            'detection',
+            'googlenet',
+            'inception',
+            'inception_v3'
+        ]
+        #'alexnet', 'densenet', 'densenet121', 'densenet161', 'densenet169', 'densenet201', 'detection', 'googlenet', 'inception', 'inception_v3', 'mnasnet', 'mnasnet0_5', 'mnasnet0_75', 'mnasnet1_0', 'mnasnet1_3', 'mobilenet', 'mobilenet_v2', 'mobilenet_v3_large', 'mobilenet_v3_small', 'mobilenetv2', 'mobilenetv3', 'quantization', 'resnet', 'resnet101', 'resnet152', 'resnet18', 'resnet34', 'resnet50', 'resnext101_32x8d', 'resnext50_32x4d', 'segmentation', 'shufflenet_v2_x0_5', 'shufflenet_v2_x1_0', 'shufflenet_v2_x1_5', 'shufflenet_v2_x2_0', 'shufflenetv2', 'squeezenet', 'squeezenet1_0', 'squeezenet1_1', 'utils', 'vgg', 'vgg11', 'vgg11_bn', 'vgg13', 'vgg13_bn', 'vgg16', 'vgg16_bn', 'vgg19', 'vgg19_bn', 'video', 'wide_resnet101_2', 'wide_resnet50_2'
 
     def decide_image_size(self):
         """
@@ -63,7 +71,10 @@ class DecisionEngine:
         decide the computation model according to the content of initial_dict
         :return: selected model
         """
-        model = 1
+        if service_type == 'image classification':
+            model = self.image_classification_models[0]
+        else:
+            model = self.object_detection_models[0]
         return model
 
 

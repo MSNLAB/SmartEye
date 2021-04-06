@@ -46,7 +46,7 @@ def get_prediction(img_path, threshold, selected_model):
     return pred_boxes, pred_class
 
 
-def object_detection_api(img_path, selected_model, ect_th=15, text_th=7, text_size=5, threshold=0.8):
+def object_detection_api(img_path, selected_model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
 
     boxes, pred_cls = get_prediction(img_path, threshold, selected_model) # Get predictions
     img = cv2.imread(img_path) # Read image with cv2

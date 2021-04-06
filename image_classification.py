@@ -1,4 +1,6 @@
+import torchvision
 from torchvision.models import *
+from torchvision import models
 import torch
 from torchvision import transforms
 from PIL import Image
@@ -46,7 +48,7 @@ def image_classification(image_path, selected_model):
 
 if __name__ == '__main__':
 
-    image_path = 'girl.jpg'
-    selected_model = 'alexnet'
-    result = image_classification(image_path, selected_model)
-
+    # image_path = 'girl.jpg'
+    # selected_model = 'alexnet'
+    # result = image_classification(image_path, selected_model)
+    print(dir(models))

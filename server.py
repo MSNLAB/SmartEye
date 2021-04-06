@@ -11,14 +11,30 @@ from transfer_files_tool import save_file, transfer_file_to_str
 import image_classification
 
 app = Flask(__name__)
-object_detection_models = ['fasterrcnn_mobilenet_v3_large_320_fpn', 'fasterrcnn_mobilenet_v3_large_fpn',
-                                        'fasterrcnn_resnet50_fpn', 'maskrcnn_resnet50_fpn', 'retinanet_resnet50_fpn']
-image_classification_models = []
+object_detection_models = [
+    'fasterrcnn_mobilenet_v3_large_320_fpn',
+    'fasterrcnn_mobilenet_v3_large_fpn',
+    'fasterrcnn_resnet50_fpn',
+    'maskrcnn_resnet50_fpn',
+    'retinanet_resnet50_fpn'
+]
+image_classification_models = [
+    'alexnet',
+    'densenet',
+    'densenet121',
+    'densenet161',
+    'densenet169',
+    'densenet201',
+    'detection',
+    'googlenet',
+    'inception',
+    'inception_v3'
+]
 global selected_model
 
 
 @app.route('/initial', methods=['GET', 'POST'])
-def initial(self):
+def initial():
     """
     do nothing just for testing
     """
@@ -26,10 +42,11 @@ def initial(self):
 
 
 @app.route('/pictures_handler', methods=['GET', 'POST'])
-def pictures_handler(self):
+def pictures_handler():
 
     register_dict = request.form
     selected_model = register_dict['selected_model']
+    print(selected_model)
     origin_file_path = save_file(**register_dict)
     # t1 = time.time()
     if selected_model in object_detection_models:
@@ -42,7 +59,7 @@ def pictures_handler(self):
 
 
 @app.route('/video_file_handler', methods=['GET', 'POST'])
-def video_file_handler(self):
+def video_file_handler():
 
     register_dict = request.form
     selected_model = register_dict['selected_model']

@@ -12,16 +12,17 @@ def image_size_adjust(input_file, **msg_dict):
     :param input_file: images which needs to be adjust
     :return: file save path
     """
+
     image = Image.open(input_file)
     if image.size == msg_dict['image_size']:
         return input_file
-
     folder_path = os.path.dirname(input_file)
     file_suffix = os.path.basename(input_file).split(".")[1]
     file_pre_name = os.path.basename(input_file).split(".")[0]
     file_path = (folder_path + "/" + file_pre_name + "_" + str(msg_dict['image_size'][0]) + '.' + file_suffix)
     result = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
     result.save(file_path)
+    # print(file_path)
     return file_path
 
 
