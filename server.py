@@ -19,16 +19,16 @@ object_detection_models = [
     'retinanet_resnet50_fpn'
 ]
 image_classification_models = [
-    'alexnet',
-    'densenet',
-    'densenet121',
-    'densenet161',
-    'densenet169',
-    'densenet201',
-    'detection',
-    'googlenet',
-    'inception',
-    'inception_v3'
+    'alexnet', 'densenet', 'densenet121', 'densenet161', 'densenet169',
+    'densenet201', 'detection', 'googlenet', 'inception', 'inception_v3',
+    'mnasnet', 'mnasnet0_5', 'mnasnet0_75', 'mnasnet1_0', 'mnasnet1_3',
+    'mobilenet', 'mobilenet_v2', 'mobilenet_v3_large', 'mobilenet_v3_small',
+    'mobilenetv2', 'mobilenetv3', 'quantization', 'resnet', 'resnet101',
+    'resnet152', 'resnet18', 'resnet34', 'resnet50', 'resnext101_32x8d',
+    'resnext50_32x4d', 'segmentation', 'shufflenet_v2_x0_5', 'shufflenet_v2_x1_0',
+    'shufflenet_v2_x1_5', 'shufflenet_v2_x2_0', 'shufflenetv2', 'squeezenet', 'squeezenet1_0',
+    'squeezenet1_1', 'utils', 'vgg', 'vgg11', 'vgg11_bn','vgg13', 'vgg13_bn',
+    'vgg16', 'vgg16_bn', 'vgg19', 'vgg19_bn', 'video', 'wide_resnet101_2', 'wide_resnet50_2'
 ]
 global selected_model
 
