@@ -1,6 +1,3 @@
-import preprocess
-
-
 class DecisionEngine:
     """
     decide the basic information of image and video:
@@ -38,6 +35,17 @@ class DecisionEngine:
             'squeezenet1_1', 'utils', 'vgg', 'vgg11', 'vgg11_bn','vgg13', 'vgg13_bn',
             'vgg16', 'vgg16_bn', 'vgg19', 'vgg19_bn', 'video', 'wide_resnet101_2', 'wide_resnet50_2'
         ]
+
+    def get_decision_result(self):
+        if self.requirement_type[0] == "image":
+            msg_dict = self.decide_image_size()
+            selected_model = self.decide_model(self.requirement_type[1])
+            # response = make_request.make_request(self.picture_url, selected_model=selected_model)
+
+        elif self.requirement_type[0] == 'video':
+            msg_dict = self.decide_bitrate_and_resolution()
+            selected_model = self.decide_model(self.requirement_type[1])
+        return msg_dict, selected_model
 
     def decide_image_size(self):
         """

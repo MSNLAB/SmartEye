@@ -1,14 +1,7 @@
 import os
-import cv2
-from flask import Flask, request, make_response, Response, render_template, jsonify
-import objectdetection
-import base64
-import numpy as np
-import matplotlib.pyplot as plt
-import time
-import video_handle_tool
-from transfer_files_tool import save_file, transfer_file_to_str
-import image_classification
+from flask import Flask, request, make_response, jsonify
+from tools.transfer_files_tool import save_file, transfer_file_to_str
+from transmission.server import image_classification, objectdetection, video_handle_tool
 
 app = Flask(__name__)
 object_detection_models = [

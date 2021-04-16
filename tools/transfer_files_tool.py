@@ -6,7 +6,7 @@ server_save_path = './offloading_file/'
 
 def save_file(picture_path=None, **msg_dict):
     """
-    :param picture_path: original path of the picture, which is handled by the server
+    :param picture_path: original path of the picture, which has handled by the server
     :param msg_dict: this is a dictionary parameter including file_name and file_str
     :return: save path
     """

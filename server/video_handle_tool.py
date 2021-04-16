@@ -2,7 +2,7 @@ import os
 import time
 import subprocess
 
-save_folder_path = './'
+save_folder_path = '../'
 
 
 def extract_frames(input_file):
