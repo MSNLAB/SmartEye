@@ -22,18 +22,11 @@ transmission client interface: transmit data to server
 
 
 # picture interface
-def process_picture(self, input_file):
+def send_frame(url, frame):
 
-    picture_path = preprocessing.image_size_adjust(input_file, image_size=msg_dict['image_size'])
-    msg_dict = transfer_file_to_str(picture_path)
-    msg_dict["selected_model"] = selected_model
-    response = make_request.make_request(picture_url, **msg_dict)
-    msg_str = response[0].read().decode('utf-8')
-    if requirement_type[1] == "image classification":
-        print(msg_str)
-    else:
-        msg_dict = json.loads(msg_str)
-        save_file(picture_path, **msg_dict)
+    response = make_request.make_request(url, frame)
+    result = response.read().decode('utf-8')
+    return result
 
 
 # video file interface

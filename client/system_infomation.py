@@ -11,9 +11,16 @@
 '''
 
 
-class SysInfo:
-    """
-    storing the system information of client and server
-    """
-    def __init__(self):
-        pass
+# class SysInfo:
+#     """
+#     storing the system information of client and server
+#     """
+#     def __init__(self):
+#         self.service_delay = 0
+#         self.net_speed = 0
+#         self.cpu_usage = 0
+#         pass
+import collections
+
+SysInfo = collections.namedtuple('SysInfo',['service_delay', 'net_speed', 'cpu_usage'])
+

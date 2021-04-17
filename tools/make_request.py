@@ -2,18 +2,18 @@ from urllib import request, parse
 import time
 
 
-def make_request(url, **msg_dict):
+def make_request(url, frame):
     """
 
     :param url: server url
-    :param msg_dict: data dict passing to server
+    :param frame: data passing to server
     :return: response object and service delay
     """
     headers = {
         # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
         # 'Host': 'httpbin.org'
     }
-    data = bytes(parse.urlencode(msg_dict), encoding='utf8')
+    data = bytes(parse.urlencode(frame), encoding='utf8')
     t1 = time.time()
     req = request.Request(url=url, data=data, headers=headers, method='POST')
     response = request.urlopen(req)

@@ -1,6 +1,7 @@
 import json
 from client import preprocessing
 # import mmap
+from client.offloading import send_frame
 from client.preprocessing import PreProcessing
 from tools import make_request
 from client.decision_engine import DecisionEngine
@@ -9,9 +10,10 @@ from tools.transfer_files_tool import save_file, transfer_file_to_str
 from client.video_reader import VideoReader
 
 
+
 if __name__ == '__main__':
 
-    input_file = "../client/girl.jpg"
+    input_file = "girl.jpg"
     initial_url = "http://39.99.145.157:5000/initial"
     picture_url = "http://39.99.145.157:5000/pictures_handler"
     video_file_url = "http://39.99.145.157:5000/video_file_handler"
@@ -31,6 +33,9 @@ if __name__ == '__main__':
         # preprocessing frames
         frame = preprocessing.pre_process_image(frame, **msg_dict)
         # transmission
+        result = send_frame(picture_url, frame)
+
+
 
 
 
