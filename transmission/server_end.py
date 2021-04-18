@@ -1,7 +1,11 @@
 import os
+
+import cv2
+import numpy as np
+from PIL import Image
 from flask import Flask, request, make_response, jsonify
 from tools.transfer_files_tool import save_file, transfer_file_to_str
-from transmission.server import image_classification, objectdetection, video_handle_tool
+from server import image_classification, objectdetection, video_handle_tool
 
 app = Flask(__name__)
 object_detection_models = [
@@ -39,16 +43,25 @@ def pictures_handler():
 
     register_dict = request.form
     selected_model = register_dict['selected_model']
-    print(selected_model)
-    origin_file_path = save_file(**register_dict)
+    # print(selected_model)
+    frame = register_dict['frame']
+    frame_shape = register_dict['frame_shape']
+    print(frame_shape)
+    print(type(frame_shape))
+    frame = np.array(frame)
+
+    print(frame)
+    im = Image.fromarray(frame)
+    im.save("out.jpg")
+    # origin_file_path = save_file(**register_dict)
     # t1 = time.time()
-    if selected_model in object_detection_models:
-        handled_file_path = objectdetection.object_detection_api(origin_file_path, selected_model, threshold=0.8)
-        msg_dict = transfer_file_to_str(handled_file_path)
-        return jsonify(msg_dict)
-    else:
-        result = image_classification.image_classification(origin_file_path, selected_model)
-        return result
+    # if selected_model in object_detection_models:
+    #     frame_handled = objectdetection.object_detection_api(frame, selected_model, threshold=0.8)
+    #     # msg_dict = transfer_file_to_str(handled_file_path)
+    #     return jsonify(frame_handled)
+    # else:
+    #     result = image_classification.image_classification(frame, selected_model)
+    #     return result
 
 
 @app.route('/video_file_handler', methods=['GET', 'POST'])

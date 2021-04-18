@@ -22,26 +22,26 @@ transmission client interface: transmit data to server
 
 
 # picture interface
-def send_frame(url, frame):
+def send_frame(url, frame, selected_model):
 
-    response = make_request.make_request(url, frame)
+    frame_shape = frame.shape
+    msg_dict = {
+        "selected_model": selected_model,
+        "frame_shape": frame_shape,
+        "frame": frame
+    }
+    response = make_request.make_request(url, **msg_dict)
+    print(response)
     result = response.read().decode('utf-8')
     return result
 
 
 # video file interface
-def process_video_file(self, input_file):
+def process_video_file(url, input_file):
 
-    try:
-        file_path = preprocessing.video_resolution_and_bitrate_adjust(input_file, **msg_dict)
-    except:
-        pass
-    else:
-        msg_dict = transfer_file_to_str(file_path)
-        msg_dict["select_dict"] = selected_model
-        response = make_request.make_request(video_file_url, **msg_dict)
+        response = make_request.make_request(url)
         video = response.read().decode('utf-8')
-        if selected_model == "image classification":
-            print(video)
-        else:
-            save_file(video, input_file)
+        # if selected_model == "image classification":
+        #     print(video)
+        # else:
+        #     save_file(video, input_file)

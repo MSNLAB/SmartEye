@@ -1,21 +1,34 @@
+import base64
+import json
 from urllib import request, parse
 import time
 
+import numpy
 
-def make_request(url, frame):
+
+def make_request(url, **msg_dict):
     """
 
     :param url: server url
     :param frame: data passing to server
+    :param selected_model:
     :return: response object and service delay
     """
+    # if "frame" in msg_dict.keys():
+    #     print(type(msg_dict["frame"]))
     headers = {
-        # 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
-        # 'Host': 'httpbin.org'
+        "User-Agent": "Mozilla",
+        # 'content-type': 'application/json'
     }
-    data = bytes(parse.urlencode(frame), encoding='utf8')
+    # if type(file) is numpy.ndarray:
+    #     img_byte = base64.b64encode(file.tostring())
+    #     file = img_byte.decode('ascii')
+    # msg_dict["file"] = file
+    data = parse.urlencode(msg_dict).encode('utf8')
+    # print(type(data))
     t1 = time.time()
     req = request.Request(url=url, data=data, headers=headers, method='POST')
+    # print(req.data)
     response = request.urlopen(req)
     t2 = time.time()
     return response, (t2 - t1) / 2

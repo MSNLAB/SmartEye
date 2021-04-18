@@ -13,14 +13,15 @@ import os
 
 from tools import make_request
 from tools.transfer_files_tool import transfer_file_to_str
-file_path = "test.zip"
+file_path = "/home/wxz/Documents/video2edge/tools/test.zip"
 
 
-def get_network_condition(url, file_path):
+def get_network_condition(url):
     # file_name = create_ramdom_file.create_file()
-    test_str = transfer_file_to_str(file_path)
-    response, service_delay = make_request.make_request(url, img_data=test_str)
+    test_dict = transfer_file_to_str(file_path)
+    response, service_delay = make_request.make_request(url, **test_dict)
     result = response.read().decode('utf-8')
-    assert result != 'ok'
+    print(result)
+    assert result == 'ok'
     net_speed = os.path.getsize(file_path) / (float(1024) * service_delay)
     return service_delay, net_speed
