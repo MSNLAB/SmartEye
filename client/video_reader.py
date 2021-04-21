@@ -16,45 +16,46 @@ class VideoReader:
     """
     Read image frames from camera or video files
     """
+    def __init__(self, input_source):
 
-    def read_camera(self, device):
+        self.input_source = input_source
+        assert input_source is not None
+        self.cap = cv2.VideoCapture(self.input_source)
+
+    def read_camera(self):
         """
         camera interface: read image frames from camera(virtual camera)
         :param: device: device number
         :return: video frame in type class 'numpy.ndarray'
         """
-        assert device is not None
-        assert type(device) == 'int'
 
-        cap = cv2.VideoCapture(device)
+        assert type(self.input_source) == 'int'
 
-        if cap.isOpened():
+        if self.cap.isOpened():
 
-            ret, frame = cap.read()
-
-            if frame is None:
-                return None
-
+            ret, frame = self.cap.read()
             return frame
+        else:
+            self.cap.release()
+            return None
 
-    def read_file(self, input_file):
+    def read_file(self):
         """
         file interface: read image frames from video file
         :param: input_file: file path which will be read
         :return: video frame in type class 'numpy.ndarray'
         """
-        assert input_file is not None
+        # print(type(self.input_source) is 'str')
+        assert isinstance(self.input_source, str)
+        if self.cap.isOpened():
 
-        cap = cv2.VideoCapture(input_file)
-
-        if cap.isOpened():
-
-            ret, frame = cap.read()
-
-            if frame is None:
-                return None
-
+            ret, frame = self.cap.read()
             return frame
+        else:
+            self.cap.realease()
+            return None
+
+
 
 
 if __name__ == "__main__":

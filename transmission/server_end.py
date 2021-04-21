@@ -1,3 +1,4 @@
+import base64
 import os
 
 import cv2
@@ -45,14 +46,13 @@ def pictures_handler():
     selected_model = register_dict['selected_model']
     # print(selected_model)
     frame = register_dict['frame']
-    frame_shape = register_dict['frame_shape']
-    print(frame_shape)
-    print(type(frame_shape))
-    frame = np.array(frame)
-
-    print(frame)
-    im = Image.fromarray(frame)
-    im.save("out.jpg")
+    # print(frame)
+    img_decode_ = frame.encode('ascii')
+    img_decode = base64.b64decode(img_decode_)
+    print(img_decode)
+    img = cv2.imdecode(np.fromstring(img_decode, np.uint8), 1)
+    print(img)
+    cv2.imwrite('save3.jpg', img)
     # origin_file_path = save_file(**register_dict)
     # t1 = time.time()
     # if selected_model in object_detection_models:

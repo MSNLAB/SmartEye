@@ -20,7 +20,6 @@ class PreProcessing:
         """
         assert frame is not None
         image = Image.fromarray(frame)
-        print(type(image))
         result_image = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
         frame = np.asarray(image)
         return frame

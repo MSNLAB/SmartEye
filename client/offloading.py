@@ -24,14 +24,14 @@ transmission client interface: transmit data to server
 # picture interface
 def send_frame(url, frame, selected_model):
 
-    frame_shape = frame.shape
+    # frame_shape = frame.shape
     msg_dict = {
         "selected_model": selected_model,
-        "frame_shape": frame_shape,
+        # "frame_shape": frame_shape,
         "frame": frame
     }
     response = make_request.make_request(url, **msg_dict)
-    print(response)
+    # print(response)
     result = response.read().decode('utf-8')
     return result
 

@@ -1,5 +1,8 @@
+import base64
 import json
 # import mmap
+import cv2
+
 from client.offloading import send_frame
 from client.preprocessing import PreProcessing
 from tools import make_request
@@ -19,29 +22,34 @@ if __name__ == '__main__':
     # picture_url = "http://39.99.145.157:5000/pictures_handler"
     # video_file_url = "http://39.99.145.157:5000/video_file_handler"
     requirement_type = ('image', 'image classification')
-    reader = VideoReader()
+    reader = VideoReader(input_file)
     service_delay, net_speed = get_network_condition(initial_url)
-    print(service_delay)
-    print(net_speed)
+    # print(service_delay)
+    # print(net_speed)
     decision_engine = DecisionEngine(
         service_delay=service_delay, requirement_type=requirement_type, net_condition=net_speed
     )
     preprocessing = PreProcessing()
 
     msg_dict, selected_model = decision_engine.get_decision_result()
-    print(selected_model)
+    # print(selected_model)
     while True:
         # get frames
-        frame = reader.read_file(input_file)
-        print("read_file")
-        print(frame)
+        frame = reader.read_file()
         # preprocessing frames
         frame = preprocessing.pre_process_image(frame, **msg_dict)
-        print("processed image")
-        print(frame)
+        binary_frame = frame.tobytes()
+        # print(binary_frame)
+        img_byte = base64.b64encode(binary_frame)  # 二进制读取后变base64编码
+        img_str = img_byte.decode('ascii')
+
+        # print(binary_frame)
+        # cv2.imshow("capture", frame) # 显示
+        # if cv2.waitKey(100) & 0xff == ord('q'): # 按q退出
+        #     break
         # transmission
-        result = send_frame(picture_url, frame, selected_model)
-        print(result)
+        result = send_frame(picture_url, img_str, selected_model)
+        # print(result)
 
 
 
