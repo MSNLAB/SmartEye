@@ -9,18 +9,21 @@
 @time: 2021/4/12 下午10:26
 @desc:
 '''
+import os
+
 import cv2
 
 
 class VideoReader:
     """
-    Read image frames from camera or video files
+    Read image frames from camera or video files: input file path for reading video file;
+    input camera device number for reading camera
     """
     def __init__(self, input_source):
-
         self.input_source = input_source
-        assert input_source is not None
-        self.cap = cv2.VideoCapture(self.input_source)
+        if self.input_source is None:
+            self.input_source = 1
+        self.cap = cv2.VideoCapture(input_source)
 
     def read_camera(self):
         """
@@ -28,16 +31,15 @@ class VideoReader:
         :param: device: device number
         :return: video frame in type class 'numpy.ndarray'
         """
-
         assert type(self.input_source) == 'int'
-
         if self.cap.isOpened():
 
             ret, frame = self.cap.read()
-            return frame
-        else:
-            self.cap.release()
-            return None
+            if ret:
+                return frame
+            else:
+                self.cap.release()
+                return None
 
     def read_file(self):
         """
@@ -45,17 +47,16 @@ class VideoReader:
         :param: input_file: file path which will be read
         :return: video frame in type class 'numpy.ndarray'
         """
-        # print(type(self.input_source) is 'str')
-        assert isinstance(self.input_source, str)
+        assert isinstance(self.input_source, str), "input is not a str type"
+        assert os.path.isfile(self.input_source), "can't find this file"
         if self.cap.isOpened():
 
             ret, frame = self.cap.read()
-            return frame
-        else:
-            self.cap.realease()
-            return None
-
-
+            if ret:
+                return frame
+            else:
+                self.cap.release()
+                return None
 
 
 if __name__ == "__main__":

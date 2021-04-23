@@ -5,10 +5,11 @@ import cv2
 import numpy as np
 from PIL import Image
 from flask import Flask, request, make_response, jsonify
-from tools.transfer_files_tool import save_file, transfer_file_to_str
+from tools.transfer_files_tool import save_file, transfer_file_to_str, transfer_array_and_str
 from server import image_classification, objectdetection, video_handle_tool
 
 app = Flask(__name__)
+# app.DEBUG = True
 object_detection_models = [
     'fasterrcnn_mobilenet_v3_large_320_fpn',
     'fasterrcnn_mobilenet_v3_large_fpn',
@@ -44,24 +45,20 @@ def pictures_handler():
 
     register_dict = request.form
     selected_model = register_dict['selected_model']
-    # print(selected_model)
     frame = register_dict['frame']
-    # print(frame)
-    img_decode_ = frame.encode('ascii')
-    img_decode = base64.b64decode(img_decode_)
-    print(img_decode)
-    img = cv2.imdecode(np.fromstring(img_decode, np.uint8), 1)
-    print(img)
-    cv2.imwrite('save3.jpg', img)
+    frame_shape = tuple(int(a) for a in register_dict["frame_shape"][1:-1].split(","))
+    img = transfer_array_and_str(frame, 'down')
+    img = img.reshape(frame_shape)
+    # print(type(nprr))
     # origin_file_path = save_file(**register_dict)
-    # t1 = time.time()
-    # if selected_model in object_detection_models:
-    #     frame_handled = objectdetection.object_detection_api(frame, selected_model, threshold=0.8)
-    #     # msg_dict = transfer_file_to_str(handled_file_path)
-    #     return jsonify(frame_handled)
-    # else:
-    #     result = image_classification.image_classification(frame, selected_model)
-    #     return result
+    if selected_model in object_detection_models:
+        frame_handled = objectdetection.object_detection_api(img, selected_model, threshold=0.8)
+        img_str = transfer_array_and_str(frame_handled, 'up')
+        return jsonify(img_str)
+    else:
+        result = image_classification.image_classification(img, selected_model)
+        # print(type(result))
+        return result
 
 
 @app.route('/video_file_handler', methods=['GET', 'POST'])
@@ -93,7 +90,7 @@ def video_file_handler():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
 

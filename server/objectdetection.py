@@ -31,8 +31,9 @@ def generate_model(selected_model):
     return model
 
 
-def get_prediction(img_path, threshold, selected_model):
-    img = Image.open(img_path) # Load the image
+def get_prediction(img, threshold, selected_model):
+    # img = Image.open(img_path)
+    img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     transform = T.Compose([T.ToTensor()]) # Defing PyTorch Transform
     img = transform(img) # Apply the transform to the image
     model = generate_model(selected_model)
@@ -49,9 +50,9 @@ def get_prediction(img_path, threshold, selected_model):
 def object_detection_api(img_path, selected_model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
 
     boxes, pred_cls = get_prediction(img_path, threshold, selected_model) # Get predictions
-    img = cv2.imread(img_path) # Read image with cv2
+    # img = cv2.imread(img_path) # Read image with cv2
     # print(img)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Convert to RGB
+    img = cv2.cvtColor(img_path, cv2.COLOR_BGR2RGB) # Convert to RGB
     # return str(boxes), str(pred_cls), img
     for i in range(len(boxes)):
         # Draw Rectangle with the coordinates

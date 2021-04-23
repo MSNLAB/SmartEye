@@ -1,3 +1,4 @@
+import cv2
 import torchvision
 from torchvision.models import *
 from torchvision import models
@@ -6,7 +7,7 @@ from torchvision import transforms
 from PIL import Image
 
 
-classes_file = "imagenet_classes.txt"
+classes_file = "D:\PyCharm 2020.3.1\workspace\\video2edge\server\imagenet_classes.txt"
 transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -26,8 +27,10 @@ def generate_model(selected_model):
     return model
 
 
-def image_classification(image_path, selected_model):
-    img = Image.open(image_path)
+def image_classification(img, selected_model):
+
+    # img = Image.open(image_path)
+    img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     img_t = transform(img)
     batch_t = torch.unsqueeze(img_t, 0)
     model = generate_model(selected_model)

@@ -21,7 +21,8 @@ class LocalStore:
 
     def __init__(self):
         time = datetime.datetime.now()
-        video_name = "/home/wxz/" + time.date() + "_" + time.hour + ".mp4"
+        # video_name = "/home/wxz/" + time.date() + "_" + time.hour + ".mp4"
+        video_name = "out.mp4"
         self.out = cv2.VideoWriter(
             video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480)
         )
@@ -33,7 +34,7 @@ class LocalStore:
         :return:
         """
         try:
-            cv2.SaveImage("out.png", frame)
+            cv2.SaveImage("out_%5d.png", frame)
         except Exception as err:
             print("save image fail:", err)
 

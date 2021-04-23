@@ -9,12 +9,12 @@
 @time: 2021/4/16 下午2:37
 @desc:
 """
+import base64
 import json
 
 from tools import make_request
 from client import preprocessing
-from tools.transfer_files_tool import transfer_file_to_str, save_file
-
+from tools.transfer_files_tool import transfer_file_to_str, save_file, transfer_array_and_str
 
 """
 transmission client interface: transmit data to server
@@ -24,15 +24,16 @@ transmission client interface: transmit data to server
 # picture interface
 def send_frame(url, frame, selected_model):
 
-    # frame_shape = frame.shape
+    frame_shape = frame.shape
+    img_str = transfer_array_and_str(frame, "up")
     msg_dict = {
         "selected_model": selected_model,
-        # "frame_shape": frame_shape,
-        "frame": frame
+        "frame_shape": frame_shape,
+        "frame": img_str
     }
-    response = make_request.make_request(url, **msg_dict)
-    # print(response)
+    response, service_delay = make_request.make_request(url, **msg_dict)
     result = response.read().decode('utf-8')
+
     return result
 
 
