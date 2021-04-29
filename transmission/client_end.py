@@ -26,13 +26,15 @@ class Client:
         # initial_url = "http://39.99.145.157:5000/initial"
         # picture_url = "http://39.99.145.157:5000/pictures_handler"
         # video_file_url = "http://39.99.145.157:5000/video_file_handler"
-
         # initialize local store
         self.local_store = LocalStore()
+
         # initialize video reader
         self.reader = VideoReader(input_file)
+
         # get initial network condition
         service_delay, net_speed = get_network_condition(self.initial_url)
+
         # initialize decision engine
         assert file_type is not None
         assert file_type == 'image' or file_type == 'video'
@@ -45,6 +47,7 @@ class Client:
             service_delay=service_delay, requirement_type=requirement_type, net_condition=net_speed
         )
         self.msg_dict, self.selected_model = decision_engine.get_decision_result()
+
         # initialize preprocess module
         self.preprocessing = PreProcessing()
 

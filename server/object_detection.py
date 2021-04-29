@@ -61,26 +61,6 @@ def object_detection_api(img_path, selected_model, rect_th=15, text_th=7, text_s
         cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
 
     return img
-    # folder_path = os.path.dirname(img_path)
-    # file_name = os.path.basename(img_path)
-    # file_pre_name = file_name.split('.')[0]
-    # new_folder_path = folder_path + '/' + file_pre_name + '_processed'
-    # if not os.path.isdir(new_folder_path):
-    #     os.mkdir(new_folder_path)
-    # file_path = new_folder_path + '/' + file_name
-    # # handled_file_path = ''
-    # scipy.misc.imsave(file_path, img)
-
-    # return file_path
-
-
-    # print(type(img))
-    # plt.figure(figsize=(20,30)) # display the output image
-    # plt.imshow(img)
-    # plt.xticks([])
-    # plt.yticks([])
-    # plt.show()
-    # return img
 
 
 if __name__ == '__main__':

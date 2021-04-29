@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+service MsgTransfer {
+
+  rpc ImageProcessing (MsgRequest) returns (MsgReply) {}
+
+}
+
+message MsgRequest {
+
+  string model = 1;
+  string frame = 2;
+  string frame_shape = 3;
+
+}
+
+message MsgReply {
+
+  string result = 2;
+  string frame_shape = 3;
+
+}

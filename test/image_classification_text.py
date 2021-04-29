@@ -1,3 +1,4 @@
+from client import local_store
 from client.local_store import LocalStore
 from client.offloading import send_frame
 from tools.transfer_files_tool import transfer_array_and_str

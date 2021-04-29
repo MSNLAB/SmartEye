@@ -21,8 +21,8 @@ class LocalStore:
 
     def __init__(self):
         time = datetime.datetime.now()
-        # video_name = "/home/wxz/" + time.date() + "_" + time.hour + ".mp4"
-        video_name = "out.mp4"
+        store_folder = ""
+        video_name = time.strftime('%a%b%d%H%M') + ".mp4"
         self.out = cv2.VideoWriter(
             video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480)
         )
@@ -48,4 +48,8 @@ class LocalStore:
             self.out.write(frame)
         except Exception as err:
             print("write frame into video fail", err)
+
+
+if __name__ == "__main__":
+    local_store = LocalStore()
 
