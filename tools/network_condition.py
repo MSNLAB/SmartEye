@@ -21,7 +21,6 @@ def get_network_condition(url):
     test_dict = transfer_file_to_str(file_path)
     response, service_delay = make_request.make_request(url, **test_dict)
     result = response.read().decode('utf-8')
-    print(result)
     assert result == 'ok'
     net_speed = os.path.getsize(file_path) / (float(1024) * service_delay)
     return service_delay, net_speed

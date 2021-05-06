@@ -17,7 +17,7 @@ class Client:
     """
     initialize Client end
     """
-    def __init__(self, input_file, file_type, service_type):
+    def __init__(self, input_file, file_type, service_type, store_type=None):
 
         self.input_file = input_file
         self.initial_url = "http://127.0.0.1:5000/initial"
@@ -27,7 +27,7 @@ class Client:
         # picture_url = "http://39.99.145.157:5000/pictures_handler"
         # video_file_url = "http://39.99.145.157:5000/video_file_handler"
         # initialize local store
-        self.local_store = LocalStore()
+        self.local_store = LocalStore(store_type)
 
         # initialize video reader
         self.reader = VideoReader(input_file)

@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import server.grpc.pbfile.msg_transfer_pb2 as msg__transfer__pb2
+import server.grpc_section.pbfile.msg_transfer_pb2 as msg__transfer__pb2
 
 
 class MsgTransferStub(object):
@@ -12,7 +12,7 @@ class MsgTransferStub(object):
         """Constructor.
 
         Args:
-            channel: A grpc.Channel.
+            channel: A grpc_section.Channel.
         """
         self.ImageProcessing = channel.unary_unary(
                 '/MsgTransfer/ImageProcessing',

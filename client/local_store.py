@@ -9,6 +9,8 @@
 @time: 2021/4/16 下午2:25
 @desc:
 '''
+import os
+
 import cv2
 import datetime
 
@@ -19,13 +21,16 @@ class LocalStore:
     as image or video in local directory
     """
 
-    def __init__(self):
+    def __init__(self, store_type):
         time = datetime.datetime.now()
-        store_folder = ""
-        video_name = time.strftime('%a%b%d%H%M') + ".mp4"
-        self.out = cv2.VideoWriter(
-            video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480)
+        self.result_store_location = os.path.join(
+            r"D:\PyCharm 2020.3.1\workspace\video2edge\resultstore", time.strftime('%a%b%d%H%M')
         )
+        if store_type == "video":
+            video_name = time.strftime('%a%b%d%H%M') + ".mp4"
+            self.out = cv2.VideoWriter(
+                video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480)
+            )
 
     def store_image(self, frame):
         """
@@ -33,8 +38,11 @@ class LocalStore:
         :param frame: image which will be stored, type numpy.narray
         :return:
         """
+        # if there is a error breaking the program, all executions before should rollback
+        if not os.path.exists(self.result_store_location):
+            os.mkdir(self.result_store_location)
         try:
-            cv2.SaveImage("out_%5d.png", frame)
+            cv2.imwrite(os.path.join(self.result_store_location, "out_%5d.png"), frame)
         except Exception as err:
             print("save image fail:", err)
 

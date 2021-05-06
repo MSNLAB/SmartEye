@@ -1,7 +1,10 @@
 import grpc
-from flask import Flask, request, make_response, jsonify
+from torchvision.models import *
+from torchvision.models.detection import *
 
-from server.grpc.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
+from flask import Flask, request, jsonify
+
+from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 
 app = Flask(__name__)
 
@@ -21,15 +24,23 @@ def pictures_handler():
     :return:
     """
     info_dict = request.form
-    channel = grpc.insecure_channel('localhost:50051')
+    # options = [('grpc.max_message_length', 256 * 1024 * 1024)]
+
+    options = [('grpc.max_receive_message_length', 256 * 1024 * 1024)]
+
+    channel = grpc.insecure_channel('localhost:50051', options=options)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
     msg_request = msg_transfer_pb2.MsgRequest(
         model=info_dict["selected_model"], frame=info_dict["frame"], frame_shape=info_dict["frame_shape"]
     )
     msg_reply = stub.ImageProcessing(msg_request)
-    print(1)
     if msg_reply.frame_shape == "":
         return msg_reply.result
     else:
-        return msg_reply.result
+        return_dict = {
+            "frame_shape": msg_reply.frame_shape,
+            "result": msg_reply.result
+        }
+
+        return jsonify(return_dict)
 

@@ -19,21 +19,21 @@ transform = transforms.Compose([
  )])
 
 
-def generate_model(selected_model):
+# def generate_model(selected_model):
+#
+#     model = eval(selected_model)(pretrained=True)
+#     model.eval()
+#
+#     return model
 
-    model = eval(selected_model)(pretrained=True)
-    model.eval()
 
-    return model
-
-
-def image_classification(img, selected_model):
+def image_classification(img, model):
 
     # img = Image.open(image_path)
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     img_t = transform(img)
     batch_t = torch.unsqueeze(img_t, 0)
-    model = generate_model(selected_model)
+    # model = generate_model(selected_model)
     out = model(batch_t)
 
     with open(classes_file) as f:

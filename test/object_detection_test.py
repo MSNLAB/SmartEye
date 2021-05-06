@@ -1,11 +1,14 @@
+import json
+
 from client.offloading import send_frame
 from client.local_store import LocalStore
 from tools.transfer_files_tool import transfer_array_and_str
 from transmission.client_end import Client
+import cv2
 
 
 if __name__ == '__main__':
-    input_file = "../85652500-1-192.mp4"
+    input_file = "../微信图片_20210506145022.jpg"
     # input_file = 0
     # while True:
     #     try:
@@ -21,8 +24,9 @@ if __name__ == '__main__':
     #         break
     file_type = "image"
     service_type = "object detection"
-
-    client = Client(input_file=input_file, file_type=file_type, service_type=service_type)
+    # image or video
+    store_type = "image"
+    client = Client(input_file=input_file, file_type=file_type, service_type=service_type, store_type=store_type)
 
     while True:
         # get frames
@@ -34,8 +38,14 @@ if __name__ == '__main__':
         frame = client.preprocessing.pre_process_image(frame, **client.msg_dict)
         # transmission
         result = send_frame(client.picture_url, frame, client.selected_model)
+
         if service_type == "image classification":
             print(result)
         else:
-            frame_handled = transfer_array_and_str(result, 'down')
+            result_dict = json.loads(result)
+            frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
+            frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
+
+            # print(frame_handled.shape)
+            # cv2.imshow('frame', frame_handled)
             client.local_store.store_image(frame_handled)

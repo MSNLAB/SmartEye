@@ -1,14 +1,10 @@
-import base64
 import os
 
-import cv2
 import grpc
-import numpy as np
-from PIL import Image
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response
 
-from server.grpc.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
-from tools.transfer_files_tool import save_file, transfer_file_to_str, transfer_array_and_str
+from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
+from tools.transfer_files_tool import save_file, transfer_file_to_str
 from server import image_classification, object_detection, video_handle_tool
 
 app = Flask(__name__)
