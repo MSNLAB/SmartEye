@@ -9,8 +9,9 @@ from client.preprocessing import PreProcessing
 from tools import make_request
 from client.decision_engine import DecisionEngine
 from tools.network_condition import get_network_condition
-from tools.transfer_files_tool import save_file, transfer_file_to_str, transfer_array_and_str
+from tools.transfer_files_tool import transfer_file_to_str, transfer_array_and_str
 from client.video_reader import VideoReader
+from tools.read_config import read_config
 
 
 class Client:
@@ -20,12 +21,12 @@ class Client:
     def __init__(self, input_file, file_type, service_type, store_type=None):
 
         self.input_file = input_file
-        self.initial_url = "http://127.0.0.1:5000/initial"
-        self.picture_url = "http://127.0.0.1:5000/pictures_handler"
-        self.video_file_url = "http://127.0.0.1:5000/video_file_handler"
-        # initial_url = "http://39.99.145.157:5000/initial"
-        # picture_url = "http://39.99.145.157:5000/pictures_handler"
-        # video_file_url = "http://39.99.145.157:5000/video_file_handler"
+        self.initial_url = read_config("transfer-url", "initial_url")
+        self.picture_url = read_config("transfer-url", "picture_url")
+        self.video_file_url = read_config("transfer-url", "video_file_url")
+        # # initial_url = "http://39.99.145.157:5000/initial"
+        # # picture_url = "http://39.99.145.157:5000/pictures_handler"
+        # # video_file_url = "http://39.99.145.157:5000/video_file_handler"
         # initialize local store
         self.local_store = LocalStore(store_type)
 

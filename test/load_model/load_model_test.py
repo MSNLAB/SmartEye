@@ -1,3 +1,5 @@
+import configparser
+from tools import read_config
 from torchvision.models import *
 from torchvision.models.detection import *
 import torch
@@ -10,16 +12,15 @@ from PIL import Image
 import time
 
 
-classes_file = "D:\PyCharm 2020.3.1\workspace\\video2edge\server\imagenet_classes.txt"
 transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize(
-    mean=[0.485, 0.456, 0.406],
-    std=[0.229, 0.224, 0.225]
-
- )])
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
 
 
 def load_model(selected_model):
@@ -28,7 +29,7 @@ def load_model(selected_model):
     :param selected_model: model is loaded
     :return: model
     """
-    weight_folder = r"D:\PyCharm 2020.3.1\workspace\video2edge\modelweightfile"
+    weight_folder = read_config.read_config("models-path", "path")
     try:
         for file in os.listdir(weight_folder):
             if selected_model in file:
@@ -38,10 +39,11 @@ def load_model(selected_model):
     except AssertionError:
         print("there is no matched file!")
     weight_files_path = os.path.join(weight_folder, file_name)
-    model = eval(selected_model)()
+    model = eval(selected_model)(pretrained=False)
     model.load_state_dict(torch.load(weight_files_path), False)
-
+    model.eval()
     return model
+
 
 def image_classification(img, selected_model):
 
@@ -50,26 +52,26 @@ def image_classification(img, selected_model):
     img_t = transform(img)
     batch_t = torch.unsqueeze(img_t, 0)
     model = load_model(selected_model)
-    # print(model)
-    out = model(batch_t)
+    with torch.no_grad():
+        out = model(batch_t)
 
+    classes_file = read_config.read_config("classes-file", "classes_file")
     with open(classes_file) as f:
         classes = [line.strip() for line in f.readlines()]
-
     _, index = torch.max(out, 1)
     percentage = torch.nn.functional.softmax(out, dim=1)[0] * 100
     result = classes[index[0]], percentage[index[0]].item()
-    # print(type(result))
-    # _, indices = torch.sort(out, descending=True)
-    # print([(classes[idx], percentage[idx].item()) for idx in indices[0][:5]])
 
     return result[0]
 
 
 if __name__ == '__main__':
 
-    image_path = '../../girl_500.jpg'
-    selected_model = 'alexnet'
+    # alexnet mnasnet0_5 mnasnet1_0 mobilenet_v2 resnet101 shufflenet_v2_x0_5 squeezenet1_0 vgg11 wide_resnet101_2
+    # "googlenet inception_v3"
+    # densenet121, densenet161
+    image_path = '../../dog.jpg'
+    selected_model = 'vgg11'
     t1 = time.time()
     result = image_classification(image_path, selected_model)
     t2 = time.time()

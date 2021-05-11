@@ -13,6 +13,8 @@ import os
 
 from tools import make_request
 from tools.transfer_files_tool import transfer_file_to_str
+
+
 file_path = "D:\PyCharm 2020.3.1\workspace\\video2edge\\tools\\test.zip"
 
 

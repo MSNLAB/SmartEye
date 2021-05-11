@@ -10,9 +10,9 @@
 @desc:
 '''
 import os
-
 import cv2
 import datetime
+from tools.read_config import read_config
 
 
 class LocalStore:
@@ -23,8 +23,9 @@ class LocalStore:
 
     def __init__(self, store_type):
         time = datetime.datetime.now()
+        store_path = read_config("store-folder", "store_path")
         self.result_store_location = os.path.join(
-            r"D:\PyCharm 2020.3.1\workspace\video2edge\resultstore", time.strftime('%a%b%d%H%M')
+            store_path, time.strftime('%a%b%d%H%M')
         )
         if store_type == "video":
             video_name = time.strftime('%a%b%d%H%M') + ".mp4"
