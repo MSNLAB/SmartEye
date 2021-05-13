@@ -9,7 +9,10 @@ def read_config(section, key=None):
     config.read(root_path + "/../config/config.ini")
     if key is None:
         items = config.items(section)
-        return items
+        models = []
+        for item in items:
+            models.append(item[1])
+        return models
     else:
         value = config.get(section, key)
         return value

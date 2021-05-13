@@ -7,6 +7,7 @@ import torch
 from server import object_detection, image_classification
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
+from tools.read_config import read_config
 
 
 object_detection_models = [
@@ -48,20 +49,26 @@ def load_model(selected_model):
     :param selected_model: model is loaded
     :return: model
     """
-    weight_folder = r"D:\PyCharm 2020.3.1\workspace\video2edge\modelweightfile"
-    try:
-        for file in os.listdir(weight_folder):
-            if selected_model in file:
-                file_name = file
-                break
-        assert file_name is not None
-    except AssertionError:
-        print("there is no matched file!")
-    # print(selected_model)
-    weight_files_path = os.path.join(weight_folder, file_name)
-    model = eval(selected_model)()
-    model.load_state_dict(torch.load(weight_files_path), False)
+
+    preload_models = read_config("preload-models")
+    if selected_model in preload_models:
+        model = eval(selected_model)()
+        model.load_state_dict(result_dict[selected_model], False)
     # print(model)
+    else:
+        weight_folder = read_config("models-path", "path")
+        try:
+            for file in os.listdir(weight_folder):
+                if selected_model in file:
+                    file_name = file
+                    break
+            assert file_name is not None
+        except AssertionError:
+            print("there is no matched file!")
+        # print(selected_model)
+        weight_files_path = os.path.join(weight_folder, file_name)
+        model = eval(selected_model)()
+        model.load_state_dict(torch.load(weight_files_path), False)
     model.eval()
     return model
 
@@ -87,6 +94,8 @@ def image_handler(img, model, selected_model):
 
 def serve():
 
+    global result_dict
+    result_dict = load_model_files_advance()
     # MAX_MESSAGE_LENGTH =
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
@@ -102,7 +111,32 @@ def serve():
     server.wait_for_termination()
 
 
+def load_model_files_advance():
+    """
+    load model files in advance into memory
+    :return:
+    """
+    weight_folder = read_config("models-path", "path")
+    preload_models = read_config("preload-models")
+    load_file_result_dict = {}
+
+    for model in preload_models:
+        try:
+            for file in os.listdir(weight_folder):
+                if model in file:
+                    file_name = file
+                    break
+            assert file_name is not None
+        except AssertionError:
+            print("there is no matched file!")
+        weight_files_path = os.path.join(weight_folder, file_name)
+        file_load = torch.load(weight_files_path)
+        load_file_result_dict[model] = file_load
+    return load_file_result_dict
+
+
+
 if __name__ == '__main__':
     # logging.basicConfig()
-    serve()
-
+    # serve()
+    load_model_files_advance().values()
