@@ -32,7 +32,7 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
 
     def ImageProcessing(self, request, context):
         selected_model = request.model
-        # print(selected_model)
+        print(selected_model)
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
         # print(len(frame))
@@ -85,7 +85,7 @@ def image_handler(img, model, selected_model):
         # print(len(img_str))
         return msg_reply
     else:
-        result = image_classification.image_classification(img, model)
+        result = image_classification.image_classification(img, selected_model)
         msg_reply = msg_transfer_pb2.MsgReply(
             result=result, frame_shape=""
         )
@@ -138,5 +138,5 @@ def load_model_files_advance():
 
 if __name__ == '__main__':
     # logging.basicConfig()
-    # serve()
-    load_model_files_advance().values()
+    serve()
+    # load_model_files_advance().values()

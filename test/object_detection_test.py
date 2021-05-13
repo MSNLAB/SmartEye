@@ -8,7 +8,7 @@ import cv2
 
 
 if __name__ == '__main__':
-    input_file = "../微信图片_20210506145022.jpg"
+    input_file = "../dog.jpg"
     # input_file = 0
     # while True:
     #     try:

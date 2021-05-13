@@ -78,7 +78,7 @@ class DecisionEngine:
         if service_type == 'image classification':
             model = self.image_classification_models[0]
         else:
-            model = self.object_detection_models[0]
+            model = self.object_detection_models[4]
         return model
 
 

@@ -24,8 +24,8 @@ def preprocess(img):
             std=[0.229, 0.224, 0.225]
         )
     ])
-    img = Image.open(img)
-    # img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # img = Image.open(img)
+    img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     img_t = transform(img)
     batch_t = torch.unsqueeze(img_t, 0)
     return batch_t
@@ -57,7 +57,6 @@ def image_classification(img, model):
     model = load_model(model)
     # prediction
     out = model(batch_t)
-
     classes_file = read_config.read_config("classes-file", "classes_file")
 
     with open(classes_file) as f:
