@@ -31,10 +31,10 @@ def send_frame(url, frame, selected_model):
         "frame_shape": frame_shape,
         "frame": img_str
     }
-    response, service_delay = make_request.make_request(url, **msg_dict)
-    result = response.read().decode('utf-8')
+    result_dict, total_service_delay, arrive_transfer_server_time = make_request.make_request(url, **msg_dict)
+    # result = response.read().decode('utf-8')
 
-    return result
+    return result_dict, total_service_delay, arrive_transfer_server_time
 
 
 # video file interface

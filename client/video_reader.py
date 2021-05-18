@@ -10,7 +10,7 @@
 @desc:
 '''
 import os
-
+import sys
 import cv2
 
 
@@ -61,7 +61,8 @@ class VideoReader:
 
 if __name__ == "__main__":
 
-    video = '/home/wxz/Desktop/20200827153531.mp4'
-    reader = VideoReader()
-    frame = reader.read_file(video)
-    print(type(frame))
+    video = 'D:\PyCharm 2020.3.1\workspace\\video2edge\85652500-1-192.mp4'
+    reader = VideoReader(video)
+    frame = reader.read_file()
+    # print(type(frame))
+    print(sys.getsizeof(frame))

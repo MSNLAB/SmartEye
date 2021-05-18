@@ -5,7 +5,8 @@ from flask import Flask, request, make_response
 
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import save_file, transfer_file_to_str
-from server import image_classification, object_detection, video_handle_tool
+from data_handler import object_detection, image_classification
+from tools import video_handle_tool
 
 app = Flask(__name__)
 # app.DEBUG = True

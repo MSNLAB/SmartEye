@@ -2,7 +2,7 @@ import base64
 import json
 # import mmap
 import cv2
-
+import os
 from client.local_store import LocalStore
 from client.offloading import send_frame
 from client.preprocessing import PreProcessing
@@ -12,6 +12,7 @@ from tools.network_condition import get_network_condition
 from tools.transfer_files_tool import transfer_file_to_str, transfer_array_and_str
 from client.video_reader import VideoReader
 from tools.read_config import read_config
+from client.system_infomation import SysInfo
 
 
 class Client:
@@ -44,13 +45,14 @@ class Client:
         assert service_type == 'image classification' or service_type == 'object detection'
         self.service_type = service_type
         requirement_type = (file_type, service_type)
-        decision_engine = DecisionEngine(
-            service_delay=service_delay, requirement_type=requirement_type, net_condition=net_speed
-        )
-        self.msg_dict, self.selected_model = decision_engine.get_decision_result()
+        self.decision_engine = DecisionEngine(requirement_type=requirement_type)
+        # self.msg_dict, self.selected_model = decision_engine.get_decision_result(service_delay, net_speed)
 
         # initialize preprocess module
         self.preprocessing = PreProcessing()
+
+        self.info = SysInfo(os.path.basename(input_file).split(".")[0])
+        self.info.append(service_delay, net_speed)
 
 
 

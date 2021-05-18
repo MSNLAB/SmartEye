@@ -1,10 +1,8 @@
 import os
 from concurrent import futures
-from torchvision.models import *
-from torchvision.models.detection import *
 import grpc
 import torch
-from server import object_detection, image_classification
+from data_handler import object_detection, image_classification
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
@@ -32,7 +30,6 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
 
     def ImageProcessing(self, request, context):
         selected_model = request.model
-        print(selected_model)
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
         # print(len(frame))
@@ -133,7 +130,6 @@ def load_model_files_advance():
         file_load = torch.load(weight_files_path)
         load_file_result_dict[model] = file_load
     return load_file_result_dict
-
 
 
 if __name__ == '__main__':

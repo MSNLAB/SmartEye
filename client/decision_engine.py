@@ -9,13 +9,13 @@ class DecisionEngine:
     should not over 1000k
     """
 
-    def __init__(self, **initial_dict):
+    def __init__(self, requirement_type): # **initial_dict
         """
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
-        self.service_delay = initial_dict['service_delay']
-        self.requirement_type = initial_dict['requirement_type']
-        self.net_condition = initial_dict['net_condition']
+        # self.service_delay = initial_dict['service_delay']
+        self.requirement_type = requirement_type
+        # self.net_condition = initial_dict['net_condition']
         self.object_detection_models = [
             'fasterrcnn_mobilenet_v3_large_320_fpn',
             'fasterrcnn_mobilenet_v3_large_fpn',
@@ -33,18 +33,18 @@ class DecisionEngine:
             'vgg19', 'vgg19_bn', 'wide_resnet101_2', 'wide_resnet50_2'
         ]
 
-    def get_decision_result(self):
+    def get_decision_result(self, service_delay, net_speed):
+
         if self.requirement_type[0] == "image":
-            msg_dict = self.decide_image_size()
-            selected_model = self.decide_model(self.requirement_type[1])
-            # response = make_request.make_request(self.picture_url, selected_model=selected_model)
+            msg_dict = self.decide_image_size(net_speed)
+            selected_model = self.decide_model(service_delay, self.requirement_type[1])
 
         elif self.requirement_type[0] == 'video':
             msg_dict = self.decide_bitrate_and_resolution()
-            selected_model = self.decide_model(self.requirement_type[1])
+            selected_model = self.decide_model(self.requirement_type[1], self.requirement_type[1])
         return msg_dict, selected_model
 
-    def decide_image_size(self):
+    def decide_image_size(self, net_speed):
         """
         decide the image size according to the content of initial_dict
         :return: image size dict
@@ -70,7 +70,7 @@ class DecisionEngine:
 
         return return_dict
 
-    def decide_model(self, service_type):
+    def decide_model(self, total_service_delay, service_type):
         """
         decide the computation model according to the content of initial_dict
         :return: selected model
