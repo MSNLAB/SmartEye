@@ -18,7 +18,7 @@ import datetime
 
 class SysInfo:
     """
-    storing the system information of client and server
+    storing the system information of local and server
     """
     def __init__(self, operation):
 

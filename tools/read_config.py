@@ -17,6 +17,7 @@ def read_config(section, key=None):
         value = config.get(section, key)
         return value
 
+
 if __name__ == '__main__':
     result = read_config("classes-file")
     print(result)

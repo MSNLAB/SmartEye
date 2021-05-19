@@ -6,24 +6,12 @@ from data_handler import object_detection, image_classification
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
+from torchvision.models.detection import *
+from torchvision.models import *
 
 
-object_detection_models = [
-    'fasterrcnn_mobilenet_v3_large_320_fpn',
-    'fasterrcnn_mobilenet_v3_large_fpn',
-    'fasterrcnn_resnet50_fpn',
-    'maskrcnn_resnet50_fpn',
-    'retinanet_resnet50_fpn'
-]
-image_classification_models = [
-    'alexnet', 'densenet121', 'densenet161', 'densenet169',
-    'densenet201', 'googlenet', 'inception_v3', 'mnasnet0_5',
-    'mnasnet1_0', 'mobilenet_v2', 'mobilenet_v3_large', 'mobilenet_v3_small',
-    'resnet101', 'resnet152', 'resnet18', 'resnet34', 'resnet50', 'resnext101_32x8d',
-    'resnext50_32x4d', 'shufflenet_v2_x0_5', 'shufflenet_v2_x1_0', 'squeezenet1_0',
-    'squeezenet1_1', 'vgg11', 'vgg11_bn','vgg13', 'vgg13_bn', 'vgg16', 'vgg16_bn',
-    'vgg19', 'vgg19_bn', 'wide_resnet101_2', 'wide_resnet50_2'
-]
+object_detection_models = read_config("object-detection")
+image_classification_models = read_config("image-classification")
 
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
@@ -32,7 +20,6 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         selected_model = request.model
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
-        # print(len(frame))
         model = load_model(selected_model)
         img = transfer_array_and_str(frame, 'down').reshape(frame_shape)
         msg_reply = image_handler(img, model, selected_model)
@@ -51,7 +38,7 @@ def load_model(selected_model):
     if selected_model in preload_models:
         model = eval(selected_model)()
         model.load_state_dict(result_dict[selected_model], False)
-    # print(model)
+        # print(model)
     else:
         weight_folder = read_config("models-path", "path")
         try:
@@ -82,6 +69,7 @@ def image_handler(img, model, selected_model):
         # print(len(img_str))
         return msg_reply
     else:
+        print(selected_model)
         result = image_classification.image_classification(img, selected_model)
         msg_reply = msg_transfer_pb2.MsgReply(
             result=result, frame_shape=""

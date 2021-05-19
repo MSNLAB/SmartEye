@@ -1,12 +1,7 @@
-import json
-import os
 import sys
 
-from client import local_store
-from client.local_store import LocalStore
-from client.offloading import send_frame
-from tools.transfer_files_tool import transfer_array_and_str
-from transmission.client_end import Client
+from local.offloading import send_frame
+from local.client_end import Client
 
 
 if __name__ == '__main__':
@@ -59,4 +54,4 @@ if __name__ == '__main__':
         #
         #     # print(frame_handled.shape)
         #     # cv2.imshow('frame', frame_handled)
-        #     client.local_store.store_image(frame_handled)
+        #     local.local_store.store_image(frame_handled)

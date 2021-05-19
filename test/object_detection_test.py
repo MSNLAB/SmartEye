@@ -1,11 +1,8 @@
 import json
 
 from client.offloading import send_frame
-from client.local_store import LocalStore
 from tools.transfer_files_tool import transfer_array_and_str
-from transmission.client_end import Client
-import cv2
-
+from local.client_end import Client
 
 if __name__ == '__main__':
     input_file = "../dog.jpg"

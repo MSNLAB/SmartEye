@@ -25,7 +25,7 @@ def initial():
 @app.route('/pictures_handler', methods=['GET', 'POST'])
 def pictures_handler():
     """
-    get info from client and then transfer to processing servers
+    get info from local and then transfer to processing servers
     :return:
     """
     arrive_time = time.time()

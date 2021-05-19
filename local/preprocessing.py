@@ -12,7 +12,7 @@ class PreProcessing:
     def pre_process_image(self, frame, **msg_dict):
         """
         according to the image_size stored in message responsed by the server,
-        client adjusts the image size of image which will be sent to the server
+        local adjusts the image size of image which will be sent to the server
 
         :param msg_dict: image size, support 100×100 poxels， 500x500 pixels
         :param input_file: images which needs to be adjust

@@ -19,7 +19,7 @@ def save_file(picture_path=None, **msg_dict):
         file_pre_name = os.path.basename(picture_path).split('.')[0]
         suffix = os.path.basename(picture_path).split('.')[1]
         file_name = origin_file_path + '/' + file_pre_name + '_handled.' + suffix
-    # client end
+    # local end
     else:
         if not os.path.isdir(server_save_path):
             os.mkdir(server_save_path)

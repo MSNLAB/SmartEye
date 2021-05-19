@@ -13,11 +13,11 @@ import base64
 import json
 
 from tools import make_request
-from client import preprocessing
+from local import preprocessing
 from tools.transfer_files_tool import transfer_file_to_str, save_file, transfer_array_and_str
 
 """
-transmission client interface: transmit data to server
+transmission local interface: transmit data to server
 """
 
 
