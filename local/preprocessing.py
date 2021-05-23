@@ -1,8 +1,10 @@
+import cv2
 from PIL import Image
 import os
 import subprocess
 import numpy as np
 from matplotlib import image as matimg
+from tools.read_config import read_config
 
 
 class PreProcessing:
@@ -23,6 +25,24 @@ class PreProcessing:
         result_image = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
         frame = np.asarray(image)
         return frame
+
+    def pre_process_by_qp(self, frame, qp):
+        """
+        change the image quality
+        :param frame: image frame, ndarray
+        :param qp: the quality number which image changes to
+        :return: image frame, ndarray
+        """
+        assert frame is not None
+        assert qp is not None
+        image = Image.fromarray(frame)
+        temporary_store = read_config("store-folder", "temporary_store")
+        file_path = os.path.join(temporary_store, 'temporary.jpg')
+        image.save(file_path, quality=qp)
+        img = Image.open(file_path)
+        frame = np.array(img)
+        return frame
+
 
     def pre_process_video(self, input_file, **b_r_dict):
         """

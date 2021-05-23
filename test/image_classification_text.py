@@ -2,7 +2,7 @@ import sys
 
 from local.offloading import send_frame
 from local.client_end import Client
-
+import logging
 
 if __name__ == '__main__':
 
@@ -38,7 +38,6 @@ if __name__ == '__main__':
         file_size = sys.getsizeof(frame)
         # transmission
         result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
-
         if service_type == "image classification":
 
             result = result_dict["prediction"]

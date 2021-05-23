@@ -69,7 +69,6 @@ def image_handler(img, model, selected_model):
         # print(len(img_str))
         return msg_reply
     else:
-        print(selected_model)
         result = image_classification.image_classification(img, selected_model)
         msg_reply = msg_transfer_pb2.MsgReply(
             result=result, frame_shape=""

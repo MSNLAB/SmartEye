@@ -38,26 +38,21 @@ def get_prediction(img, threshold, model):
     img = transform(img) # Apply the transform to the image
     # model = generate_model(selected_model)
     pred = model([img]) # Pass the image to the model
-    # print(pred)
     pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())] # Get the Prediction Score
     pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())] # Bounding boxes
     pred_score = list(pred[0]['scores'].detach().numpy())
     pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1] # Get list of index with score greater than threshold.
     pred_boxes = pred_boxes[:pred_t+1]
     pred_class = pred_class[:pred_t+1]
-    # print(pred_boxes)
-    # print(pred_class)
+
     return pred_boxes, pred_class
 
 
 def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
 
-    boxes, pred_cls = get_prediction(img_path, threshold, model) # Get predictions
-    # print(boxes)
-    # print(pred_cls)
+    boxes, pred_cls = get_prediction(img_path, threshold, model)
     # img = cv2.imread(img_path) # Read image with cv2
-    # print(img)
-    img = cv2.cvtColor(img_path, cv2.COLOR_BGR2RGB) # Convert to RGB
+    img = cv2.cvtColor(img_path, cv2.COLOR_BGR2RGB)
     # return str(boxes), str(pred_cls), img
     for i in range(len(boxes)):
         # Draw Rectangle with the coordinates

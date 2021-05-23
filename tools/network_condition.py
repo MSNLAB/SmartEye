@@ -13,9 +13,10 @@ import os
 
 from tools import make_request
 from tools.transfer_files_tool import transfer_file_to_str
+from tools.read_config import read_config
 
 
-file_path = "D:\PyCharm 2020.3.1\workspace\\video2edge\\tools\\test.zip"
+file_path = read_config("test-file-path", "test_path")
 
 
 def get_network_condition(url):

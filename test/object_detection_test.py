@@ -1,6 +1,6 @@
 import json
 
-from client.offloading import send_frame
+from local.offloading import send_frame
 from tools.transfer_files_tool import transfer_array_and_str
 from local.client_end import Client
 

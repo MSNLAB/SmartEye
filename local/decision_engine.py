@@ -31,8 +31,13 @@ class DecisionEngine:
             selected_model = self.decide_model(self.requirement_type[1], self.requirement_type[1])
         return msg_dict, selected_model
 
-    def decide_qp(self):
-        pass
+    def decide_qp(self, net_speed):
+
+        qp_list = [i for i in range(0, 52)]
+        # select the first for test
+        qp = qp_list[0]
+        return qp
+
     
     def decide_image_size(self, net_speed):
         """
