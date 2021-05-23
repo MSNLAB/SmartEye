@@ -105,7 +105,7 @@ if __name__ == '__main__':
     # densenet121, densenet161
     result_dict = load_model_files_advance()
     # print(result_dict.keys())
-    image_path = '../../dog.jpg'
+    image_path = '../../info_store/handled_result/dog.jpg'
     selected_model = 'mnasnet0_5'
     # print(result_dict[selected_model])
     t1 = time.time()

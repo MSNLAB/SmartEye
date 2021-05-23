@@ -43,7 +43,6 @@ class PreProcessing:
         frame = np.array(img)
         return frame
 
-
     def pre_process_video(self, input_file, **b_r_dict):
         """
         adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
@@ -62,42 +61,6 @@ class PreProcessing:
 
         subprocess.Popen(cmd)
         return file_path
-
-    # def video_bitrate_adjust(input_file, bitrate):
-    #     """
-    #     adjust the input_file's bitrate according to the parameter bitrate
-    #
-    #     :param input_file: video file path
-    #     :param bitrate: the bitrate value of video transfered to
-    #     :return:
-    #     """
-    #
-    #     # function should get the original bitrate of input_file
-    #     # and then transfer to the target bitrate
-    #     # of course, the bitrate value should belong to a bitrate list
-    #
-    #
-    #     result = input_file
-    #     cmd = ("ffmpeg -i " + input_file + " -b:v " + bitrate +
-    #            " -maxrate 2M " + " -bufsize 2M " + result)
-    #     os.system(cmd)
-
-    # def get_info(input_file, get_info):
-    #
-    #     json_file_name = os.path.basename(input_file).split(".")[0]
-    #     video_info_cmd = ("ffprobe -i " + input_file + " -v quiet -print_format json -show_streams -select_streams v:0 > "
-    #                       + json_file_name + ".json")
-    #     os.system(video_info_cmd)
-    #
-    #     with open(json_file_name + ".json", 'r') as f:
-    #         info = json.load(f)
-    #         origin_bitrate = info["streams"][0]["bit_rate"]
-    #         origin_resolution = str(info["streams"][0]["width"]) + ":" + str(info["streams"][0]["height"])
-    #
-    #     if get_info == "bitrate":
-    #         return origin_bitrate
-    #     else:
-    #         return origin_resolution
 
 
 if __name__ == '__main__':

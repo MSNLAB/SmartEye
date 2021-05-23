@@ -5,7 +5,7 @@ from tools.transfer_files_tool import transfer_array_and_str
 from local.client_end import Client
 
 if __name__ == '__main__':
-    input_file = "../dog.jpg"
+    input_file = "../info_store/handled_result/dog.jpg"
     # input_file = 0
     # while True:
     #     try:
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     service_type = "object detection"
     # image or video
     store_type = "image"
-    client = Client(input_file=input_file, file_type=file_type, service_type=service_type, store_type=store_type)
+    client = Client(input_file, file_type, service_type, store_type)
 
     while True:
         # get frames
@@ -32,17 +32,16 @@ if __name__ == '__main__':
         if frame is None:
             print("service comes over!")
             exit()
-        frame = client.preprocessing.pre_process_image(frame, **client.msg_dict)
+
+        msg_dict, selected_model = client.decision_engine.get_decision_result(client.info.info_list[-1][0],
+                                                                              client.info.info_list[-1][1])
+        frame = client.preprocessing.pre_process_image(frame, **msg_dict)
         # transmission
-        result = send_frame(client.picture_url, frame, client.selected_model)
+        result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
 
         if service_type == "image classification":
-            print(result)
+            print(result_dict["prediction"])
         else:
-            result_dict = json.loads(result)
             frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
             frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
-
-            # print(frame_handled.shape)
-            # cv2.imshow('frame', frame_handled)
             client.local_store.store_image(frame_handled)

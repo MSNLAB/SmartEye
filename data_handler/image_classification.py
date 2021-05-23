@@ -71,7 +71,7 @@ def image_classification(img, model):
 
 if __name__ == '__main__':
 
-    image_path = '../dog.jpg'
+    image_path = '../info_store/handled_result/dog.jpg'
     selected_model = 'resnet101'
     result = image_classification(image_path, selected_model)
     # print(dir(models))
