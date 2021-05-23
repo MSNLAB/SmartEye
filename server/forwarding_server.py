@@ -5,6 +5,7 @@ from tools.read_config import read_config
 from flask import Flask, request, jsonify
 import time
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
+from tools.read_config import read_config
 
 app = Flask(__name__)
 
@@ -55,13 +56,14 @@ def which_server_decision_engine():
     decide which server to send frame to
     :return: server number
     """
-    information = 1
-    if information == 1:
-        server_number = 1
-    else:
-        server_number = 0
+    grpc_servers = read_config("grpc-url")
+    blocking_process_number_list = []
+    for grpc_server in grpc_servers:
+        blocking_process_number = get_server_info(grpc_server)
+        blocking_process_number_list.append(blocking_process_number)
 
-    return server_number
+    selected_server = blocking_process_number_list.index(min(blocking_process_number_list))
+    return grpc_servers[selected_server]
 
 
 def get_result(server_number, **info_dict):
@@ -81,6 +83,14 @@ def get_result(server_number, **info_dict):
     msg_reply = stub.ImageProcessing(msg_request)
     return msg_reply
 
+
+def get_server_info(grpc_server):
+    """
+    get the blocking process number of the server
+    :param grpc_server: server's url
+    :return: blocking process number
+    """
+    return 1
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=5000, debug=True,threaded=True)
