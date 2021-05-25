@@ -63,7 +63,8 @@ def which_server_decision_engine():
         blocking_process_number_list.append(blocking_process_number)
 
     selected_server = blocking_process_number_list.index(min(blocking_process_number_list))
-    return grpc_servers[selected_server]
+    # return grpc_servers[selected_server]
+    return grpc_servers[0]
 
 
 def get_result(server_number, **info_dict):

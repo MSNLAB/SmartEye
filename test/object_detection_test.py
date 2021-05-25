@@ -1,4 +1,5 @@
 import json
+import sys
 
 from local.offloading import send_frame
 from tools.transfer_files_tool import transfer_array_and_str
@@ -33,9 +34,11 @@ if __name__ == '__main__':
             print("service comes over!")
             exit()
 
-        msg_dict, selected_model = client.decision_engine.get_decision_result(client.info.info_list[-1][0],
-                                                                              client.info.info_list[-1][1])
+        msg_dict, selected_model = client.decision_engine.get_decision_result(
+            client.info.info_list[-1][0], client.info.info_list[-1][1]
+        )
         frame = client.preprocessing.pre_process_image(frame, **msg_dict)
+        file_size = sys.getsizeof(frame)
         # transmission
         result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
 
