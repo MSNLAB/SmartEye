@@ -23,6 +23,7 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         model = load_model(selected_model)
         img = transfer_array_and_str(frame, 'down').reshape(frame_shape)
         msg_reply = image_handler(img, model, selected_model)
+        print(msg_reply)
 
         return msg_reply
 
@@ -40,7 +41,8 @@ def load_model(selected_model):
         model.load_state_dict(result_dict[selected_model], False)
         # print(model)
     else:
-        weight_folder = read_config("models-path", "path")
+        # weight_folder = read_config("models-path", "path")
+        weight_folder = os.path.join(os.path.dirname(__file__), "../../../modelweightfile")
         try:
             for file in os.listdir(weight_folder):
                 if selected_model in file:
@@ -100,7 +102,8 @@ def load_model_files_advance():
     load model files in advance into memory
     :return:
     """
-    weight_folder = read_config("models-path", "path")
+    # weight_folder = read_config("models-path", "path")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../../../modelweightfile")
     preload_models = read_config("preload-models")
     load_file_result_dict = {}
 

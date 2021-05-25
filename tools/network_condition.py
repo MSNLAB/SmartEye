@@ -16,7 +16,8 @@ from tools.transfer_files_tool import transfer_file_to_str
 from tools.read_config import read_config
 
 
-file_path = read_config("test-file-path", "test_path")
+# file_path = read_config("test-file-path", "test_path")
+file_path = os.path.join(os.path.dirname(__file__), "test.zip")
 
 
 def get_network_condition(url):

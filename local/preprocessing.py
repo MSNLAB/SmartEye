@@ -36,7 +36,8 @@ class PreProcessing:
         assert frame is not None
         assert qp is not None
         image = Image.fromarray(frame)
-        temporary_store = read_config("store-folder", "temporary_store")
+        # temporary_store = read_config("store-folder", "temporary_store")
+        temporary_store = os.path.join(os.path.dirname(__file__), "../info_store/temporary_file")
         file_path = os.path.join(temporary_store, 'temporary.jpg')
         image.save(file_path, quality=qp)
         img = Image.open(file_path)

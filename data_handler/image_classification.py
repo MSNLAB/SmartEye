@@ -33,7 +33,8 @@ def preprocess(img):
 
 def load_model(selected_model):
 
-    weight_folder = read_config.read_config("models-path", "path")
+    # weight_folder = read_config.read_config("models-path", "path")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../modelweightfile")
     try:
         for file in os.listdir(weight_folder):
             if selected_model in file:
@@ -57,7 +58,7 @@ def image_classification(img, model):
     model = load_model(model)
     # prediction
     out = model(batch_t)
-    classes_file = read_config.read_config("classes-file", "classes_file")
+    classes_file = os.path.join(os.path.dirname(__file__), "imagenet_classes.txt")
 
     with open(classes_file) as f:
         classes = [line.strip() for line in f.readlines()]

@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 import time
 from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.read_config import read_config
+import random
 
 app = Flask(__name__)
 
@@ -32,9 +33,9 @@ def pictures_handler():
     """
     arrive_time = time.time()
     info_dict = request.form
-    server_number = which_server_decision_engine()
+    server_url = which_server_decision_engine()
 
-    msg_reply = get_result(server_number, **info_dict)
+    msg_reply = get_result(server_url, **info_dict)
     if msg_reply.frame_shape == "":
         return_dict = {
             "prediction": msg_reply.result,
@@ -57,26 +58,29 @@ def which_server_decision_engine():
     :return: server number
     """
     grpc_servers = read_config("grpc-url")
-    blocking_process_number_list = []
-    for grpc_server in grpc_servers:
-        blocking_process_number = get_server_info(grpc_server)
-        blocking_process_number_list.append(blocking_process_number)
+    print(grpc_servers)
+    rand = random.randint(0, len(grpc_servers)-1)
+    print(rand)
 
-    selected_server = blocking_process_number_list.index(min(blocking_process_number_list))
+    # blocking_process_number_list = []
+    # for grpc_server in grpc_servers:
+    #     blocking_process_number = get_server_info(grpc_server)
+    #     blocking_process_number_list.append(blocking_process_number)
+
+    # selected_server = blocking_process_number_list.index(min(blocking_process_number_list))
     # return grpc_servers[selected_server]
-    return grpc_servers[0]
+    return grpc_servers[rand]
 
 
-def get_result(server_number, **info_dict):
+def get_result(server_url, **info_dict):
     """
     send frame to handled server whose server number equals to server_number, get return the result struct
     :param server_number: handled servers' number
     :return: msg_reply
     """
-    url = "url" + str(server_number)
+
     options = [('grpc.max_receive_message_length', 256 * 1024 * 1024)]
-    grpc_url = read_config("grpc-url", url)
-    channel = grpc.insecure_channel(grpc_url, options=options)
+    channel = grpc.insecure_channel(server_url, options=options)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
     msg_request = msg_transfer_pb2.MsgRequest(
         model=info_dict["selected_model"], frame=info_dict["frame"], frame_shape=info_dict["frame_shape"]
@@ -85,13 +89,15 @@ def get_result(server_number, **info_dict):
     return msg_reply
 
 
-def get_server_info(grpc_server):
+def get_server_cpu_usage(grpc_server):
     """
-    get the blocking process number of the server
-    :param grpc_server: server's url
+    get the cpu usage of grpc server
+    :param grpc_server: server's url, including port
     :return: blocking process number
     """
     return 1
+
+
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=5000, debug=True,threaded=True)

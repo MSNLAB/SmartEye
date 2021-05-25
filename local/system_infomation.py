@@ -34,7 +34,8 @@ class SysInfo:
 
     def store(self):
 
-        info_store_path = os.path.join(read_config("info_store_path", "path"), self.operation)
+        store_path = os.path.join(os.path.dirname(__file__), "../info_store/system_infomation")
+        info_store_path = os.path.join(store_path, self.operation)
         info_title = ("total_service_delay", "net_speed", "cpu_usage", "memory_usage")
         with open(info_store_path, 'w+') as f:
             f.write(str(info_title) + '\n')

@@ -30,20 +30,22 @@ def load_model(selected_model):
     :param selected_model: model is loaded
     :return: model
     """
-    weight_folder = read_config("models-path", "path")
+    # weight_folder = read_config("models-path", "path")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../modelweightfile")
     try:
         for file in os.listdir(weight_folder):
+            print(file)
             if selected_model in file:
                 file_name = file
                 break
         assert file_name is not None
     except AssertionError:
         print("there is no matched file!")
-    weight_files_path = os.path.join(weight_folder, file_name)
-    model = eval(selected_model)()
-    model.load_state_dict(torch.load(weight_files_path), False)
-    model.eval()
-    return model
+    # weight_files_path = os.path.join(weight_folder, file_name)
+    # model = eval(selected_model)()
+    # model.load_state_dict(torch.load(weight_files_path), False)
+    # model.eval()
+    # return model
 
 
 class LocalProcessing:
@@ -64,3 +66,7 @@ class LocalProcessing:
         else:
             result = image_classification.image_classification(frame, selected_model)
 
+
+if __name__ == "__main__":
+    # load_model("s")
+    pass

@@ -23,7 +23,8 @@ class LocalStore:
 
     def __init__(self, store_type):
         time = datetime.datetime.now()
-        store_path = read_config("store-folder", "result_store")
+        # store_path = read_config("store-folder", "result_store")
+        store_path = os.path.join(os.path.dirname(__file__), "../info_store/handled_result")
         self.result_store_location = os.path.join(
             store_path, time.strftime('%a%b%d%H%M')
         )
