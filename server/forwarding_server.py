@@ -58,16 +58,15 @@ def which_server_decision_engine():
     :return: server number
     """
     grpc_servers = read_config("grpc-url")
-    print(grpc_servers)
     rand = random.randint(0, len(grpc_servers)-1)
-    print(rand)
 
-    # blocking_process_number_list = []
+    # second way to decide server
+    # cpu_usage_list = []
     # for grpc_server in grpc_servers:
-    #     blocking_process_number = get_server_info(grpc_server)
-    #     blocking_process_number_list.append(blocking_process_number)
-
-    # selected_server = blocking_process_number_list.index(min(blocking_process_number_list))
+    #     cpu_usage = get_server_cpu_usage(grpc_server)
+    #     cpu_usage_list.append(cpu_usage)
+    #
+    # selected_server = cpu_usage_list.index(min(cpu_usage_list))
     # return grpc_servers[selected_server]
     return grpc_servers[rand]
 
@@ -75,7 +74,7 @@ def which_server_decision_engine():
 def get_result(server_url, **info_dict):
     """
     send frame to handled server whose server number equals to server_number, get return the result struct
-    :param server_number: handled servers' number
+    :param server_url: handled servers' url
     :return: msg_reply
     """
 
@@ -93,9 +92,14 @@ def get_server_cpu_usage(grpc_server):
     """
     get the cpu usage of grpc server
     :param grpc_server: server's url, including port
-    :return: blocking process number
+    :return: cpu usage
     """
-    return 1
+    channel = grpc.insecure_channel(grpc_server)
+    stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
+    cpu_usage_request = msg_transfer_pb2.Cpu_Usage_Request()
+    cpu_usage_reply = stub.Get_Cpu_Usage(cpu_usage_request)
+
+    return cpu_usage_reply.cpu_usage
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ syntax = "proto3";
 service MsgTransfer {
 
   rpc ImageProcessing (MsgRequest) returns (MsgReply) {}
+  rpc Get_Cpu_Usage (Cpu_Usage_Request) returns (Cpu_Usage_Reply) {}
 
 }
 
@@ -18,5 +19,15 @@ message MsgReply {
 
   string result = 2;
   string frame_shape = 3;
+
+}
+
+message Cpu_Usage_Request {
+
+}
+
+message Cpu_Usage_Reply {
+
+  float cpu_usage = 1;
 
 }

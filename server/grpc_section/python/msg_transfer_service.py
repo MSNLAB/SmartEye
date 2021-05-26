@@ -8,7 +8,7 @@ from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
 from torchvision.models.detection import *
 from torchvision.models import *
-
+import psutil
 
 object_detection_models = read_config("object-detection")
 image_classification_models = read_config("image-classification")
@@ -23,10 +23,14 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         model = load_model(selected_model)
         img = transfer_array_and_str(frame, 'down').reshape(frame_shape)
         msg_reply = image_handler(img, model, selected_model)
-        print(msg_reply)
 
         return msg_reply
 
+    def Get_Cpu_Usage(self, request, context):
+
+        cpu_usage_reply = get_server_cpu_usage()
+
+        return cpu_usage_reply
 
 def load_model(selected_model):
     """
@@ -121,6 +125,12 @@ def load_model_files_advance():
         load_file_result_dict[model] = file_load
     return load_file_result_dict
 
+
+def get_server_cpu_usage():
+
+    cpu_usage = psutil.cpu_percent()
+    cpu_usage_reply = msg_transfer_pb2.Cpu_Usage_Request(cpu_usage=cpu_usage)
+    return cpu_usage_reply
 
 if __name__ == '__main__':
     # logging.basicConfig()
