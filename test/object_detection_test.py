@@ -1,12 +1,12 @@
 import json
 import sys
-
+sys.path.append("../")
 from local.offloading import send_frame
 from tools.transfer_files_tool import transfer_array_and_str
 from local.client_end import Client
 
 if __name__ == '__main__':
-    input_file = "../info_store/handled_result/dog.jpg"
+    input_file = "../dog.jpg"
     # input_file = 0
     # while True:
     #     try:

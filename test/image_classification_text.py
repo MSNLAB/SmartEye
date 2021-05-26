@@ -1,5 +1,5 @@
 import sys
-
+sys.path.append("../")
 from local.offloading import send_frame
 from local.client_end import Client
 import logging

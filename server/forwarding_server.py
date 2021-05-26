@@ -1,6 +1,8 @@
 import grpc
 from torchvision.models import *
 from torchvision.models.detection import *
+import sys
+sys.path.append("../")
 from tools.read_config import read_config
 from flask import Flask, request, jsonify
 import time
