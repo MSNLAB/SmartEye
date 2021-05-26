@@ -13,23 +13,25 @@
 * [Contact](#contact)
 
 ## Overview
-Video2Edge is an opensource offloading framework for video analytics on edge. It can leverage the scalability of the cloud infrastructure to encode and transcode the video files in fast speed, and dynamically provision the computing resource to accommodate the time-varying workload. Morph is implemented in Python. It can be accessed via RESTful API, command line interface (CLI), and RPC. 
+Video2Edge is an opensource offloading framework for video analytics on edge. It can leverage the scalability of the cloud infrastructure to encode and transcode the video files in fast speed, and dynamically provision the computing resource to accommodate the time-varying workload. Video2Edge is implemented in Python. It can be accessed via RESTful API, command line interface (CLI), and RPC. 
 
 The system architecture is shown in the following figure. The system is composed of the following layers:
 
 <img src="https://raw.githubusercontent.com/cap-ntu/Morph/master/DOC/system.png" width="40%" height="40%">
 
-* Interface Layer
+* client section
 
-It interacts with the users for processing the transcoding requests and preprocessing the video contents. The system provides 3 types of service interfaces, namely, command line interface (CLI), remote procedure call (RPC), and RESTful API. The users can submit the transcoding tasks and query the transcoding progress via the service interfaces. For each of the user submitted transcoding tasks, it will estimate the required computing time for the task and segment the video files into video blocks for transcoding in parallel on the workers.
+The client section 
 
-* Scheduling Layer
+The client mainly includes three functions: one is the file reading interface, which is used to read the video files to be processed. The second is the decision engine, which determines the resolution and other information according to the current network state (network speed, delay, etc.). The third is the preprocessing function, which preprocesses the image file according to the decision result of the decision engine; Fourth, the local processing function, for some simple structure of the image, can be directly processed locally, do not have to send to the server.
 
-The user submitted transcoding tasks will be put into the scheduling queue. The task scheduler sequences the pending tasks in the queue according to the scheduling policy and the QoS profiles of the tasks. Whenever the master node receives a transcoding request from the worker, the task scheduler will select a video block from the pending tasks for dispatching by applying the scheduling policy. The transcoded video blocks on the worker will be sent back to the master for concentration.
+* forwarding server
 
-* Provisioning Layer
+It receives data from the client and sends the data to a processing server for processing through a series of decisions. The decision-making method includes random selection and selection according to the CPU utilization of each server. Then get the processing result and return it to the client.
 
-It manages the transcoding workers for dynamic resource provisioning. Our system can adopt the virtual machines (e.g., KVM ) or containers (e.g., Docker) for resource virtualization. Each VM instance or container runs a worker. The worker will request a video block from the master node whenever it it idle. The worker will transcode the video block into the target representations, which will be sent back to the master node.
+* Processing server
+
+The processing server consists of two parts, one is data preprocessing, which can process the image into usable format. The second part is the prediction part, which includes two functions：image recognition and object detection, both of which are processed by the pre training model in pytorch.
 
 ## Workflow
 
