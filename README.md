@@ -37,12 +37,13 @@ The processing server consists of two parts, one is data preprocessing, which ca
 
 <img src="https://raw.githubusercontent.com/cap-ntu/Morph/master/DOC/workflow.png" width="80%" height="80%">
 
-The user submit a transcoding task by uploading a video file and specifying the transcoding parameters. The video content will be segmented into independent video blocks according to the group of pictures (GOP) structure. The video block information of the task will be then put into the scheduling queue. 
+The user submits a processing task by providing the video path, being read by virtual camera or derectly video interface. Together with some other parameters, such as service type(image classification or object detection), the client will be initialized. At the same time, preprocessing module, local process module, decision engine module and local store module will be initialized too. In this time, client will get the current network condition, for example, service delay, net speed. Then, Decision Engine makes some decisions for data transfer, such as image resolution. And client will transfer these information to preprocess module. And the preprocess module processes the images according to the parameters. Last, client transfer these images which have been processed to the transfer server. For some images of simple structure, i preserve local process interface. 
 
-When an idle worker requests a video block from the master node, the scheduler determines which video block in the scheduling queue will be selected for dispatching by applying the scheduling policy. The worker will transcode the video block into the target representation, and then send back the target representation to the master node. The video blocks in the scheduling queue can be requested and transcoded by the workers in parallel. 
+Once the forwarding server get the data from client, the server will decide to send to which Processing server and send data to it.
 
-The master node continuously checks the transcoding status of the video blocks of each task. If all the video blocks of a task have been finished successfully, the master node will concentrate the video blocks into one video file. Then, the transcoding task is finished and the target representations of the video content are ready to be downloaded by the users.
+when the processing server get the data from forwarding server, the server will preprocess the data first, letting the image conform to the format of predictions. Then processing server will make predictions respectively. Last, return the results to forwarding server.
 
+forwarding server return the result directly to the client,and the client will print the result or store the result respectively according to the service type. 
 
 ## Installation
 
@@ -50,8 +51,7 @@ System Requirement
 
 * [ubuntu 14.04](http://releases.ubuntu.com/14.04/)
 * [Python 2.7.6](https://www.python.org/download/releases/2.7.6/)
-* [ffmpeg](https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu)
-* [Mysql](https://help.ubuntu.com/12.04/serverguide/mysql.html)
+
 
 Please click the above links for the installation of the dependent software.
 
