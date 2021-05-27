@@ -49,64 +49,58 @@ forwarding server return the result directly to the client,and the client will p
 
 System Requirement
 
-* [ubuntu 14.04](http://releases.ubuntu.com/14.04/)
-* [Python 2.7.6](https://www.python.org/download/releases/2.7.6/)
+* [ubuntu 18.04](http://releases.ubuntu.com/14.04/)
+* [Python 3](https://www.python.org/download/releases/2.7.6/)
 
 
 Please click the above links for the installation of the dependent software.
 
-It may require to install some lacked libraries, e.g., pycurl, mysqldb.
+It may require to install some lacked libraries, e.g., opencv, torchvision, torch, psutil, grpc, flask.
 ```bash
-sudo apt-get update    
-sudo apt-get install python-pycurl
-sudo apt-get install python-mysqldb
-sudo apt-get install python-numpy
+sudo apt update    
+sudo apt install python-opencv
+sudo apt install torchvision
+sudo apt install torch
+sudo apt install psutil
+sudo apt install grpc
+sudo apt install flask
 ```
 
 Step 1: Clone the code from Github
 
 ```bash
-git clone https://github.com/cap-ntu/Morph.git
+git clone git@github.com:MSNLAB/video2edge.git
 ```
 
-Step 2: Revise the configuration file **config.py**
+Step 2: Revise the configuration file **video2edge/config/config.ini**
 
-All executable programs read the configuration information from config.py.
+All executable programs read the configuration information from config.ini.
 Make sure each item is set with appropriate value according to your system configuration.
-
 ```bash
 
-#the IP address of the master node
-master_ip       = "127.0.0.1"
+#the IP address of the servers
+there are three servers in the configuration file, one is for forwarding server under the "transfer-url" label, others are for grpc servers or handled servers under the "handled-server" label. They are all initialized with "127.0.0.1"
+Also, you can add more server urls under the "handled-server" label, it's ok. 
+Under the "transfer-url" label, there are initial_url and picture_url, you just need to change the ip.
+All the ports in the urls don't need to change, unless you want to change.
+
+[grpc-url]
+url0=localhost:50051
+url1=localhost:50051
+[transfer-url]
+initial_url=http://39.99.145.157:5000/initial
+picture_url=http://39.99.145.157:5000/pictures_handler
 
 #Remain unchanged
-master_rpc_port = "8091" 
-master_rev_port = "9001"
-master_snd_port = "9011"
+url0's port=50051
+url1's port=50051
+initial_url's=5000
+picture_url's=5000
 
-#The working path of the master node, keep unchanged
-master_path = "./master/"
-
-#The working path of the worker node, keep unchanged
-worker_path = "./worker/"
-
-#the configuration of Mysql
-mysql_ip        = "127.0.0.1"
-mysql_user_name = "root"
-mysql_password  = ""
-
-#Remain unchanged 
-mysql_db_name   = "morph"
-
-#the duration for each of the video block
-equal_block_dur = 60*2
-
-#the number of threads for task preprocessing
-preproc_thread_num = 10
-
-#algorithm for task scheduling
-sch_alg = 'fifo'
-
+#Remain unchanged labels' content
+[preload-models]
+[image-classification]
+[object-detection]
 ```
 
 Step 3: Initialize the database and tables in Mysql   
