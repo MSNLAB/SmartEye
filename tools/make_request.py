@@ -10,8 +10,7 @@ def make_request(url, **msg_dict):
     """
 
     :param url: server url
-    :param frame: data passing to server
-    :param selected_model:
+    :param msg_dict:
     :return: response object and service delay
     """
     headers = {

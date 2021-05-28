@@ -1,5 +1,5 @@
 import sys
-
+import os
 from local.offloading import send_frame
 from local.client_end import Client
 import logging
@@ -10,6 +10,9 @@ if __name__ == '__main__':
 
     while True:
         try:
+            input_file = input("please input file path: \n")
+            assert input_file is not None
+            assert os.path.isfile(input_file)
             file_type = input("please input file type: image or video\n")
             assert file_type is not None
             assert file_type == "image" or file_type == "video"
@@ -20,7 +23,7 @@ if __name__ == '__main__':
             print("please input again:")
         else:
             break
-    input_file = "../85652500-1-192.mp4"
+
     file_type = "image"
     service_type = "image classification"
     client = Client(input_file, file_type, service_type)
