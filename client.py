@@ -3,6 +3,7 @@ import os
 from local.offloading import send_frame
 from local.client_end import Client
 import logging
+import common
 
 from tools.transfer_files_tool import transfer_array_and_str
 
@@ -24,8 +25,8 @@ if __name__ == '__main__':
         else:
             break
 
-    file_type = "image"
-    service_type = "image classification"
+    file_type = common.IMAGE_TYPE
+    service_type = common.IMAGE_CLASSIFICATION
     client = Client(input_file, file_type, service_type)
     while True:
         # get frames
