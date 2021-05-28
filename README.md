@@ -49,193 +49,89 @@ forwarding server return the result directly to the client,and the client will p
 
 System Requirement
 
-* [ubuntu 14.04](http://releases.ubuntu.com/14.04/)
-* [Python 2.7.6](https://www.python.org/download/releases/2.7.6/)
+* [ubuntu 18.04](http://releases.ubuntu.com/14.04/)
+* [Python 3](https://www.python.org/download/releases/2.7.6/)
 
 
 Please click the above links for the installation of the dependent software.
 
-It may require to install some lacked libraries, e.g., pycurl, mysqldb.
+It may require to install some lacked libraries, e.g., opencv, torchvision, torch, psutil, grpc, flask.
 ```bash
-sudo apt-get update    
-sudo apt-get install python-pycurl
-sudo apt-get install python-mysqldb
-sudo apt-get install python-numpy
+sudo apt update    
+sudo apt install python-opencv
+sudo apt install torchvision
+sudo apt install torch
+sudo apt install psutil
+sudo apt install grpc
+sudo apt install flask
 ```
 
 Step 1: Clone the code from Github
 
 ```bash
-git clone https://github.com/cap-ntu/Morph.git
+git clone git@github.com:MSNLAB/video2edge.git
 ```
 
-Step 2: Revise the configuration file **config.py**
+Step 2: Revise the configuration file **video2edge/config/config.ini**
 
-All executable programs read the configuration information from config.py.
+All executable programs read the configuration information from config.ini.
 Make sure each item is set with appropriate value according to your system configuration.
-
 ```bash
 
-#the IP address of the master node
-master_ip       = "127.0.0.1"
+#the IP address of the servers
+there are three servers in the configuration file, one is for forwarding server under the "transfer-url" label, 
+others are for grpc servers or handled servers under the "handled-server" label. They are all initialized with "127.0.0.1"
+Also, you can add more server urls under the "handled-server" label, it's ok. 
+Under the "transfer-url" label, there are initial_url and picture_url, you just need to change the ip.
+All the ports in the urls don't need to change, unless you want to change one.
+
+#Should change ip address
+[grpc-url]
+url0=localhost:50051
+url1=localhost:50051
+[transfer-url]
+initial_url=http://39.99.145.157:5000/initial
+picture_url=http://39.99.145.157:5000/pictures_handler
 
 #Remain unchanged
-master_rpc_port = "8091" 
-master_rev_port = "9001"
-master_snd_port = "9011"
+url0's port=50051
+url1's port=50051
+initial_url's=5000
+picture_url's=5000
 
-#The working path of the master node, keep unchanged
-master_path = "./master/"
-
-#The working path of the worker node, keep unchanged
-worker_path = "./worker/"
-
-#the configuration of Mysql
-mysql_ip        = "127.0.0.1"
-mysql_user_name = "root"
-mysql_password  = ""
-
-#Remain unchanged 
-mysql_db_name   = "morph"
-
-#the duration for each of the video block
-equal_block_dur = 60*2
-
-#the number of threads for task preprocessing
-preproc_thread_num = 10
-
-#algorithm for task scheduling
-sch_alg = 'fifo'
-
+#Remain unchanged labels' content
+[preload-models]
+[image-classification]
+[object-detection]
 ```
 
-Step 3: Initialize the database and tables in Mysql   
+Step 3: For convenience, you can upload the whole project directly to each server  
 ```bash
-python init_db.py
+#such as:
+scp -r video2edge/ ****@ip_address:/home/user/video2edge
 ```
-
-Step 4: Change to the directory 'Morph', and start up the Master node by executing the following command.
-```bash
-nohup python master.py > master_error_msg &
-```
-
-Step 5: Change to the directory 'Morph', start up the Worker node. This needs to be executed on each of the worker node. 
-```bash
-nohup python worker.py > worker_error_msg &
-```
-
-Step 6: Check the log and the error message of the master node.
-```bash
-tail master_error_msg
-tail master.*.log
-```
-
-Check the log and the error message of the worker nodes.
-```bash
-tail worker_error_msg
-tail worker.*.log
-```
-
-## Programming Interface
--------------------
-
-The system provides three kinds of interface for accessing the service, including Restful API, Command Line Interface, and RPC. The users can use these interfaces to submit new transcoding tasks and to query the transcoding progress of a task.
-
-### Restful API
-
-The parameters of HTTP POST method for submitting a new task. The video location is specified with URL. 
-
-<html>
-
-     'url': 'http://155.69.52.158/test.mp4',
-     'target_resolution': '100x100 200x200',
-     'priority': 5
-     
-</html>
-
-The parameters of HTTP POST method for submitting a new task. The video location is specified with a local path. The video file will be uploaded to the server for video transcoding. 
-
-<html>
-
-     'video_file': open('/home/Public/test.mp4','rb'),
-     'target_resolution': '100x100 200x200',
-     'priority': 5
- 
-</html>
-
-The parameter of HTTP Post method for querying the task status. 
-
-<html>
-
-     url = 'http://155.69.52.158/transcoder/get_progress'
-     key = {'key' : 'G8QKmGXX'}
-     
-</html>
-
-### Command Line
-
-Parameters for the command line:
-<html>
-
-     -l: local video file
-     -u: url of the video file
-     -p: priority (optional)
-     -s: target resolutions
-     
-</html>
-
-Submit a new transcoding task by CLI
-```bash
-python cli_submit.py -l /home/Videos/test.mp4 -s 640x360 426x240
-```
-
-Query task status
-
-```bash
-python cli_query.py –k taskid
-```
-
-### RPC
-
-We adopt [SimpleXMLRPCServer](https://docs.python.org/2/library/simplexmlrpcserver.html) for implementing RPC, the APIs for submitting transcoding task and querying task status are as follows:
-
-Submit a new transcoding task (URI can be a URL or local file path)
-```bash
-put_trans_task(URI, bitrate, width, height, priority, task_id = None)
-```
-
-Query the task status
-```bash
-get_progress(task_id)
-```
-
-
 ## Basic Usage
 
-The easiest way to use this software is via command line. With this method, you do not need to configure the webserver or write the code for calling RPC. There are two programs serving as the command line, **cli_query.py** and **cli_submit.py**. Note that the **config.py** should be kept a copy with these two programs, since they need to the configuration information from it. 
+The easiest way to use this software is via command line. 
 
-* Submit a transcoding task by the command line  
+* Submit a image classification task by the command line  
 
+Step 1: loading the project on forwarding server 
 ```bash
-python cli_submit.py -l /home/Videos/test.mp4 -s 640x360 426x240
-Return: Task ID
+python3 ~/video2edge/server/forwarding_server.py
 ```
-In the above command, the file path of the original video file is '/home/Videos/test.mp4', specified by '-l'. This needs to be a valid local video file in the master node. The taget resolutions are 640x360, 426x240, specified by '-s'.
 
+Step 2: loading the project on processing servers, there are more than one, but the execution is the same. 
 ```bash
-python cli_submit.py -u http://aidynamic.com/video/bunny.mp4 -s 640x360 426x240
-Return: Task ID
+python3 ~/video2edge/server/grpc/python/msg_transfer_service.py
 ```
-The user can also specify the URL of the original video file by '-u' to submit a task. In the above command, the URL of the original video file is 'http://aidynamic.com/video/bunny.mp4', specified by '-u'. The master node will first download the video file and then perform the transcoding operations. 
 
-* Query the transcoding progress of a task with the task ID
+Step 3: using the service on the client end
 ```bash
-python cli_query.py –k ddsdd123
-Return: 
-1. Progress of the task.
-2. The file path of the target video file if it has been finished. 
+python3 main.py
 ```
-In the above command, the task ID is 'ddsdd123', specified by '-k'. 
+According to the tips information， you can input the video you want to process, and input some parameters for your demand.  
+
 
 ## Advanced Usage
 We can start the controller to dynamically control the transcoding workers. To do this, we first need to add the information of the available VM instances or containers to the file **vm.list**. In this file, each line corresponds to the host name of an instance or a container. We can execute the command **hostname** to obtain the name of an instance or a container, and then, file the host name into the file **vm.list**. After that, we can start the controller.
