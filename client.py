@@ -11,8 +11,10 @@ from tools.transfer_files_tool import transfer_array_and_str
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--video', help='input video file')
+    parser.add_argument('-i', '--image', help='input image')
     args = parser.parse_args()
     video_file = args.video
+    image_file = args.image
 
     while True:
         try:
