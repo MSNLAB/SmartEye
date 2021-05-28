@@ -4,14 +4,19 @@ from local.offloading import send_frame
 from local.client_end import Client
 import logging
 import common
+import argparse
 
 from tools.transfer_files_tool import transfer_array_and_str
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--video', help='input video file')
+    args = parser.parse_args()
+    video_file = args.video
 
     while True:
         try:
-            input_file = input("please input file path: \n")
+            input_file = video_file
             assert input_file is not None
             assert os.path.isfile(input_file)
             file_type = input("please input file type: image or video\n")
