@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     while True:
         # get frames
-        frame = client.reader.read_file()
+        frame = client.reader.read_frame()
         # preprocessing frames
         if frame is None:
             client.info.store()

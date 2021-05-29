@@ -41,7 +41,6 @@ class DecisionEngine:
         qp = qp_list[0]
         return qp
 
-    
     def decide_image_size(self, net_speed):
         """
         decide the image size according to the content of initial_dict
