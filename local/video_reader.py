@@ -41,7 +41,7 @@ class VideoReader:
                 self.cap.release()
                 return None
 
-    def read_file(self):
+    def read_frame(self):
         """
         file interface: read image frames from video file
         :param: input_file: file path which will be read
