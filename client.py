@@ -56,7 +56,6 @@ if __name__ == '__main__':
         # transmission
         result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
         if serv_type == common.IMAGE_CLASSIFICATION:
-
             result = result_dict["prediction"]
             net_speed = file_size / arrive_transfer_server_time
             client.info.append(total_service_delay, net_speed)
