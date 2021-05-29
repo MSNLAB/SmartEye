@@ -9,30 +9,38 @@ import argparse
 from tools.transfer_files_tool import transfer_array_and_str
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--video', help='input video file')
-    args = parser.parse_args()
-    video_file = args.video
 
-    while True:
-        try:
-            input_file = video_file
-            assert input_file is not None
-            assert os.path.isfile(input_file)
-            file_type = input("please input file type: image or video\n")
-            assert file_type is not None
-            assert file_type == "image" or file_type == "video"
-            service_type = input("please input file type: image classification or object detection\n")
-            assert service_type is not None
-            assert service_type == "image classification" or service_type == "object detection"
-        except AssertionError:
-            print("please input again:")
-        else:
-            break
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--file', help='input file')
+    # parser.add_argument('-F', '--filetype', help="input file type, '0' for IMAGE, '1' for VIDEO")
+    parser.add_argument('-s', '--serv', help="input service demand, '3' for IMAGE_CLASSIFICATION," 
+                                             "'4' for OBJECT_DETECTION")
+    # parser.add_argument('-ST', '--store', help="input store type demand, "
+    #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
+    args = parser.parse_args()
 
     file_type = common.IMAGE_TYPE
-    service_type = common.IMAGE_CLASSIFICATION
-    client = Client(input_file, file_type, service_type)
+
+    input_file = None
+    if args.file is not None:
+        input_file = args.file
+    else:
+        print("Error: no matched file type")
+        sys.exit()
+    if not os.path.isfile(input_file):
+        print("Error: file not exists")
+        sys.exit()
+
+    serv_type = None
+    if args.serv is not None:
+        serv_type = int(args.serv)
+
+    # store_type = args.store
+    # if store_type is not None:
+    #     store_type = int(args.store)
+
+    client = Client(input_file, file_type, serv_type)
+
     while True:
         # get frames
         frame = client.reader.read_file()
@@ -42,12 +50,12 @@ if __name__ == '__main__':
             print("service comes over!")
             exit()
 
-        msg_dict, selected_model = client.decision_engine.get_decision_result(client.info.info_list[-1][0], client.info.info_list[-1][1])
+        msg_dict, selected_model = client.decision_engine.get_decision()
         frame = client.preprocessing.pre_process_image(frame, **msg_dict)
         file_size = sys.getsizeof(frame)
         # transmission
         result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
-        if service_type == "image classification":
+        if serv_type == common.IMAGE_CLASSIFICATION:
 
             result = result_dict["prediction"]
             net_speed = file_size / arrive_transfer_server_time

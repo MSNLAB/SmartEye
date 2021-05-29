@@ -12,6 +12,8 @@
 import os
 import cv2
 import datetime
+
+import common
 from tools.read_config import read_config
 
 
@@ -23,12 +25,11 @@ class LocalStore:
 
     def __init__(self, store_type):
         time = datetime.datetime.now()
-        # store_path = read_config("store-folder", "result_store")
         store_path = os.path.join(os.path.dirname(__file__), "../info_store/handled_result")
         self.result_store_location = os.path.join(
             store_path, time.strftime('%a%b%d%H%M')
         )
-        if store_type == "video":
+        if store_type == common.VIDEO_TYPE:
             video_name = time.strftime('%a%b%d%H%M') + ".mp4"
             self.out = cv2.VideoWriter(
                 video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480)
@@ -40,7 +41,6 @@ class LocalStore:
         :param frame: image which will be stored, type numpy.narray
         :return:
         """
-        # if there is a error breaking the program, all executions before should rollback
         if not os.path.exists(self.result_store_location):
             os.mkdir(self.result_store_location)
         try:
@@ -62,4 +62,5 @@ class LocalStore:
 
 if __name__ == "__main__":
     local_store = LocalStore()
+
 

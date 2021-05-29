@@ -1,3 +1,4 @@
+import common
 from tools.read_config import read_config
 
 
@@ -12,21 +13,23 @@ class DecisionEngine:
     should not over 1000k
     """
 
-    def __init__(self, requirement_type): # **initial_dict
+    def __init__(self, serv_delay, net_speed, requirement_type): # **initial_dict
         """
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
+        self.serv_delay = serv_delay
+        self.net_speed = net_speed
         self.requirement_type = requirement_type
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_decision_result(self, service_delay, net_speed):
+    def get_decision(self):
 
-        if self.requirement_type[0] == "image":
-            msg_dict = self.decide_image_size(net_speed)
-            selected_model = self.decide_model(service_delay, self.requirement_type[1])
+        if self.requirement_type[0] == common.IMAGE_TYPE:
+            msg_dict = self.decide_image_size(self.serv_delay)
+            selected_model = self.decide_model(self.serv_delay, self.requirement_type[1])
 
-        elif self.requirement_type[0] == 'video':
+        elif self.requirement_type[0] == common.VIDEO_TYPE:
             msg_dict = self.decide_bitrate_and_resolution()
             selected_model = self.decide_model(self.requirement_type[1], self.requirement_type[1])
         return msg_dict, selected_model
@@ -69,7 +72,7 @@ class DecisionEngine:
         decide the computation model according to the content of initial_dict
         :return: selected model
         """
-        if service_type == 'image classification':
+        if service_type == common.IMAGE_CLASSIFICATION:
             model = self.image_classification_models[0]
         else:
             model = self.object_detection_models[4]
