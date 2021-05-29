@@ -22,9 +22,13 @@ class SysInfo:
     """
     def __init__(self, operation):
 
-        time = datetime.datetime.now()
+        #time = datetime.datetime.now()
         self.operation = operation + "_" + time.strftime('%a%b%d%H%M') + ".txt"
-        self.info_list = []
+        # self.info_list = []
+        self.cpu_usage = []
+        self.bandwidth = []
+        self.processing_delay = []
+        self.memory_usage = []
 
     def append(self, total_service_delay, net_speed):
         cpu_usage = psutil.cpu_percent()
