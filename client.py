@@ -47,11 +47,9 @@ if __name__ == '__main__':
     # if store_type is not None:
     #     store_type = int(args.store)
     reader = VideoReader(input_file)
-    decision_engine = DecisionEngine(
-            file_type, serv_type
-        )
+    decision_engine = DecisionEngine(file_type, serv_type)
     preprocessor = PreProcessor()
-    sys_info = SysInfo(input_file)
+    sys_info = SysInfo()
     local_store = LocalStore()
 
     while True:
@@ -63,14 +61,13 @@ if __name__ == '__main__':
             print("service comes over!")
             exit()
 
-        if len(sys_info.bandwidth) == 0:
-            msg_dict, selected_model = decision_engine.get_decision(0, 0)
-        msg_dict, selected_model = decision_engine.get_decision(sys_info.bandwidth, sys_info.processing_delay)
-
+        msg_dict, selected_model = decision_engine.get_decision(sys_info)
         frame = preprocessor.preprocess_image(frame, **msg_dict)
         file_size = sys.getsizeof(frame)
         # send the video frame to the server
-        result_dict, start_time, processing_delay, arrive_transfer_server_time = send_frame(picture_url, frame, selected_model)
+        result_dict, start_time, processing_delay, arrive_transfer_server_time = \
+            send_frame(picture_url, frame, selected_model)
+
         if serv_type == common.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
             bandwidth = file_size / arrive_transfer_server_time
