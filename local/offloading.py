@@ -13,7 +13,7 @@ import base64
 import json
 
 from tools import make_request
-from local import preprocessing
+from local import preprocessor
 from tools.transfer_files_tool import transfer_file_to_str, save_file, transfer_array_and_str
 
 """
@@ -31,10 +31,10 @@ def send_frame(url, frame, selected_model):
         "frame_shape": frame_shape,
         "frame": img_str
     }
-    result_dict, total_service_delay, arrive_transfer_server_time = make_request.make_request(url, **msg_dict)
+    result_dict, start_time, total_service_delay, arrive_transfer_server_time = make_request.make_request(url, **msg_dict)
     # result = response.read().decode('utf-8')
 
-    return result_dict, total_service_delay, arrive_transfer_server_time
+    return result_dict, start_time,  total_service_delay, arrive_transfer_server_time
 
 
 # video file interface

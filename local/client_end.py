@@ -7,7 +7,7 @@ import os
 import common
 from local.local_store import LocalStore
 from local.offloading import send_frame
-from local.preprocessing import PreProcessing
+from local.preprocessor import PreProcessing
 from tools import make_request
 from local.decision_engine import DecisionEngine
 from tools.network_condition import get_network_condition
@@ -34,32 +34,32 @@ class Client:
         assert service_type == common.IMAGE_CLASSIFICATION or service_type == common.OBJECT_DETECTION
         self.service_type = service_type
 
-        self.initial_url = read_config("transfer-url", "initial_url")
-        self.picture_url = read_config("transfer-url", "picture_url")
-        self.video_file_url = read_config("transfer-url", "video_file_url")
+        # self.initial_url = read_config("transfer-url", "initial_url")
+        # self.picture_url = read_config("transfer-url", "picture_url")
+        # self.video_file_url = read_config("transfer-url", "video_file_url")
 
         # get initial network condition
-        service_delay, net_speed = get_network_condition(self.initial_url)
-        self.info = SysInfo(os.path.basename(input_file).split(".")[0])
-        self.info.append(service_delay, net_speed)
+        # service_delay, net_speed = get_network_condition(self.initial_url)
+        # self.info = SysInfo(os.path.basename(input_file).split(".")[0])
+        # self.info.append(service_delay, net_speed)
 
         # initialize local store
-        self.local_store = LocalStore(store_type)
+        # self.local_store = LocalStore(store_type)
 
         # initialize video reader
-        self.reader = VideoReader(input_file)
+        # self.reader = VideoReader(input_file)
 
         # initialize decision engine
         requirement_type = (file_type, service_type)
-        self.decision_engine = DecisionEngine(
-            serv_delay=self.info.info_list[-1][0],
-            net_speed=self.info.info_list[-1][1],
-            requirement_type=requirement_type
-        )
+        # self.decision_engine = DecisionEngine(
+        #     serv_delay=self.info.info_list[-1][0],
+        #     net_speed=self.info.info_list[-1][1],
+        #     requirement_type=requirement_type
+        # )
         # self.msg_dict, self.selected_model = decision_engine.get_decision_result(service_delay, net_speed)
 
         # initialize preprocess module
-        self.preprocessing = PreProcessing()
+        # self.preprocessing = PreProcessing()
 
 
         # # initial_url = "http://39.99.145.157:5000/initial"

@@ -16,7 +16,7 @@ import torch
 from data_handler import object_detection, image_classification
 from local.decision_engine import DecisionEngine
 from local.local_store import LocalStore
-from local.preprocessing import PreProcessing
+from local.preprocessor import PreProcessor
 from local.video_reader import VideoReader
 from tools.read_config import read_config
 

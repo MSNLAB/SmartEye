@@ -7,17 +7,17 @@ from matplotlib import image as matimg
 from tools.read_config import read_config
 
 
-class PreProcessing:
+class PreProcessor:
     """
     inputing video frames or directly a video, transfer in resolution, qp etc.
     """
-    def pre_process_image(self, frame, **msg_dict):
+    def preprocess_image(self, frame, **msg_dict):
         """
         according to the image_size stored in message responsed by the server,
         local adjusts the image size of image which will be sent to the server
 
         :param msg_dict: image size, support 100×100 poxels， 500x500 pixels
-        :param input_file: images which needs to be adjust
+        :param frame: images which needs to be adjust
         :return: file save path
         """
         assert frame is not None
@@ -26,7 +26,7 @@ class PreProcessing:
         frame = np.asarray(image)
         return frame
 
-    def pre_process_by_qp(self, frame, qp):
+    def preprocess_by_qp(self, frame, qp):
         """
         change the image quality
         :param frame: image frame, ndarray
@@ -44,7 +44,7 @@ class PreProcessing:
         frame = np.array(img)
         return frame
 
-    def pre_process_video(self, input_file, **b_r_dict):
+    def preprocess_video(self, input_file, **b_r_dict):
         """
         adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
         :param input_file: video file path

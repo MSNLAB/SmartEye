@@ -13,35 +13,33 @@ class DecisionEngine:
     should not over 1000k
     """
 
-    def __init__(self, serv_delay, net_speed, requirement_type): # **initial_dict
+    def __init__(self, *requirement_type): # **initial_dict
         """
         :param initial_dict: this is a dict type, including service_delay, requirements and netcondition
         """
-        self.serv_delay = serv_delay
-        self.net_speed = net_speed
         self.requirement_type = requirement_type
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_decision(self):
+    def get_decision(self, bandwidth, processing_delay):
 
         if self.requirement_type[0] == common.IMAGE_TYPE:
-            msg_dict = self.decide_image_size(self.serv_delay)
-            selected_model = self.decide_model(self.serv_delay, self.requirement_type[1])
+            msg_dict = self.decide_image_size(processing_delay)
+            selected_model = self.decide_model(processing_delay, self.requirement_type[1])
 
         elif self.requirement_type[0] == common.VIDEO_TYPE:
-            msg_dict = self.decide_bitrate_and_resolution()
-            selected_model = self.decide_model(self.requirement_type[1], self.requirement_type[1])
+            msg_dict = self.decide_bitrate_and_resolution(processing_delay)
+            selected_model = self.decide_model(processing_delay, self.requirement_type[1])
         return msg_dict, selected_model
 
-    def decide_qp(self, net_speed):
+    def decide_qp(self, processing_delay):
 
         qp_list = [i for i in range(0, 52)]
         # select the first for test
         qp = qp_list[0]
         return qp
 
-    def decide_image_size(self, net_speed):
+    def decide_image_size(self, processing_delay):
         """
         decide the image size according to the content of initial_dict
         :return: image size dict
@@ -56,7 +54,7 @@ class DecisionEngine:
 
         return return_dict
 
-    def decide_bitrate_and_resolution(self):
+    def decide_bitrate_and_resolution(self, processing_delay):
         """
         decide the image size according to the content of initial_dict
         :return: bitrate and resolution dict
@@ -66,12 +64,12 @@ class DecisionEngine:
 
         return return_dict
 
-    def decide_model(self, total_service_delay, service_type):
+    def decide_model(self, processing_delay, serv_type):
         """
         decide the computation model according to the content of initial_dict
         :return: selected model
         """
-        if service_type == common.IMAGE_CLASSIFICATION:
+        if serv_type == common.IMAGE_CLASSIFICATION:
             model = self.image_classification_models[0]
         else:
             model = self.object_detection_models[4]

@@ -23,7 +23,7 @@ class LocalStore:
     as image or video in local directory
     """
 
-    def __init__(self, store_type):
+    def __init__(self, store_type=None):
         time = datetime.datetime.now()
         store_path = os.path.join(os.path.dirname(__file__), "../info_store/handled_result")
         self.result_store_location = os.path.join(

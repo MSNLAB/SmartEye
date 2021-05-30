@@ -1,18 +1,23 @@
 import sys
 import os
+
+from local.decision_engine import DecisionEngine
+from local.local_store import LocalStore
 from local.offloading import send_frame
-from local.client_end import Client
 import logging
 import common
 import argparse
 
+from local.preprocessor import PreProcessor
+from local.system_info import SysInfo
+from local.video_reader import VideoReader
+from tools.read_config import read_config
 from tools.transfer_files_tool import transfer_array_and_str
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--file', help='input file')
-    # parser.add_argument('-F', '--filetype', help="input file type, '0' for IMAGE, '1' for VIDEO")
     parser.add_argument('-s', '--serv', help="input service demand, '3' for IMAGE_CLASSIFICATION," 
                                              "'4' for OBJECT_DETECTION")
     # parser.add_argument('-ST', '--store', help="input store type demand, "
@@ -34,40 +39,48 @@ if __name__ == '__main__':
     serv_type = None
     if args.serv is not None:
         serv_type = int(args.serv)
-
+    # store_type = ""
+    initial_url = read_config("transfer-url", "initial_url")
+    picture_url = read_config("transfer-url", "picture_url")
+    video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store
     # if store_type is not None:
     #     store_type = int(args.store)
-
-    client = Client(input_file, file_type, serv_type)
-    decision_engine = DecisionEngine()
+    reader = VideoReader(input_file)
+    decision_engine = DecisionEngine(
+            file_type, serv_type
+        )
     preprocessor = PreProcessor()
-    sysinfo = SysInfo（）
+    sys_info = SysInfo(input_file)
+    local_store = LocalStore()
 
     while True:
         # get frames
-        frame = client.reader.read_frame()
+        frame = reader.read_frame()
         # preprocessing frames
         if frame is None:
-            client.info.store()
-            print("Error: no frame can be read")
+            sys_info.store()
+            print("service comes over!")
             exit()
 
-        msg_dict, selected_model = decision_engine.get_decision()
+        if len(sys_info.bandwidth) == 0:
+            msg_dict, selected_model = decision_engine.get_decision(0, 0)
+        msg_dict, selected_model = decision_engine.get_decision(sys_info.bandwidth, sys_info.processing_delay)
+
         frame = preprocessor.preprocess_image(frame, **msg_dict)
         file_size = sys.getsizeof(frame)
         # send the video frame to the server
-        result_dict, total_service_delay, arrive_transfer_server_time = send_frame(client.picture_url, frame, selected_model)
+        result_dict, start_time, processing_delay, arrive_transfer_server_time = send_frame(picture_url, frame, selected_model)
         if serv_type == common.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
-            net_speed = file_size / arrive_transfer_server_time
-            sysinfo.append(total_service_delay, net_speed)
+            bandwidth = file_size / arrive_transfer_server_time
+            sys_info.append(start_time, processing_delay, bandwidth)
             print(result)
         elif serv_type == common.OBJECT_DETECTION:
             frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
             frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
-            client.local_store.store_image(frame_handled)
-            net_speed = file_size / arrive_transfer_server_time
-            client.info.append(total_service_delay, net_speed)
+            local_store.store_image(frame_handled)
+            bandwidth = file_size / arrive_transfer_server_time
+            sys_info.append(start_time, processing_delay, bandwidth)
         else:
             print("Error: no specified service type")
