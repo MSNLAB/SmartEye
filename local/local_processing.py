@@ -11,13 +11,7 @@
 '''
 import os
 
-import torch
-
-from data_handler import object_detection, image_classification
-from local.decision_engine import DecisionEngine
-from local.local_store import LocalStore
-from local.preprocessor import PreProcessor
-from local.video_reader import VideoReader
+from model_manager import object_detection, image_classification
 from tools.read_config import read_config
 
 object_detection_models = read_config("object-detection")

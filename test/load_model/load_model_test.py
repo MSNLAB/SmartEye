@@ -1,16 +1,10 @@
-import configparser
 from tools.read_config import read_config
-from torchvision.models import *
-from torchvision.models.detection import *
 import torch
 import os
-import cv2
-import torchvision
-from torchvision import models
 from torchvision import transforms
 from PIL import Image
 import time
-from server.grpc_section.python.msg_transfer_service import load_model_files_advance
+from server.msg_transfer_service import load_model_files_advance
 
 
 transform = transforms.Compose([

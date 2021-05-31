@@ -21,15 +21,24 @@ class DecisionEngine:
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_decision(self, bandwidth, processing_delay):
+    def get_decision(self, sys_info):
 
         if self.requirement_type[0] == common.IMAGE_TYPE:
-            msg_dict = self.decide_image_size(processing_delay)
-            selected_model = self.decide_model(processing_delay, self.requirement_type[1])
+            if len(sys_info.processing_delay) == 0:
+                msg_dict = self.decide_image_size(0)
+                selected_model = self.decide_model(0, self.requirement_type[1])
+            else:
+                msg_dict = self.decide_image_size(sys_info.processing_delay[-1])
+                selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
         elif self.requirement_type[0] == common.VIDEO_TYPE:
-            msg_dict = self.decide_bitrate_and_resolution(processing_delay)
-            selected_model = self.decide_model(processing_delay, self.requirement_type[1])
+            if len(sys_info.processing_delay) == 0:
+                msg_dict = self.decide_bitrate_and_resolution(0)
+                selected_model = self.decide_model(0, self.requirement_type[1])
+            else:
+                msg_dict = self.decide_bitrate_and_resolution(sys_info.processing_delay[-1])
+                selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
+
         return msg_dict, selected_model
 
     def decide_qp(self, processing_delay):

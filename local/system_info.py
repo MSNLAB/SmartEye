@@ -21,24 +21,39 @@ class SysInfo:
     """
     storing the system information of local and server
     """
-    def __init__(self, input_file):
-        pre_file = os.path.basename(input_file).split(".")[0]
+    def __init__(self):
         now = datetime.datetime.now()
-        self.file = pre_file + "_" + now.strftime('%a%b%d%H%M') + ".txt"
-        self.time_stamp = []
+        self.file = "SysInfo" + "_" + now.strftime('%a%b%d%H%M') + ".log"
+        self.infos = []
         self.cpu_usage = []
         self.bandwidth = []
         self.processing_delay = []
         self.memory_usage = []
 
-    def append(self, start_time, processing_delay, bandwidth):
-        cpu_usage = psutil.cpu_percent()
-        memory_usage = psutil.virtual_memory().percent
-        self.time_stamp.append(start_time)
-        self.processing_delay.append(processing_delay)
-        self.bandwidth.append(bandwidth)
-        self.cpu_usage.append(cpu_usage)
-        self.memory_usage.append(memory_usage)
+    def append(self, start_time, processing_delay=None, bandwidth=None, cpu_usage=None, memory_usage=None):
+        # cpu_usage = psutil.cpu_percent()
+        # memory_usage = psutil.virtual_memory().percent
+        assert start_time is not None, "start_time can't be None"
+        assert (processing_delay is not None or
+               bandwidth is not None or
+               cpu_usage is not None or
+               memory_usage is not None), "at least one parameter is not None"
+
+        dict = {"time": start_time}
+
+        if processing_delay is not None:
+            dict["processing_delay"] = processing_delay
+            self.processing_delay.append(processing_delay)
+        if bandwidth is not None:
+            dict["bandwidth"] = bandwidth
+            self.bandwidth.append(bandwidth)
+        if cpu_usage is not None:
+            dict["cpu_usage"] = cpu_usage
+            self.cpu_usage.append(cpu_usage)
+        if memory_usage is not None:
+            dict["memory_usage"] = memory_usage
+            self.memory_usage.append(memory_usage)
+        self.infos.append(dict)
 
     def store(self):
 
@@ -46,16 +61,8 @@ class SysInfo:
         info_store_path = os.path.join(store_path, self.file)
         info_title = "time processing_delay bandwidth cpu_usage memory_usage"
         with open(info_store_path, 'w+') as f:
-            f.write(str(info_title) + '\n')
-            for i in range(len(self.bandwidth)):
-                content = (
-                        str(self.time_stamp[i]) + " " +
-                        str(self.processing_delay[i]) + " " +
-                        str(self.bandwidth[i]) + " " +
-                        str(self.cpu_usage[i]) + " " +
-                        str(self.memory_usage[i])
-                )
-                f.write(content + '\n')
+            for info in self.infos:
+                f.write(str(info) + '\n')
 
 
 # import collections

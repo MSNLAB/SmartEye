@@ -3,8 +3,7 @@ import os
 
 from local.decision_engine import DecisionEngine
 from local.local_store import LocalStore
-from local.offloading import send_frame
-import logging
+from transmission.offloading import send_frame
 import common
 import argparse
 

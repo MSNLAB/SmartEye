@@ -3,13 +3,11 @@ from concurrent import futures
 import grpc
 import torch
 import sys
-sys.path.append("../../../")
-from data_handler import object_detection, image_classification
-from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
+sys.path.append("../")
+from model_manager import object_detection, image_classification
+from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
-from torchvision.models.detection import *
-from torchvision.models import *
 import psutil
 
 object_detection_models = read_config("object-detection")

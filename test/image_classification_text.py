@@ -1,8 +1,7 @@
 import sys
 sys.path.append("../")
-from local.offloading import send_frame
+from transmission.offloading import send_frame
 from local.client_end import Client
-import logging
 
 if __name__ == '__main__':
 

@@ -1,7 +1,6 @@
-import json
 import sys
 sys.path.append("../")
-from local.offloading import send_frame
+from transmission.offloading import send_frame
 from tools.transfer_files_tool import transfer_array_and_str
 from local.client_end import Client
 

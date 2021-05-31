@@ -1,12 +1,9 @@
 import grpc
-from torchvision.models import *
-from torchvision.models.detection import *
 import sys
 sys.path.append("../")
-from tools.read_config import read_config
 from flask import Flask, request, jsonify
 import time
-from server.grpc_section.pbfile import msg_transfer_pb2_grpc, msg_transfer_pb2
+from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.read_config import read_config
 import random
 
