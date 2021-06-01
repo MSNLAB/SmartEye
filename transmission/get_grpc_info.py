@@ -19,7 +19,7 @@ def get_memory_usage(grpc_server):
     pass
 
 
-def load_model(grpc_server, model_name):
+def load_a_model(grpc_server, model_name):
     """
     request grpc server to load the specified model
     :param grpc_server: server url

@@ -11,7 +11,7 @@ from torchvision.models.detection import *
 from torchvision.models import *
 
 
-def load_model(selected_model):
+def load_a_model(selected_model):
     """
     load the weight file of model
     :param selected_model: model is loaded
