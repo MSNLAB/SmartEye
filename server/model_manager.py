@@ -43,7 +43,7 @@ def load_model(selected_model):
     return model
 
 
-def uninstall_model(model_name):
+def unload_model(model_name):
 
     del global_variable.loaded_model_dict[model_name]
 
