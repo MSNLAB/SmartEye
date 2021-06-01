@@ -1,5 +1,8 @@
 import grpc
 import sys
+
+from transmission.get_grpc_info import get_cpu_usage, load_specified_model, get_loaded_models
+
 sys.path.append("../")
 from flask import Flask, request, jsonify
 import time
@@ -10,18 +13,18 @@ import random
 app = Flask(__name__)
 
 
-@app.route('/initial', methods=['GET', 'POST'])
-def initial():
-    """
-    do nothing just for testing
-    """
-    # print(request.form)
-    arrive_time = time.time()
-    result_dict = {
-        "result": "ok",
-        "arrive_time": arrive_time
-    }
-    return jsonify(result_dict)
+# @app.route('/initial', methods=['GET', 'POST'])
+# def initial():
+#     """
+#     do nothing just for testing
+#     """
+#     # print(request.form)
+#     arrive_time = time.time()
+#     result_dict = {
+#         "result": "ok",
+#         "arrive_time": arrive_time
+#     }
+#     return jsonify(result_dict)
 
 
 @app.route('/pictures_handler', methods=['GET', 'POST'])
@@ -30,22 +33,25 @@ def pictures_handler():
     get info from local and then transfer to processing servers
     :return:
     """
-    arrive_time = time.time()
+
     info_dict = request.form
     server_url = which_server_decision_engine()
-
+    t1 = time.time()
     msg_reply = get_result(server_url, **info_dict)
+    t2 = time.time()
     if msg_reply.frame_shape == "":
         return_dict = {
             "prediction": msg_reply.result,
-            "arrive_time": arrive_time
+            "process_time": t2 - t1
         }
+
         return jsonify(return_dict)
+
     else:
         return_dict = {
             "frame_shape": msg_reply.frame_shape,
             "result": msg_reply.result,
-            "arrive_time": arrive_time
+            "process_time": t2 - t1
         }
 
         return jsonify(return_dict)
@@ -61,10 +67,13 @@ def which_server_decision_engine():
 
     # second way to decide server
     # cpu_usage_list = []
-    # for grpc_server in grpc_servers:
-    #     cpu_usage = get_server_cpu_usage(grpc_server)
+    for grpc_server in grpc_servers:
+        load_specified_model(grpc_server, "densenet121")
+    #     # cpu_usage = get_cpu_usage(grpc_server)
+    #     models = get_loaded_models(grpc_server)
+    #     print(models)
     #     cpu_usage_list.append(cpu_usage)
-    #
+    # print(cpu_usage_list)
     # selected_server = cpu_usage_list.index(min(cpu_usage_list))
     # return grpc_servers[selected_server]
     return grpc_servers[rand]
@@ -85,20 +94,6 @@ def get_result(server_url, **info_dict):
     )
     msg_reply = stub.ImageProcessing(msg_request)
     return msg_reply
-
-
-def get_server_cpu_usage(grpc_server):
-    """
-    get the cpu usage of grpc server
-    :param grpc_server: server's url, including port
-    :return: cpu usage
-    """
-    channel = grpc.insecure_channel(grpc_server)
-    stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
-    cpu_usage_request = msg_transfer_pb2.Cpu_Usage_Request()
-    cpu_usage_reply = stub.Get_Cpu_Usage(cpu_usage_request)
-
-    return cpu_usage_reply.cpu_usage
 
 
 if __name__ == '__main__':

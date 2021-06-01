@@ -24,7 +24,9 @@ def make_request(url, **msg_dict):
     t2 = time.time()
     result = response.read().decode('utf-8')
     result_dict = json.loads(result)
-    return result_dict, t1, (t2 - t1) / 2, result_dict["arrive_time"] - t1
+    processing_delay = t2 - t1
+    arrive_transfer_server_time = (processing_delay - result_dict["process_time"]) / 2
+    return result_dict, t1, processing_delay, arrive_transfer_server_time
 
 
 if __name__ == "__main__":

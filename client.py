@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if args.serv is not None:
         serv_type = int(args.serv)
     # store_type = ""
-    initial_url = read_config("transfer-url", "initial_url")
+    # initial_url = read_config("transfer-url", "initial_url")
     picture_url = read_config("transfer-url", "picture_url")
     video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store

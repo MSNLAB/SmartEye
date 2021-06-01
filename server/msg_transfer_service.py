@@ -3,6 +3,11 @@ from concurrent import futures
 import grpc
 import torch
 import sys
+
+from flask import jsonify
+
+from server.model_operation import load_model, get_server_cpu_usage, uninstall_model
+import global_variable
 sys.path.append("../")
 from model_manager import object_detection, image_classification
 from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
@@ -17,6 +22,7 @@ image_classification_models = read_config("image-classification")
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
 
     def ImageProcessing(self, request, context):
+
         selected_model = request.model
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
@@ -32,35 +38,19 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
 
         return cpu_usage_reply
 
-def load_model(selected_model):
-    """
-    load the weight file of model
-    :param selected_model: model is loaded
-    :return: model
-    """
+    def Get_loaded_models_name(self, request, context):
 
-    preload_models = read_config("preload-models")
-    if selected_model in preload_models:
-        model = eval(selected_model)()
-        model.load_state_dict(result_dict[selected_model], False)
-        # print(model)
-    else:
-        # weight_folder = read_config("models-path", "path")
-        weight_folder = os.path.join(os.path.dirname(__file__), "../../../modelweightfile")
-        try:
-            for file in os.listdir(weight_folder):
-                if selected_model in file:
-                    file_name = file
-                    break
-            assert file_name is not None
-        except AssertionError:
-            print("there is no matched file!")
-        # print(selected_model)
-        weight_files_path = os.path.join(weight_folder, file_name)
-        model = eval(selected_model)()
-        model.load_state_dict(torch.load(weight_files_path), False)
-    model.eval()
-    return model
+        loaded_model_name_reply = msg_transfer_pb2.Loaded_Model_Name_Reply(
+            loaded_model_name=str(global_variable.loaded_model_dict.keys())
+        )
+        return loaded_model_name_reply
+
+    def load_specified_model(self, request, context):
+
+        specified_model = request.specified_model
+        load_model(specified_model)
+        load_specified_model_reply = msg_transfer_pb2.load_specified_model_Reply()
+        return load_specified_model_reply
 
 
 def image_handler(img, model, selected_model):
@@ -84,8 +74,8 @@ def image_handler(img, model, selected_model):
 
 def serve():
 
-    global result_dict
-    result_dict = load_model_files_advance()
+    global_variable.init()
+    load_model_files_advance()
     # MAX_MESSAGE_LENGTH =
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
@@ -107,9 +97,10 @@ def load_model_files_advance():
     :return:
     """
     # weight_folder = read_config("models-path", "path")
-    weight_folder = os.path.join(os.path.dirname(__file__), "../../../modelweightfile")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     preload_models = read_config("preload-models")
-    load_file_result_dict = {}
+    global loaded_model_dict
+    loaded_model_dict = {}
 
     for model in preload_models:
         try:
@@ -122,17 +113,11 @@ def load_model_files_advance():
             print("there is no matched file!")
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
-        load_file_result_dict[model] = file_load
-    return load_file_result_dict
+        global_variable.loaded_model_dict[model] = file_load
 
-
-def get_server_cpu_usage():
-
-    cpu_usage = psutil.cpu_percent()
-    cpu_usage_reply = msg_transfer_pb2.Cpu_Usage_Request(cpu_usage=cpu_usage)
-    return cpu_usage_reply
 
 if __name__ == '__main__':
     # logging.basicConfig()
     serve()
+
     # load_model_files_advance().values()

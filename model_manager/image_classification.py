@@ -33,8 +33,7 @@ def preprocess(img):
 
 def load_model(selected_model):
 
-    # weight_folder = read_config.read_config("models-path", "path")
-    weight_folder = os.path.join(os.path.dirname(__file__), "../modelweightfile")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     try:
         for file in os.listdir(weight_folder):
             if selected_model in file:

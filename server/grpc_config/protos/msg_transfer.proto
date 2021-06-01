@@ -4,6 +4,8 @@ service MsgTransfer {
 
   rpc ImageProcessing (MsgRequest) returns (MsgReply) {}
   rpc Get_Cpu_Usage (Cpu_Usage_Request) returns (Cpu_Usage_Reply) {}
+  rpc Get_loaded_models_name (Loaded_Model_Name_Request) returns (Loaded_Model_Name_Reply) {}
+  rpc load_specified_model (load_specified_model_Request) returns (load_specified_model_Reply) {}
 
 }
 
@@ -22,12 +24,26 @@ message MsgReply {
 
 }
 
-message Cpu_Usage_Request {
-
-}
+message Cpu_Usage_Request {}
 
 message Cpu_Usage_Reply {
 
   float cpu_usage = 1;
 
 }
+
+message  Loaded_Model_Name_Request {}
+
+message Loaded_Model_Name_Reply {
+
+  string loaded_model_name = 1;
+
+}
+
+message load_specified_model_Request {
+
+  string specified_model = 1;
+
+}
+
+message load_specified_model_Reply {}

@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from server.grpc_config import msg_transfer_pb2 as server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2
+from server.grpc_config import msg_transfer_pb2 as server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2
 
 
 class MsgTransferStub(object):
@@ -16,13 +16,23 @@ class MsgTransferStub(object):
         """
         self.ImageProcessing = channel.unary_unary(
                 '/MsgTransfer/ImageProcessing',
-                request_serializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgRequest.SerializeToString,
-                response_deserializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgReply.FromString,
+                request_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgRequest.SerializeToString,
+                response_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgReply.FromString,
                 )
         self.Get_Cpu_Usage = channel.unary_unary(
                 '/MsgTransfer/Get_Cpu_Usage',
-                request_serializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.SerializeToString,
-                response_deserializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.FromString,
+                request_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.SerializeToString,
+                response_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.FromString,
+                )
+        self.Get_loaded_models_name = channel.unary_unary(
+                '/MsgTransfer/Get_loaded_models_name',
+                request_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Request.SerializeToString,
+                response_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Reply.FromString,
+                )
+        self.load_specified_model = channel.unary_unary(
+                '/MsgTransfer/load_specified_model',
+                request_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Request.SerializeToString,
+                response_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Reply.FromString,
                 )
 
 
@@ -41,18 +51,40 @@ class MsgTransferServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Get_loaded_models_name(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def load_specified_model(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_MsgTransferServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ImageProcessing': grpc.unary_unary_rpc_method_handler(
                     servicer.ImageProcessing,
-                    request_deserializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgRequest.FromString,
-                    response_serializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgReply.SerializeToString,
+                    request_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgRequest.FromString,
+                    response_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgReply.SerializeToString,
             ),
             'Get_Cpu_Usage': grpc.unary_unary_rpc_method_handler(
                     servicer.Get_Cpu_Usage,
-                    request_deserializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.FromString,
-                    response_serializer=server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.SerializeToString,
+                    request_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.FromString,
+                    response_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.SerializeToString,
+            ),
+            'Get_loaded_models_name': grpc.unary_unary_rpc_method_handler(
+                    servicer.Get_loaded_models_name,
+                    request_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Request.FromString,
+                    response_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Reply.SerializeToString,
+            ),
+            'load_specified_model': grpc.unary_unary_rpc_method_handler(
+                    servicer.load_specified_model,
+                    request_deserializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Request.FromString,
+                    response_serializer=server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Reply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +108,8 @@ class MsgTransfer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/MsgTransfer/ImageProcessing',
-            server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgRequest.SerializeToString,
-            server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.MsgReply.FromString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgRequest.SerializeToString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.MsgReply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,7 +125,41 @@ class MsgTransfer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/MsgTransfer/Get_Cpu_Usage',
-            server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.SerializeToString,
-            server_dot_grpc__section_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.FromString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Request.SerializeToString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Cpu_Usage_Reply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Get_loaded_models_name(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/MsgTransfer/Get_loaded_models_name',
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Request.SerializeToString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.Loaded_Model_Name_Reply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def load_specified_model(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/MsgTransfer/load_specified_model',
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Request.SerializeToString,
+            server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2.load_specified_model_Reply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

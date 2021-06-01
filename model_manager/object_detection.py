@@ -23,14 +23,6 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 ]
 
 
-def generate_model(selected_model):
-
-    model = eval(selected_model)(pretrained=True)
-    model.eval()
-
-    return model
-
-
 def get_prediction(img, threshold, model):
     # img = Image.open(img_path)
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -64,6 +56,6 @@ def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, th
 
 
 if __name__ == '__main__':
-    model = generate_model('fasterrcnn_resnet50_fpn')
-    print(model)
-
+    # model = generate_model('fasterrcnn_resnet50_fpn')
+    # print(model)
+    pass
