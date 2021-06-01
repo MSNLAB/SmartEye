@@ -27,8 +27,8 @@ app = Flask(__name__)
 #     return jsonify(result_dict)
 
 
-@app.route('/pictures_handler', methods=['GET', 'POST'])
-def pictures_handler():
+@app.route('/image_handler', methods=['GET', 'POST'])
+def image_handler():
     """
     get info from local and then transfer to processing servers
     :return:
@@ -57,7 +57,7 @@ def pictures_handler():
         return jsonify(return_dict)
 
 
-def which_server_decision_engine():
+def rpc_server_selection():
     """
     decide which server to send frame to
     :return: server number
