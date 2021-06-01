@@ -1,5 +1,4 @@
 import grpc
-
 from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 
 
@@ -13,11 +12,14 @@ def get_cpu_usage(grpc_server):
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
     cpu_usage_request = msg_transfer_pb2.Cpu_Usage_Request()
     cpu_usage_reply = stub.Get_Cpu_Usage(cpu_usage_request)
-
     return cpu_usage_reply.cpu_usage
 
 
-def load_specified_model(grpc_server, model_name):
+def get_memory_usage(grpc_server):
+    pass
+
+
+def load_model(grpc_server, model_name):
     """
     request grpc server to load the specified model
     :param grpc_server: server url
@@ -26,8 +28,7 @@ def load_specified_model(grpc_server, model_name):
     channel = grpc.insecure_channel(grpc_server)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
     load_specified_model_request = msg_transfer_pb2.load_specified_model_Request(
-        specified_model=model_name
-    )
+        specified_model=model_name)
     stub.load_specified_model(load_specified_model_request)
 
 
