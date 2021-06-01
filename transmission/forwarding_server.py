@@ -1,7 +1,7 @@
 import grpc
 import sys
 
-from transmission.get_grpc_info import get_cpu_usage, load_specified_model, get_loaded_models
+from transmission.get_grpc_info import get_server_utilization, load_specified_model, get_loaded_models
 
 sys.path.append("../")
 from flask import Flask, request, jsonify
@@ -35,7 +35,7 @@ def image_handler():
     """
 
     info_dict = request.form
-    server_url = which_server_decision_engine()
+    server_url = rpc_server_selection()
     t1 = time.time()
     msg_reply = get_result(server_url, **info_dict)
     t2 = time.time()
@@ -67,8 +67,8 @@ def rpc_server_selection():
 
     # second way to decide server
     # cpu_usage_list = []
-    for grpc_server in grpc_servers:
-        load_specified_model(grpc_server, "densenet121")
+    # for grpc_server in grpc_servers:
+    #     load_specified_model(grpc_server, "densenet121")
     #     # cpu_usage = get_cpu_usage(grpc_server)
     #     models = get_loaded_models(grpc_server)
     #     print(models)
@@ -92,7 +92,7 @@ def get_result(server_url, **info_dict):
     msg_request = msg_transfer_pb2.MsgRequest(
         model=info_dict["selected_model"], frame=info_dict["frame"], frame_shape=info_dict["frame_shape"]
     )
-    msg_reply = stub.ImageProcessing(msg_request)
+    msg_reply = stub.image_processor(msg_request)
     return msg_reply
 
 

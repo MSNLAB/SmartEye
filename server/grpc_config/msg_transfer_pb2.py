@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n,server/grpc_config/protos/msg_transfer.proto\"?\n\nMsgRequest\x12\r\n\x05model\x18\x01 \x01(\t\x12\r\n\x05\x66rame\x18\x02 \x01(\t\x12\x13\n\x0b\x66rame_shape\x18\x03 \x01(\t\"/\n\x08MsgReply\x12\x0e\n\x06result\x18\x02 \x01(\t\x12\x13\n\x0b\x66rame_shape\x18\x03 \x01(\t\"\x13\n\x11\x43pu_Usage_Request\"$\n\x0f\x43pu_Usage_Reply\x12\x11\n\tcpu_usage\x18\x01 \x01(\x02\"\x1b\n\x19Loaded_Model_Name_Request\"4\n\x17Loaded_Model_Name_Reply\x12\x19\n\x11loaded_model_name\x18\x01 \x01(\t\"7\n\x1cload_specified_model_Request\x12\x17\n\x0fspecified_model\x18\x01 \x01(\t\"\x1c\n\x1aload_specified_model_Reply2\x9b\x02\n\x0bMsgTransfer\x12+\n\x0fImageProcessing\x12\x0b.MsgRequest\x1a\t.MsgReply\"\x00\x12\x37\n\rGet_Cpu_Usage\x12\x12.Cpu_Usage_Request\x1a\x10.Cpu_Usage_Reply\"\x00\x12P\n\x16Get_loaded_models_name\x12\x1a.Loaded_Model_Name_Request\x1a\x18.Loaded_Model_Name_Reply\"\x00\x12T\n\x14load_specified_model\x12\x1d.load_specified_model_Request\x1a\x1b.load_specified_model_Reply\"\x00\x62\x06proto3'
+  serialized_pb=b'\n,server/grpc_config/protos/msg_transfer.proto\"?\n\nMsgRequest\x12\r\n\x05model\x18\x01 \x01(\t\x12\r\n\x05\x66rame\x18\x02 \x01(\t\x12\x13\n\x0b\x66rame_shape\x18\x03 \x01(\t\"/\n\x08MsgReply\x12\x0e\n\x06result\x18\x02 \x01(\t\x12\x13\n\x0b\x66rame_shape\x18\x03 \x01(\t\"\x1c\n\x1aServer_Utilization_Request\"C\n\x18Server_Utilization_Reply\x12\x11\n\tcpu_usage\x18\x01 \x01(\x02\x12\x14\n\x0cmemory_usage\x18\x02 \x01(\x02\"\x1b\n\x19Loaded_Model_Name_Request\"4\n\x17Loaded_Model_Name_Reply\x12\x19\n\x11loaded_model_name\x18\x01 \x01(\t\"7\n\x1cLoad_Specified_Model_Request\x12\x17\n\x0fspecified_model\x18\x01 \x01(\t\"\x1c\n\x1aLoad_Specified_Model_Reply2\xb6\x02\n\x0bMsgTransfer\x12+\n\x0fimage_processor\x12\x0b.MsgRequest\x1a\t.MsgReply\"\x00\x12R\n\x16get_server_utilization\x12\x1b.Server_Utilization_Request\x1a\x19.Server_Utilization_Reply\"\x00\x12P\n\x16get_loaded_models_name\x12\x1a.Loaded_Model_Name_Request\x1a\x18.Loaded_Model_Name_Reply\"\x00\x12T\n\x14load_specified_model\x12\x1d.Load_Specified_Model_Request\x1a\x1b.Load_Specified_Model_Reply\"\x00\x62\x06proto3'
 )
 
 
@@ -110,9 +110,9 @@ _MSGREPLY = _descriptor.Descriptor(
 )
 
 
-_CPU_USAGE_REQUEST = _descriptor.Descriptor(
-  name='Cpu_Usage_Request',
-  full_name='Cpu_Usage_Request',
+_SERVER_UTILIZATION_REQUEST = _descriptor.Descriptor(
+  name='Server_Utilization_Request',
+  full_name='Server_Utilization_Request',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -131,21 +131,28 @@ _CPU_USAGE_REQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=162,
-  serialized_end=181,
+  serialized_end=190,
 )
 
 
-_CPU_USAGE_REPLY = _descriptor.Descriptor(
-  name='Cpu_Usage_Reply',
-  full_name='Cpu_Usage_Reply',
+_SERVER_UTILIZATION_REPLY = _descriptor.Descriptor(
+  name='Server_Utilization_Reply',
+  full_name='Server_Utilization_Reply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='cpu_usage', full_name='Cpu_Usage_Reply.cpu_usage', index=0,
+      name='cpu_usage', full_name='Server_Utilization_Reply.cpu_usage', index=0,
       number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='memory_usage', full_name='Server_Utilization_Reply.memory_usage', index=1,
+      number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -162,8 +169,8 @@ _CPU_USAGE_REPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=183,
-  serialized_end=219,
+  serialized_start=192,
+  serialized_end=259,
 )
 
 
@@ -187,8 +194,8 @@ _LOADED_MODEL_NAME_REQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=221,
-  serialized_end=248,
+  serialized_start=261,
+  serialized_end=288,
 )
 
 
@@ -219,21 +226,21 @@ _LOADED_MODEL_NAME_REPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=250,
-  serialized_end=302,
+  serialized_start=290,
+  serialized_end=342,
 )
 
 
 _LOAD_SPECIFIED_MODEL_REQUEST = _descriptor.Descriptor(
-  name='load_specified_model_Request',
-  full_name='load_specified_model_Request',
+  name='Load_Specified_Model_Request',
+  full_name='Load_Specified_Model_Request',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='specified_model', full_name='load_specified_model_Request.specified_model', index=0,
+      name='specified_model', full_name='Load_Specified_Model_Request.specified_model', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -251,14 +258,14 @@ _LOAD_SPECIFIED_MODEL_REQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=304,
-  serialized_end=359,
+  serialized_start=344,
+  serialized_end=399,
 )
 
 
 _LOAD_SPECIFIED_MODEL_REPLY = _descriptor.Descriptor(
-  name='load_specified_model_Reply',
-  full_name='load_specified_model_Reply',
+  name='Load_Specified_Model_Reply',
+  full_name='Load_Specified_Model_Reply',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -276,18 +283,18 @@ _LOAD_SPECIFIED_MODEL_REPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=361,
-  serialized_end=389,
+  serialized_start=401,
+  serialized_end=429,
 )
 
 DESCRIPTOR.message_types_by_name['MsgRequest'] = _MSGREQUEST
 DESCRIPTOR.message_types_by_name['MsgReply'] = _MSGREPLY
-DESCRIPTOR.message_types_by_name['Cpu_Usage_Request'] = _CPU_USAGE_REQUEST
-DESCRIPTOR.message_types_by_name['Cpu_Usage_Reply'] = _CPU_USAGE_REPLY
+DESCRIPTOR.message_types_by_name['Server_Utilization_Request'] = _SERVER_UTILIZATION_REQUEST
+DESCRIPTOR.message_types_by_name['Server_Utilization_Reply'] = _SERVER_UTILIZATION_REPLY
 DESCRIPTOR.message_types_by_name['Loaded_Model_Name_Request'] = _LOADED_MODEL_NAME_REQUEST
 DESCRIPTOR.message_types_by_name['Loaded_Model_Name_Reply'] = _LOADED_MODEL_NAME_REPLY
-DESCRIPTOR.message_types_by_name['load_specified_model_Request'] = _LOAD_SPECIFIED_MODEL_REQUEST
-DESCRIPTOR.message_types_by_name['load_specified_model_Reply'] = _LOAD_SPECIFIED_MODEL_REPLY
+DESCRIPTOR.message_types_by_name['Load_Specified_Model_Request'] = _LOAD_SPECIFIED_MODEL_REQUEST
+DESCRIPTOR.message_types_by_name['Load_Specified_Model_Reply'] = _LOAD_SPECIFIED_MODEL_REPLY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 MsgRequest = _reflection.GeneratedProtocolMessageType('MsgRequest', (_message.Message,), {
@@ -304,19 +311,19 @@ MsgReply = _reflection.GeneratedProtocolMessageType('MsgReply', (_message.Messag
   })
 _sym_db.RegisterMessage(MsgReply)
 
-Cpu_Usage_Request = _reflection.GeneratedProtocolMessageType('Cpu_Usage_Request', (_message.Message,), {
-  'DESCRIPTOR' : _CPU_USAGE_REQUEST,
+Server_Utilization_Request = _reflection.GeneratedProtocolMessageType('Server_Utilization_Request', (_message.Message,), {
+  'DESCRIPTOR' : _SERVER_UTILIZATION_REQUEST,
   '__module__' : 'server.grpc_config.protos.msg_transfer_pb2'
-  # @@protoc_insertion_point(class_scope:Cpu_Usage_Request)
+  # @@protoc_insertion_point(class_scope:Server_Utilization_Request)
   })
-_sym_db.RegisterMessage(Cpu_Usage_Request)
+_sym_db.RegisterMessage(Server_Utilization_Request)
 
-Cpu_Usage_Reply = _reflection.GeneratedProtocolMessageType('Cpu_Usage_Reply', (_message.Message,), {
-  'DESCRIPTOR' : _CPU_USAGE_REPLY,
+Server_Utilization_Reply = _reflection.GeneratedProtocolMessageType('Server_Utilization_Reply', (_message.Message,), {
+  'DESCRIPTOR' : _SERVER_UTILIZATION_REPLY,
   '__module__' : 'server.grpc_config.protos.msg_transfer_pb2'
-  # @@protoc_insertion_point(class_scope:Cpu_Usage_Reply)
+  # @@protoc_insertion_point(class_scope:Server_Utilization_Reply)
   })
-_sym_db.RegisterMessage(Cpu_Usage_Reply)
+_sym_db.RegisterMessage(Server_Utilization_Reply)
 
 Loaded_Model_Name_Request = _reflection.GeneratedProtocolMessageType('Loaded_Model_Name_Request', (_message.Message,), {
   'DESCRIPTOR' : _LOADED_MODEL_NAME_REQUEST,
@@ -332,19 +339,19 @@ Loaded_Model_Name_Reply = _reflection.GeneratedProtocolMessageType('Loaded_Model
   })
 _sym_db.RegisterMessage(Loaded_Model_Name_Reply)
 
-load_specified_model_Request = _reflection.GeneratedProtocolMessageType('load_specified_model_Request', (_message.Message,), {
+Load_Specified_Model_Request = _reflection.GeneratedProtocolMessageType('Load_Specified_Model_Request', (_message.Message,), {
   'DESCRIPTOR' : _LOAD_SPECIFIED_MODEL_REQUEST,
   '__module__' : 'server.grpc_config.protos.msg_transfer_pb2'
-  # @@protoc_insertion_point(class_scope:load_specified_model_Request)
+  # @@protoc_insertion_point(class_scope:Load_Specified_Model_Request)
   })
-_sym_db.RegisterMessage(load_specified_model_Request)
+_sym_db.RegisterMessage(Load_Specified_Model_Request)
 
-load_specified_model_Reply = _reflection.GeneratedProtocolMessageType('load_specified_model_Reply', (_message.Message,), {
+Load_Specified_Model_Reply = _reflection.GeneratedProtocolMessageType('Load_Specified_Model_Reply', (_message.Message,), {
   'DESCRIPTOR' : _LOAD_SPECIFIED_MODEL_REPLY,
   '__module__' : 'server.grpc_config.protos.msg_transfer_pb2'
-  # @@protoc_insertion_point(class_scope:load_specified_model_Reply)
+  # @@protoc_insertion_point(class_scope:Load_Specified_Model_Reply)
   })
-_sym_db.RegisterMessage(load_specified_model_Reply)
+_sym_db.RegisterMessage(Load_Specified_Model_Reply)
 
 
 
@@ -355,12 +362,12 @@ _MSGTRANSFER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=392,
-  serialized_end=675,
+  serialized_start=432,
+  serialized_end=742,
   methods=[
   _descriptor.MethodDescriptor(
-    name='ImageProcessing',
-    full_name='MsgTransfer.ImageProcessing',
+    name='image_processor',
+    full_name='MsgTransfer.image_processor',
     index=0,
     containing_service=None,
     input_type=_MSGREQUEST,
@@ -369,18 +376,18 @@ _MSGTRANSFER = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='Get_Cpu_Usage',
-    full_name='MsgTransfer.Get_Cpu_Usage',
+    name='get_server_utilization',
+    full_name='MsgTransfer.get_server_utilization',
     index=1,
     containing_service=None,
-    input_type=_CPU_USAGE_REQUEST,
-    output_type=_CPU_USAGE_REPLY,
+    input_type=_SERVER_UTILIZATION_REQUEST,
+    output_type=_SERVER_UTILIZATION_REPLY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='Get_loaded_models_name',
-    full_name='MsgTransfer.Get_loaded_models_name',
+    name='get_loaded_models_name',
+    full_name='MsgTransfer.get_loaded_models_name',
     index=2,
     containing_service=None,
     input_type=_LOADED_MODEL_NAME_REQUEST,

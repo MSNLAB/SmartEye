@@ -2,10 +2,10 @@ syntax = "proto3";
 
 service MsgTransfer {
 
-  rpc ImageProcessing (MsgRequest) returns (MsgReply) {}
-  rpc Get_Cpu_Usage (Cpu_Usage_Request) returns (Cpu_Usage_Reply) {}
-  rpc Get_loaded_models_name (Loaded_Model_Name_Request) returns (Loaded_Model_Name_Reply) {}
-  rpc load_specified_model (load_specified_model_Request) returns (load_specified_model_Reply) {}
+  rpc image_processor (MsgRequest) returns (MsgReply) {}
+  rpc get_server_utilization(Server_Utilization_Request) returns (Server_Utilization_Reply) {}
+  rpc get_loaded_models_name (Loaded_Model_Name_Request) returns (Loaded_Model_Name_Reply) {}
+  rpc load_specified_model (Load_Specified_Model_Request) returns (Load_Specified_Model_Reply) {}
 
 }
 
@@ -24,11 +24,12 @@ message MsgReply {
 
 }
 
-message Cpu_Usage_Request {}
+message Server_Utilization_Request {}
 
-message Cpu_Usage_Reply {
+message Server_Utilization_Reply {
 
   float cpu_usage = 1;
+  float memory_usage = 2;
 
 }
 
@@ -40,10 +41,10 @@ message Loaded_Model_Name_Reply {
 
 }
 
-message load_specified_model_Request {
+message Load_Specified_Model_Request {
 
   string specified_model = 1;
 
 }
 
-message load_specified_model_Reply {}
+message Load_Specified_Model_Reply {}

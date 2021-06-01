@@ -11,6 +11,31 @@ from torchvision.models.detection import *
 from torchvision.models import *
 
 
+def load_model_files_advance():
+    """
+    load model files in advance into memory
+    :return:
+    """
+    # weight_folder = read_config("models-path", "path")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
+    preload_models = read_config("preload-models")
+    global loaded_model_dict
+    loaded_model_dict = {}
+
+    for model in preload_models:
+        try:
+            for file in os.listdir(weight_folder):
+                if model in file:
+                    file_name = file
+                    break
+            assert file_name is not None
+        except AssertionError:
+            print("there is no matched file!")
+        weight_files_path = os.path.join(weight_folder, file_name)
+        file_load = torch.load(weight_files_path)
+        global_variable.loaded_model_dict[model] = file_load
+
+
 def load_a_model(selected_model):
     """
     load the weight file of model
@@ -51,5 +76,6 @@ def unload_model(model_name):
 def get_server_cpu_usage():
 
     cpu_usage = psutil.cpu_percent()
-    cpu_usage_reply = msg_transfer_pb2.Cpu_Usage_Reply(cpu_usage=cpu_usage)
+    memory_usage = psutil.virtual_memory().percent
+    cpu_usage_reply = msg_transfer_pb2.Cpu_Usage_Reply(cpu_usage=cpu_usage, memory_usage=memory_usage)
     return cpu_usage_reply
