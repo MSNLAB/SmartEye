@@ -1,5 +1,6 @@
 import grpc
 import sys
+from dispatch_policy import random_policy
 
 from transmission.get_grpc_info import get_server_utilization, load_specified_model, get_loaded_models
 
@@ -48,21 +49,8 @@ def rpc_server_selection():
     decide which server to send frame to
     :return: server number
     """
-    grpc_servers = read_config("grpc-url")
-    rand = random.randint(0, len(grpc_servers)-1)
-
-    # second way to decide server
-    # cpu_usage_list = []
-    # for grpc_server in grpc_servers:
-    #     load_specified_model(grpc_server, "densenet121")
-    #     # cpu_usage = get_cpu_usage(grpc_server)
-    #     models = get_loaded_models(grpc_server)
-    #     print(models)
-    #     cpu_usage_list.append(cpu_usage)
-    # print(cpu_usage_list)
-    # selected_server = cpu_usage_list.index(min(cpu_usage_list))
-    # return grpc_servers[selected_server]
-    return grpc_servers[rand]
+    grpc_server = random_policy()
+    return grpc_server
 
 
 def get_result(server_url, **info_dict):
