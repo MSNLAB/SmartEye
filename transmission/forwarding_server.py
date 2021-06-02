@@ -13,20 +13,6 @@ import random
 app = Flask(__name__)
 
 
-# @app.route('/initial', methods=['GET', 'POST'])
-# def initial():
-#     """
-#     do nothing just for testing
-#     """
-#     # print(request.form)
-#     arrive_time = time.time()
-#     result_dict = {
-#         "result": "ok",
-#         "arrive_time": arrive_time
-#     }
-#     return jsonify(result_dict)
-
-
 @app.route('/image_handler', methods=['GET', 'POST'])
 def image_handler():
     """
@@ -97,5 +83,4 @@ def get_result(server_url, **info_dict):
 
 
 if __name__ == '__main__':
-
-    app.run(host='0.0.0.0', port=5000, debug=True,threaded=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
