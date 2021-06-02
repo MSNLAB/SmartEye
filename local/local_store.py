@@ -26,6 +26,7 @@ class LocalStore:
     def __init__(self, store_type=None):
         time = datetime.datetime.now()
         store_path = os.path.join(os.path.dirname(__file__), "../info_store/handled_result")
+        self.n = 0
         self.result_store_location = os.path.join(
             store_path, time.strftime('%a%b%d%H%M')
         )
@@ -44,15 +45,17 @@ class LocalStore:
         if not os.path.exists(self.result_store_location):
             os.mkdir(self.result_store_location)
         try:
-            cv2.imwrite(os.path.join(self.result_store_location, "out%5d.png"), frame)
+            image_path = os.path.join(self.result_store_location, "out"+self.n+".png")
+            cv2.imwrite(image_path, frame)
+            self.n += 1
         except Exception as err:
             print("save image fail:", err)
 
     def store_video(self, frame):
         """
-        store frame as image
-        :param frame: image which will be stored, type numpy.narray
-        :return:
+        write a image frame into a video file.
+        :param frame: image which will be written, type numpy.ndarray
+        :return: None
         """
         try:
             self.out.write(frame)

@@ -4,7 +4,7 @@ import common
 import argparse
 from local.decision_engine import DecisionEngine
 from local.local_store import LocalStore
-from transmission.offloading import send_frame
+from frontend_server.offloading import send_frame
 from local.preprocessor import PreProcessor
 from local.system_info import SysInfo
 from local.video_reader import VideoReader

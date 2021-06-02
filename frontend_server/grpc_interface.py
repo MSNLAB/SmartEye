@@ -1,5 +1,22 @@
 import grpc
-from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
+from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
+
+
+def get_grpc_reply(server_url, **info_dict):
+    """
+    send frame to handled server whose server number equals to server_number, get return the result struct
+    :param server_url: handled servers' url
+    :return: msg_reply
+    """
+
+    options = [('grpc.max_receive_message_length', 256 * 1024 * 1024)]
+    channel = grpc.insecure_channel(server_url, options=options)
+    stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
+    msg_request = msg_transfer_pb2.MsgRequest(
+        model=info_dict["selected_model"], frame=info_dict["frame"], frame_shape=info_dict["frame_shape"]
+    )
+    msg_reply = stub.image_processor(msg_request)
+    return msg_reply
 
 
 def get_server_utilization(grpc_server):

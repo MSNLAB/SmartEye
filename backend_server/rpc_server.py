@@ -2,11 +2,11 @@ from concurrent import futures
 import grpc
 import sys
 
-from model_manager.model_controller import load_a_model, get_server_cpu_usage, load_model_files_advance
+from backend_server.model_controller import load_a_model, get_server_cpu_usage, load_model_files_advance
 import global_variable
 sys.path.append("../")
 from model_manager import object_detection, image_classification
-from server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
+from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
 

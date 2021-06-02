@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from server.grpc_config import msg_transfer_pb2 as server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2
+from backend_server.grpc_config import msg_transfer_pb2 as server_dot_grpc__config_dot_protos_dot_msg__transfer__pb2
 
 
 class MsgTransferStub(object):

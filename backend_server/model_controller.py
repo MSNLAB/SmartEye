@@ -5,7 +5,7 @@ import sys
 import psutil
 import torch
 import global_variable
-from server.grpc_config import msg_transfer_pb2
+from backend_server.grpc_config import msg_transfer_pb2
 from tools.read_config import read_config
 from torchvision.models.detection import *
 from torchvision.models import *
