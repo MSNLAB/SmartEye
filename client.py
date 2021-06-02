@@ -1,12 +1,10 @@
 import sys
 import os
-
+import common
+import argparse
 from local.decision_engine import DecisionEngine
 from local.local_store import LocalStore
 from transmission.offloading import send_frame
-import common
-import argparse
-
 from local.preprocessor import PreProcessor
 from local.system_info import SysInfo
 from local.video_reader import VideoReader
@@ -16,20 +14,20 @@ from tools.transfer_files_tool import transfer_array_and_str
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--file', help='input file')
+    parser.add_argument('-i', '--file', help='input video file')
     parser.add_argument('-s', '--serv', help="input service demand, '3' for IMAGE_CLASSIFICATION," 
                                              "'4' for OBJECT_DETECTION")
     # parser.add_argument('-ST', '--store', help="input store type demand, "
     #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
     args = parser.parse_args()
 
+    input_file = None
     file_type = common.IMAGE_TYPE
 
-    input_file = None
     if args.file is not None:
         input_file = args.file
     else:
-        print("Error: no matched file type")
+        print("Error: no input video file")
         sys.exit()
     if not os.path.isfile(input_file):
         print("Error: file not exists")
