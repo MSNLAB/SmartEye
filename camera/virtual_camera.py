@@ -10,13 +10,13 @@
 @desc:
 '''
 import pyvirtualcam
-import numpy as np
+# import numpy as np
 import cv2
-from PIL import Image
+# from PIL import Image
 import subprocess
-import os
-import json
-import time
+# import os
+# import json
+# import time
 
 
 class VirtualCamera:

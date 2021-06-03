@@ -3,12 +3,13 @@ import grpc
 import sys
 
 from backend_server.model_controller import load_a_model, get_server_cpu_usage, load_model_files_advance
-import global_variable
+import globals
 sys.path.append("../")
 from model_manager import object_detection, image_classification
 from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
+
 
 object_detection_models = read_config("object-detection")
 image_classification_models = read_config("image-classification")
@@ -36,7 +37,7 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
     def get_loaded_models_name(self, request, context):
 
         loaded_model_name_reply = msg_transfer_pb2.Loaded_Model_Name_Reply(
-            loaded_model_name=str(global_variable.loaded_model_dict.keys())
+            loaded_model_name=str(globals.loaded_model.keys())
         )
         return loaded_model_name_reply
 
@@ -60,7 +61,7 @@ def image_handler(img, model, selected_model):
         # print(len(img_str))
         return msg_reply
     else:
-        result = image_classification.image_classification(img, selected_model)
+        result = image_classification.image_classification(img, model)
         msg_reply = msg_transfer_pb2.MsgReply(
             result=result, frame_shape=""
         )
@@ -69,7 +70,7 @@ def image_handler(img, model, selected_model):
 
 def serve():
 
-    global_variable.init()
+    globals.init()
     load_model_files_advance()
     # MAX_MESSAGE_LENGTH =
     server = grpc.server(

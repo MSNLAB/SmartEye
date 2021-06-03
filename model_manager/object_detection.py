@@ -1,10 +1,10 @@
-import torchvision
+# import torchvision
 from PIL import Image
 from torchvision import transforms as T
 import cv2
-import scipy.misc
-import matplotlib.pyplot as plt
-import os
+# import scipy.misc
+# import matplotlib.pyplot as plt
+# import os
 from torchvision.models.detection import *
 
 COCO_INSTANCE_CATEGORY_NAMES = [

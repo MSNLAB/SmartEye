@@ -1,9 +1,9 @@
 import os
-from tools import read_config
+# from tools import read_config
 import cv2
-import torchvision
+# import torchvision
 from torchvision.models import *
-from torchvision import models
+# from torchvision import models
 import torch
 from torchvision import transforms
 from PIL import Image
@@ -54,7 +54,7 @@ def image_classification(img, model):
     # image preprocess
     batch_t = preprocess(img)
     # load model
-    model = load_model(model)
+    # model = load_model(model)
     # prediction
     out = model(batch_t)
     classes_file = os.path.join(os.path.dirname(__file__), "imagenet_classes.txt")

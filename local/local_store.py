@@ -12,9 +12,8 @@
 import os
 import cv2
 import datetime
-
 import common
-from tools.read_config import read_config
+# from tools.read_config import read_config
 
 
 class LocalStore:

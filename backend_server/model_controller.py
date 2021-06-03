@@ -1,10 +1,7 @@
-import json
 import os
-import sys
-
 import psutil
 import torch
-import global_variable
+import globals
 from backend_server.grpc_config import msg_transfer_pb2
 from tools.read_config import read_config
 from torchvision.models.detection import *
@@ -16,11 +13,8 @@ def load_model_files_advance():
     load model files in advance into memory
     :return:
     """
-    # weight_folder = read_config("models-path", "path")
     weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     preload_models = read_config("preload-models")
-    global loaded_model_dict
-    loaded_model_dict = {}
 
     for model in preload_models:
         try:
@@ -33,7 +27,7 @@ def load_model_files_advance():
             print("there is no matched file!")
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
-        global_variable.loaded_model_dict[model] = file_load
+        globals.loaded_model[model] = file_load
 
 
 def load_a_model(selected_model):
@@ -42,11 +36,11 @@ def load_a_model(selected_model):
     :param selected_model: model is loaded
     :return: model
     """
-    loaded_models = global_variable.loaded_model_dict.keys()
+    loaded_models = globals.loaded_model.keys()
 
     if selected_model in loaded_models:
         model = eval(selected_model)()
-        model.load_state_dict(global_variable.loaded_model_dict[selected_model], False)
+        model.load_state_dict(globals.loaded_model[selected_model], False)
     else:
         # weight_folder = read_config("models-path", "path")
         weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
@@ -61,7 +55,7 @@ def load_a_model(selected_model):
         # print(selected_model)
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
-        global_variable.loaded_model_dict[selected_model] = file_load
+        globals.loaded_model[selected_model] = file_load
         model = eval(selected_model)()
         model.load_state_dict(file_load, False)
     model.eval()
@@ -70,7 +64,7 @@ def load_a_model(selected_model):
 
 def unload_model(model_name):
 
-    del global_variable.loaded_model_dict[model_name]
+    del globals.loaded_model[model_name]
 
 
 def get_server_cpu_usage():

@@ -3,8 +3,8 @@ from PIL import Image
 import os
 import subprocess
 import numpy as np
-from matplotlib import image as matimg
-from tools.read_config import read_config
+# from matplotlib import image as matimg
+# from tools.read_config import read_config
 
 
 class PreProcessor:

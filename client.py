@@ -2,7 +2,11 @@ import sys
 import os
 import common
 import argparse
+import time
+from local import globals
 from local.decision_engine import DecisionEngine
+# from local.local_info import processor_decision
+from local.local_processor import LocalProcessor
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
 from local.preprocessor import PreProcessor
@@ -37,12 +41,14 @@ if __name__ == '__main__':
     if args.serv is not None:
         serv_type = int(args.serv)
     # store_type = ""
-    # initial_url = read_config("transfer-url", "initial_url")
+
     picture_url = read_config("transfer-url", "picture_url")
     video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store
     # if store_type is not None:
     #     store_type = int(args.store)
+    globals.init()
+    local_processor = LocalProcessor(input_file, serv_type)
     reader = VideoReader(input_file)
     decision_engine = DecisionEngine(file_type, serv_type)
     preprocessor = PreProcessor()
@@ -57,24 +63,44 @@ if __name__ == '__main__':
             sys_info.store()
             print("service comes over!")
             exit()
+        # if choosing the local processor, it is not necessary to care about the processing_delay
+        # and bandwidth, just pay attention to the cpu usage and memory usage, so there is no need to
+        # use decision engine and preprocessor, just set a fixed model
+        # decide_processor = processor_decision()
+        decide_processor = ""
+        if decide_processor == "local":
+            t1 = time.time()
+            result = local_processor.process(frame)
+            t2 = time.time()
+            processing_delay = t2 - t1
+            if serv_type == common.IMAGE_CLASSIFICATION:
+                print(result)
+                sys_info.append(t1, processing_delay)
+            elif serv_type == common.OBJECT_DETECTION:
+                # frame_shape = frame_handled.shape
+                local_store.store_image(frame_handled)
+                sys_info.append(start_time, processing_delay, bandwidth)
+            else:
+                print("Error: no specified service type")
 
-        msg_dict, selected_model = decision_engine.get_decision(sys_info)
-        frame = preprocessor.preprocess_image(frame, **msg_dict)
-        file_size = sys.getsizeof(frame)
-        # send the video frame to the server
-        result_dict, start_time, processing_delay, arrive_transfer_server_time = \
-            send_frame(picture_url, frame, selected_model)
-
-        if serv_type == common.IMAGE_CLASSIFICATION:
-            result = result_dict["prediction"]
-            bandwidth = file_size / arrive_transfer_server_time
-            sys_info.append(start_time, processing_delay, bandwidth)
-            print(result)
-        elif serv_type == common.OBJECT_DETECTION:
-            frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
-            frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
-            local_store.store_image(frame_handled)
-            bandwidth = file_size / arrive_transfer_server_time
-            sys_info.append(start_time, processing_delay, bandwidth)
         else:
-            print("Error: no specified service type")
+            msg_dict, selected_model = decision_engine.get_decision(sys_info)
+            frame = preprocessor.preprocess_image(frame, **msg_dict)
+            file_size = sys.getsizeof(frame)
+            # send the video frame to the server
+            result_dict, start_time, processing_delay, arrive_transfer_server_time = \
+                send_frame(picture_url, frame, selected_model)
+
+            if serv_type == common.IMAGE_CLASSIFICATION:
+                result = result_dict["prediction"]
+                bandwidth = file_size / arrive_transfer_server_time
+                sys_info.append(start_time, processing_delay, bandwidth)
+                print(result)
+            elif serv_type == common.OBJECT_DETECTION:
+                frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
+                frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
+                local_store.store_image(frame_handled)
+                bandwidth = file_size / arrive_transfer_server_time
+                sys_info.append(start_time, processing_delay, bandwidth)
+            else:
+                print("Error: no specified service type")

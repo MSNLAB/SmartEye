@@ -9,12 +9,8 @@
 @time: 2021/4/16 下午2:37
 @desc:
 """
-import base64
-import json
-
 from tools import make_request
-from local import preprocessor
-from tools.transfer_files_tool import transfer_file_to_str, save_file, transfer_array_and_str
+from tools.transfer_files_tool import transfer_array_and_str
 
 """
 transmission local interface: transmit data to server
@@ -32,7 +28,6 @@ def send_frame(url, frame, selected_model):
         "frame": img_str
     }
     result_dict, start_time, processing_delay, arrive_transfer_server_time = make_request.make_request(url, **msg_dict)
-    # result = response.read().decode('utf-8')
 
     return result_dict, start_time,  processing_delay, arrive_transfer_server_time
 

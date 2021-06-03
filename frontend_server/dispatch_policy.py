@@ -1,8 +1,6 @@
 import random
-
 from frontend_server.grpc_interface import get_server_utilization
-from tools.read_config import read_config
-import global_variable
+import globals
 
 
 def random_policy():
@@ -10,21 +8,19 @@ def random_policy():
     choose a random server from all of the servers and return.
     :return: server url
     """
-    rand = random.randint(0, len(global_variable.grpc_servers)-1)
-    key = global_variable.grpc_servers[rand]
-    global_variable.tasks_number_dict[key] += 1
-    print(global_variable.tasks_number_dict)
+    rand = random.randint(0, len(globals.grpc_servers)-1)
+    key = globals.grpc_servers[rand]
     return key
 
 
 def shortest_queue():
     """
-    choose
+    choose a grpc server whose tasks queue is the shortest.
+    :return: server url
     """
-    tasks_number_list = global_variable.tasks_number_dict.values()
+    tasks_number_list = globals.tasks_number.values()
     selected_server = tasks_number_list.index(min(tasks_number_list))
-    key = global_variable.grpc_servers[selected_server]
-    global_variable.tasks_number_dict[key] += 1
+    key = globals.grpc_servers[selected_server]
     return key
 
 
@@ -33,14 +29,18 @@ def lowest_cpu_utilization():
     get the server url whose cpu utilization is the lowest one.
     :return: server url
     """
-    cpu_usage_list = []
-    memory_usage_list = []
-    for grpc_server in global_variable.grpc_servers:
-        cpu_usage, memory_usage = get_server_utilization(grpc_server)
-        cpu_usage_list.append(cpu_usage)
-        memory_usage_list.append(memory_usage)
-    selected_server = cpu_usage_list.index(min(cpu_usage_list))
-    key = global_variable.grpc_servers[selected_server]
-    global_variable.tasks_number_dict[key] += 1
+    selected_server = globals.cpu_usage.index(min(globals.cpu_usage))
+    key = globals.grpc_servers[selected_server]
     return key
+
+
+def update_cpu_and_memory_usage():
+    """
+    update the cpu usage list and memory usage list every ten seconds.
+    :return: None
+    """
+    for grpc_server in globals.grpc_servers:
+        cpu_usage, memory_usage = get_server_utilization(grpc_server)
+        cpu_usage.append(cpu_usage)
+        memory_usage.append(memory_usage)
 
