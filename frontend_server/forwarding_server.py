@@ -31,16 +31,13 @@ def image_handler():
     if msg_reply.frame_shape == "":
         return_dict = {
             "prediction": msg_reply.result,
-            "process_time": t2 - t1
-        }
+            "process_time": t2 - t1}
         return jsonify(return_dict)
-
     else:
         return_dict = {
             "frame_shape": msg_reply.frame_shape,
             "result": msg_reply.result,
-            "process_time": t2 - t1
-        }
+            "process_time": t2 - t1}
         return jsonify(return_dict)
 
 
