@@ -44,7 +44,7 @@ class LocalStore:
         if not os.path.exists(self.result_store_location):
             os.mkdir(self.result_store_location)
         try:
-            image_path = os.path.join(self.result_store_location, "out"+self.n+".png")
+            image_path = os.path.join(self.result_store_location, "out"+str(self.n)+".png")
             cv2.imwrite(image_path, frame)
             self.n += 1
         except Exception as err:

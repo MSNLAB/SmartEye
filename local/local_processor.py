@@ -32,24 +32,23 @@ class LocalProcessor:
 
         self.input_file = input_file
         self.serv_type = serv_type
-        self.models = {3: "alexnet",4: "fasterrcnn_mobilenet_v3_large_320_fpn"}
-        if serv_type == common.OBJECT_DETECTION:
-            self.model = load_model(self.models[4])
-        else:
-            self.model = load_model(self.models[3])
 
-    def process(self, frame):
-
-        if self.serv_type == common.OBJECT_DETECTION:
-            frame_handled = object_detection.object_detection_api(frame, self.model, threshold=0.8)
+    def process(self, frame, selected_model):
+        model = load_model(selected_model)
+        if selected_model in object_detection_models:
+            frame_handled = object_detection.object_detection_api(frame, model, threshold=0.8)
             return frame_handled
-        else:
-            result = image_classification.image_classification(frame, self.model)
+        elif selected_model in image_classification_models:
+            result = image_classification.image_classification(frame, model)
             return result
 
 
 def load_model(selected_model):
-
+    """
+    load the specified model
+    :param selected_model
+    :return: model
+    """
     weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     try:
         for file in os.listdir(weight_folder):

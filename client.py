@@ -5,7 +5,6 @@ import argparse
 import time
 from local import globals
 from local.decision_engine import DecisionEngine
-# from local.local_info import processor_decision
 from local.local_processor import LocalProcessor
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
@@ -63,14 +62,14 @@ if __name__ == '__main__':
             sys_info.store()
             print("service comes over!")
             exit()
-        # if choosing the local processor, it is not necessary to care about the processing_delay
-        # and bandwidth, just pay attention to the cpu usage and memory usage, so there is no need to
-        # use decision engine and preprocessor, just set a fixed model
-        # decide_processor = processor_decision()
-        decide_processor = ""
-        if decide_processor == "local":
+
+        decide_processor = decision_engine.get_processor_decision()
+
+        if decide_processor == common.LOCAL:
+            selected_model = decision_engine.get_decision()
+            print(selected_model)
             t1 = time.time()
-            result = local_processor.process(frame)
+            result = local_processor.process(frame, selected_model)
             t2 = time.time()
             processing_delay = t2 - t1
             if serv_type == common.IMAGE_CLASSIFICATION:
@@ -78,12 +77,13 @@ if __name__ == '__main__':
                 sys_info.append(t1, processing_delay)
             elif serv_type == common.OBJECT_DETECTION:
                 # frame_shape = frame_handled.shape
-                local_store.store_image(frame_handled)
-                sys_info.append(start_time, processing_delay, bandwidth)
+                local_store.store_image(result)
+                sys_info.append(t1, processing_delay)
             else:
                 print("Error: no specified service type")
 
-        else:
+        elif decide_processor == common.OFFLOAD:
+
             msg_dict, selected_model = decision_engine.get_decision(sys_info)
             frame = preprocessor.preprocess_image(frame, **msg_dict)
             file_size = sys.getsizeof(frame)

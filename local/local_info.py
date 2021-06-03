@@ -1,5 +1,4 @@
 import psutil
-import globals
 
 
 def get_local_utilization():
@@ -13,14 +12,4 @@ def get_local_utilization():
     return cpu_usage, memory_usage
 
 
-def processor_decision():
-    """
-    decide to choose local processor or remote processor
-    :return: 'local' for local processor and 'remote' for remote processor
-    """
-    cpu_usage = globals.local_cpu_usage
-    memory_usage = globals.local_memory_usage
-    if cpu_usage < 0 and memory_usage < 0:
-        return "local"
-    else:
-        return "remote"
+
