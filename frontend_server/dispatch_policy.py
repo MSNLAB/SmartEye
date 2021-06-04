@@ -1,4 +1,6 @@
+import os
 import random
+import time
 from frontend_server.grpc_interface import get_server_utilization
 import globals
 
@@ -34,13 +36,21 @@ def lowest_cpu_utilization():
     return key
 
 
-def update_cpu_and_memory_usage():
+def update_cpu_and_memory_usage(grpc_servers_proxy, cpu_usage_proxy, memory_usage_proxy):
     """
     update the cpu usage list and memory usage list every ten seconds.
     :return: None
     """
-    for grpc_server in globals.grpc_servers:
-        cpu_usage, memory_usage = get_server_utilization(grpc_server)
-        cpu_usage.append(cpu_usage)
-        memory_usage.append(memory_usage)
+    while os.getppid():
+
+        cpu_usage_proxy = []
+        memory_usage_proxy = []
+        for grpc_server in grpc_servers_proxy:
+            new_cpu_usage, new_memory_usage = get_server_utilization(grpc_server)
+            cpu_usage_proxy += [new_cpu_usage]
+            memory_usage_proxy += [new_memory_usage]
+        time.sleep(10)
+
+        print("cpu_usage:", cpu_usage_proxy)
+        print("memory_usage", memory_usage_proxy)
 

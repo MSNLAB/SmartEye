@@ -30,7 +30,7 @@ class DecisionEngine:
         """
         cpu_usage = globals.local_cpu_usage
         memory_usage = globals.local_memory_usage
-        if cpu_usage < 100 and memory_usage < 100:
+        if cpu_usage.value < 0 and memory_usage.value < 0:
             return common.LOCAL
         else:
             return common.OFFLOAD

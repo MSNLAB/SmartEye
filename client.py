@@ -3,8 +3,10 @@ import os
 import common
 import argparse
 import time
+import multiprocessing
 from local import globals
 from local.decision_engine import DecisionEngine
+from local.local_info import update_local_utilization
 from local.local_processor import LocalProcessor
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
@@ -47,6 +49,11 @@ if __name__ == '__main__':
     # if store_type is not None:
     #     store_type = int(args.store)
     globals.init()
+    p = multiprocessing.Process(
+        target=update_local_utilization,
+        args=(globals.local_cpu_usage, globals.local_memory_usage)
+    )
+    p.start()
     local_processor = LocalProcessor(input_file, serv_type)
     reader = VideoReader(input_file)
     decision_engine = DecisionEngine(file_type, serv_type)
@@ -60,6 +67,7 @@ if __name__ == '__main__':
         # preprocessing frames
         if frame is None:
             sys_info.store()
+            p.terminate()
             print("service comes over!")
             exit()
 
@@ -67,7 +75,6 @@ if __name__ == '__main__':
 
         if decide_processor == common.LOCAL:
             selected_model = decision_engine.get_decision()
-            print(selected_model)
             t1 = time.time()
             result = local_processor.process(frame, selected_model)
             t2 = time.time()

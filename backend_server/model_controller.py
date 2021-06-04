@@ -67,9 +67,9 @@ def unload_model(model_name):
     del globals.loaded_model[model_name]
 
 
-def get_server_cpu_usage():
+def get_server_utilization():
 
     cpu_usage = psutil.cpu_percent()
     memory_usage = psutil.virtual_memory().percent
-    cpu_usage_reply = msg_transfer_pb2.Cpu_Usage_Reply(cpu_usage=cpu_usage, memory_usage=memory_usage)
-    return cpu_usage_reply
+    server_utilization_reply = msg_transfer_pb2.Server_Utilization_Reply(cpu_usage=cpu_usage, memory_usage=memory_usage)
+    return server_utilization_reply

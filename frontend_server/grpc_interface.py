@@ -27,9 +27,9 @@ def get_server_utilization(grpc_server):
     """
     channel = grpc.insecure_channel(grpc_server)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
-    cpu_usage_request = msg_transfer_pb2.Cpu_Usage_Request()
-    cpu_usage_reply = stub.get_server_utilization(cpu_usage_request)
-    return cpu_usage_reply.cpu_usage, cpu_usage_reply.memory_usage
+    server_utilization_request = msg_transfer_pb2.Server_Utilization_Request()
+    server_utilization_reply = stub.get_server_utilization(server_utilization_request)
+    return server_utilization_reply.cpu_usage, server_utilization_reply.memory_usage
 
 
 def load_specified_model(grpc_server, model_name):

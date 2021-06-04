@@ -2,7 +2,7 @@ from concurrent import futures
 import grpc
 import sys
 
-from backend_server.model_controller import load_a_model, get_server_cpu_usage, load_model_files_advance
+from backend_server.model_controller import load_a_model, get_server_utilization, load_model_files_advance
 import globals
 sys.path.append("../")
 from model_manager import object_detection, image_classification
@@ -30,9 +30,9 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
 
     def get_server_utilization(self, request, context):
 
-        cpu_usage_reply = get_server_cpu_usage()
+        server_utilization_reply = get_server_utilization()
 
-        return cpu_usage_reply
+        return server_utilization_reply
 
     def get_loaded_models_name(self, request, context):
 

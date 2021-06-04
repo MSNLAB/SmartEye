@@ -1,13 +1,12 @@
 import sys
-from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilization
-from frontend_server.grpc_interface import get_grpc_reply   #get_server_utilization, load_specified_model, get_loaded_models,
+import dispatch_policy
+from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilization, update_cpu_and_memory_usage
+from frontend_server.grpc_interface import get_grpc_reply
 import globals
 sys.path.append("../")
 from flask import Flask, request, jsonify
 import time
-# from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
-# from tools.read_config import read_config
-# import random
+from multiprocessing import Process
 
 
 app = Flask(__name__)
@@ -56,5 +55,9 @@ def rpc_server_selection(policy):
 if __name__ == '__main__':
 
     globals.init()
-    # print(globals.tasks_number_dict)
+    p = Process(
+        target=update_cpu_and_memory_usage,
+        args=(globals.grpc_servers, globals.cpu_usage, globals.memory_usage)
+    )
+    p.start()
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
