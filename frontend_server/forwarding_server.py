@@ -1,15 +1,20 @@
 import sys
-import dispatch_policy
-from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilization, update_cpu_and_memory_usage
+from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilization
 from frontend_server.grpc_interface import get_grpc_reply
 import globals
+from frontend_server.monitor import server_monitor
+from tools.read_config import read_config
+
 sys.path.append("../")
 from flask import Flask, request, jsonify
 import time
-from multiprocessing import Process
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 app = Flask(__name__)
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(server_monitor, 'interval', seconds=int(read_config("monitor", "monitor_interval")))
+sched.start()
 
 
 @app.route('/image_handler', methods=['GET', 'POST'])
@@ -55,9 +60,4 @@ def rpc_server_selection(policy):
 if __name__ == '__main__':
 
     globals.init()
-    p = Process(
-        target=update_cpu_and_memory_usage,
-        args=(globals.grpc_servers, globals.cpu_usage, globals.memory_usage)
-    )
-    p.start()
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

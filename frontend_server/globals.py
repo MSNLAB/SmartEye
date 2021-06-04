@@ -8,15 +8,10 @@ def init():
     global grpc_servers
     global cpu_usage
     global memory_usage
-    # grpc_servers =
-    grpc_servers = multiprocessing.Manager().list(read_config("grpc-url"))
-    cpu_usage = multiprocessing.Manager().list()
 
-    memory_usage = multiprocessing.Manager().list()
-
-
-    # cpu_usage = []
-    # memory_usage = []
+    grpc_servers = read_config("grpc-url")
+    cpu_usage = []
+    memory_usage = []
 
     global distribution_function
     distribution_function = {
