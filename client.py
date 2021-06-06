@@ -21,38 +21,38 @@ import multiprocessing
 from multiprocessing import Pool
 
 
-def seal(queue, local_processor, decision_engine, preprocessor, sys_info, local_store, serv_type):
+def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model):
 
     picture_url = read_config("transfer-url", "picture_url")
     frame = queue.get()
-    decide_processor = decision_engine.get_processor_decision(globals.local_cpu_usage.value, globals.local_memory_usage.value)
-    if decide_processor == common.LOCAL:
-        selected_model = decision_engine.get_decision()
+
+    if flag == common.LOCAL:
+        # selected_model = decision_engine.get_decision()
 
         t1 = time.time()
         result = local_processor.process(frame, selected_model)
         t2 = time.time()
         processing_delay = t2 - t1
         if serv_type == common.IMAGE_CLASSIFICATION:
-            sys_info.append(t1, processing_delay)
+            sys_info.processing_delay += [processing_delay]
+            # sys_info.append(t1, processing_delay)
             print(result)
         elif serv_type == common.OBJECT_DETECTION:
             # frame_shape = frame_handled.shape
             local_store.store_image(result)
-            sys_info.append(t1, processing_delay)
+            # sys_info.append(t1, processing_delay)
         else:
             print("Error: no specified service type")
 
-    elif decide_processor == common.OFFLOAD:
+    elif flag == common.OFFLOAD:
 
-        msg_dict, selected_model = decision_engine.get_decision(sys_info)
+        # msg_dict, selected_model = decision_engine.get_decision(sys_info)
         frame = preprocessor.preprocess_image(frame, **msg_dict)
         file_size = sys.getsizeof(frame)
         # send the video frame to the server
         result_dict, start_time, processing_delay, arrive_transfer_server_time = \
             send_frame(picture_url, frame, selected_model)
         bandwidth = file_size / arrive_transfer_server_time
-        print(result_dict.keys())
         if serv_type == common.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
             sys_info.append(start_time, processing_delay, bandwidth)
@@ -105,22 +105,20 @@ if __name__ == '__main__':
     p.start()
 
     reader = VideoReader(input_file)
+    decision_engine = DecisionEngine(file_type, serv_type)
+
     queue = multiprocessing.Manager().Queue(10)
     pool = Pool(5, globals.init, ())
 
-    BaseManager.register('LocalProcessor', LocalProcessor)   # Proxy
-    BaseManager.register('DecisionEngine', DecisionEngine)
+    BaseManager.register('LocalProcessor', LocalProcessor)   #Proxy
     BaseManager.register('PreProcessor', PreProcessor)
     BaseManager.register('SysInfo', SysInfo, Proxy)
     BaseManager.register('LocalStore', LocalStore)
     manager = BaseManager()
     manager.start()
     local_processor = manager.LocalProcessor(input_file, serv_type)
-    # print(local_processor.input_file)
-    decision_engine = manager.DecisionEngine(file_type, serv_type)
     preprocessor = manager.PreProcessor()
     sys_info = manager.SysInfo()
-    # print(sys_info)
     local_store = manager.LocalStore()
 
     while True:
@@ -132,10 +130,13 @@ if __name__ == '__main__':
             p.terminate()
             print("service comes over!")
             exit()
+        flag, msg_dict, selected_model = decision_engine.get_result(globals.local_cpu_usage.value,
+                                                                    globals.local_memory_usage.value,
+                                                                    sys_info
+                                                                    )
         queue.put(frame)
-        args = [queue, local_processor, decision_engine, preprocessor, sys_info, local_store, serv_type]
+        args = [queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model]
         pool.apply(seal, args=args)
     pool.close()
     pool.join()
-
 

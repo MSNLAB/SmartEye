@@ -23,48 +23,51 @@ class DecisionEngine:
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_processor_decision(self, local_cpu_usage, local_memory_usage):
+    def get_result(self, local_cpu_usage, local_memory_usage, sys_info):
         """
         decide to choose local processor or remote processor
         :return: 'local' for local processor and 'remote' for remote processor
         """
-        if local_cpu_usage < 0 and local_memory_usage < 100:
-            return common.LOCAL
+        if local_cpu_usage < 100 and local_memory_usage < 100:
+            flag = common.LOCAL
+            # return common.LOCAL
         else:
-            return common.OFFLOAD
+            flag = common.OFFLOAD
+            # return common.OFFLOAD
+        msg_dict, selected_model = self.get_decision(flag, sys_info)
+        return flag, msg_dict, selected_model
 
-    def get_decision(self, sys_info=None):
+    def get_decision(self, flag, sys_info):   # sys_info=None
 
-        if sys_info is not None:
+        print(sys_info.processing_delay)
+        if flag == common.OFFLOAD:
             if self.requirement_type[0] == common.IMAGE_TYPE:
                 if len(sys_info.processing_delay) == 0:
                     msg_dict = self.decide_image_size(0)
                     selected_model = self.decide_model(0, self.requirement_type[1])
-                    print(1)
                 else:
-                    print(2)
                     msg_dict = self.decide_image_size(sys_info.processing_delay[-1])
                     selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
             elif self.requirement_type[0] == common.VIDEO_TYPE:
                 if len(sys_info.processing_delay) == 0:
-                    print(1)
                     msg_dict = self.decide_bitrate_and_resolution(0)
                     selected_model = self.decide_model(0, self.requirement_type[1])
                 else:
-                    print(2)
                     msg_dict = self.decide_bitrate_and_resolution(sys_info.processing_delay[-1])
                     selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
             return msg_dict, selected_model
         else:
             if self.requirement_type[0] == common.IMAGE_TYPE:
+                msg_dict = {}
                 selected_model = self.decide_local_model(self.requirement_type[1])
 
             elif self.requirement_type[0] == common.VIDEO_TYPE:
+                msg_dict = {}
                 selected_model = self.decide_local_model(self.requirement_type[1])
 
-            return selected_model
+            return msg_dict, selected_model
 
     def decide_qp(self, processing_delay):
 
@@ -106,7 +109,7 @@ class DecisionEngine:
         if serv_type == common.IMAGE_CLASSIFICATION:
             model = self.image_classification_models[0]
         else:
-            model = self.object_detection_models[4]
+            model = self.object_detection_models[1]
         return model
 
     def decide_local_model(self, serv_type):
