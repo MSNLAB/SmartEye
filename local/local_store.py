@@ -47,6 +47,7 @@ class LocalStore:
             image_path = os.path.join(self.result_store_location, "out"+str(self.n)+".png")
             cv2.imwrite(image_path, frame)
             self.n += 1
+            print(self.n)
         except Exception as err:
             print("save image fail:", err)
 

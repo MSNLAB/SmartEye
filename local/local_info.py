@@ -2,7 +2,7 @@ import os
 import time
 
 import psutil
-
+from local import globals
 
 
 def get_local_utilization():

@@ -23,14 +23,12 @@ class DecisionEngine:
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_processor_decision(self):
+    def get_processor_decision(self, local_cpu_usage, local_memory_usage):
         """
         decide to choose local processor or remote processor
         :return: 'local' for local processor and 'remote' for remote processor
         """
-        cpu_usage = globals.local_cpu_usage
-        memory_usage = globals.local_memory_usage
-        if cpu_usage.value < 0 and memory_usage.value < 0:
+        if local_cpu_usage < 0 and local_memory_usage < 100:
             return common.LOCAL
         else:
             return common.OFFLOAD
@@ -42,15 +40,19 @@ class DecisionEngine:
                 if len(sys_info.processing_delay) == 0:
                     msg_dict = self.decide_image_size(0)
                     selected_model = self.decide_model(0, self.requirement_type[1])
+                    print(1)
                 else:
+                    print(2)
                     msg_dict = self.decide_image_size(sys_info.processing_delay[-1])
                     selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
             elif self.requirement_type[0] == common.VIDEO_TYPE:
                 if len(sys_info.processing_delay) == 0:
+                    print(1)
                     msg_dict = self.decide_bitrate_and_resolution(0)
                     selected_model = self.decide_model(0, self.requirement_type[1])
                 else:
+                    print(2)
                     msg_dict = self.decide_bitrate_and_resolution(sys_info.processing_delay[-1])
                     selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
