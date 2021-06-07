@@ -28,7 +28,7 @@ class DecisionEngine:
         decide to choose local processor or remote processor
         :return: 'local' for local processor and 'remote' for remote processor
         """
-        if local_cpu_usage < 100 and local_memory_usage < 100:
+        if local_cpu_usage < 0 and local_memory_usage < 100:
             flag = common.LOCAL
             # return common.LOCAL
         else:
@@ -39,7 +39,6 @@ class DecisionEngine:
 
     def get_decision(self, flag, sys_info):   # sys_info=None
 
-        print(sys_info.processing_delay)
         if flag == common.OFFLOAD:
             if self.requirement_type[0] == common.IMAGE_TYPE:
                 if len(sys_info.processing_delay) == 0:

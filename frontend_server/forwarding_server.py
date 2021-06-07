@@ -30,6 +30,8 @@ def image_handler():
     msg_reply = get_grpc_reply(server_url, **info_dict)
     globals.tasks_number[server_url] -= 1
     t2 = time.time()
+    if msg_reply is None:
+        return None
     if msg_reply.frame_shape == "":
         return_dict = {
             "prediction": msg_reply.result,
