@@ -27,7 +27,6 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
     frame = queue.get()
 
     if flag == common.LOCAL:
-
         t1 = time.time()
         result = local_processor.process(frame, selected_model)
         t2 = time.time()

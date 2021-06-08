@@ -45,6 +45,7 @@ class DecisionEngine:
                     msg_dict = self.decide_image_size(0)
                     selected_model = self.decide_model(0, self.requirement_type[1])
                 else:
+                    print("mark")
                     msg_dict = self.decide_image_size(sys_info.processing_delay[-1])
                     selected_model = self.decide_model(sys_info.processing_delay[-1], self.requirement_type[1])
 
