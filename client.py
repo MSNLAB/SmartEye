@@ -75,23 +75,37 @@ if __name__ == '__main__':
                                              "'4' for OBJECT_DETECTION")
     # parser.add_argument('-ST', '--store', help="input store type demand, "
     #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
+    parser.add_argument('-r', '--reader', help="select video reader interface, "
+                                               "'9' for READ_VIDEO_FILE, "
+                                               "'10' for READ_REAL_FILE  "
+                                               "and '11' for READ_VIRTUAL_FILE")
     args = parser.parse_args()
 
-    input_file = None
     file_type = common.IMAGE_TYPE
 
-    if args.file is not None:
-        input_file = args.file
-    else:
-        print("Error: no input video file")
-        sys.exit()
-    if not os.path.isfile(input_file):
-        print("Error: file not exists")
-        sys.exit()
+    input_file = args.file
+    if input_file is not None:
+        if not os.path.isfile(input_file):
+            print("Error: file not exists")
+            sys.exit()
 
     serv_type = None
     if args.serv is not None:
         serv_type = int(args.serv)
+    else:
+        print("Error: server type can not be None!")
+        sys.exit()
+
+    read_type = None
+    if args.reader is not None:
+        read_type = int(args.reader)
+    else:
+        print("Error: read type can not be None!")
+        sys.exit()
+
+    if input_file is None and read_type == common.READ_VIDEO_FILE:
+        print("Error: input file is None and read type is read video file!")
+
     # store_type = ""
     # video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store
@@ -105,7 +119,7 @@ if __name__ == '__main__':
     )
     p.start()
 
-    reader = VideoReader(input_file)
+    reader = VideoReader(input_file, read_type)
     decision_engine = DecisionEngine(file_type, serv_type)
 
     queue = multiprocessing.Manager().Queue(int(read_config("some-number", "queue_length")))

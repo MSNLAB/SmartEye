@@ -13,33 +13,30 @@ import os
 import sys
 import cv2
 
+import common
+from tools.read_config import read_config
+
 
 class VideoReader:
     """
     Read image frames from camera or video files: input file path for reading video file;
     input camera device number for reading camera
     """
-    def __init__(self, input_source):
+    def __init__(self, input_source, read_type):
         self.input_source = input_source
-        if self.input_source is None:
-            self.input_source = 1
-        self.cap = cv2.VideoCapture(input_source)
+        if read_type == common.READ_VIDEO_FILE or read_type == common.READ_VIRTUAL_CAMERA:
+            if self.input_source is None:
+                self.input_source = 1
+            self.cap = cv2.VideoCapture(input_source)
+        elif read_type == common.READ_REAL_CAMERA:
+            account = read_config("camera-info", "account")
+            password = read_config("camera-info", "password")
+            ip_address = read_config("camera-info", "ip_address")
+            channel = int(read_config("camera-info", "channel"))
+            video_stream_path = "rtsp://%s:%s@%s/cam/realmonitor?channel=%d&subtype=0" % (
+                account, password, ip_address, channel)
 
-    def read_camera(self):
-        """
-        camera interface: read image frames from camera(virtual camera)
-        :param: device: device number
-        :return: video frame in type class 'numpy.ndarray'
-        """
-        assert type(self.input_source) == 'int'
-        if self.cap.isOpened():
-
-            ret, frame = self.cap.read()
-            if ret:
-                return frame
-            else:
-                self.cap.release()
-                return None
+            self.cap = cv2.VideoCapture(video_stream_path)
 
     def read_frame(self):
         """
@@ -47,12 +44,11 @@ class VideoReader:
         :param: input_file: file path which will be read
         :return: video frame in type class 'numpy.ndarray'
         """
-        assert isinstance(self.input_source, str), "input is not a str type"
-        assert os.path.isfile(self.input_source), "can't find this file"
         if self.cap.isOpened():
 
             ret, frame = self.cap.read()
             if ret:
+                print(frame)
                 return frame
             else:
                 self.cap.release()
@@ -62,7 +58,6 @@ class VideoReader:
 if __name__ == "__main__":
 
     video = 'D:\PyCharm 2020.3.1\workspace\\video2edge\85652500-1-192.mp4'
-    reader = VideoReader(video)
-    frame = reader.read_file()
+    reader = VideoReader(video, 9)
+    frame = reader.read_frame()
     # print(type(frame))
-    print(sys.getsizeof(frame))
