@@ -48,7 +48,6 @@ class VideoReader:
 
             ret, frame = self.cap.read()
             if ret:
-                print(frame)
                 return frame
             else:
                 self.cap.release()

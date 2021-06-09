@@ -28,7 +28,7 @@ class DecisionEngine:
         decide to choose local processor or remote processor
         :return: 'local' for local processor and 'remote' for remote processor
         """
-        if local_cpu_usage < 0 and local_memory_usage < 100:
+        if local_cpu_usage < 100 and local_memory_usage < 100:
             flag = common.LOCAL
             # return common.LOCAL
         else:

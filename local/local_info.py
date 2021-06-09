@@ -24,6 +24,6 @@ def update_local_utilization(local_cpu_usage, local_memory_usage):
         local_cpu_usage.value = cpu_usage
         local_memory_usage.value = memory_usage
         time.sleep(10)
-        print("local_cpu_usage:", local_cpu_usage)
-        print("local_memory_usage", local_memory_usage)
+        # print("local_cpu_usage:", local_cpu_usage)
+        # print("local_memory_usage", local_memory_usage)
 

@@ -43,7 +43,6 @@ class SysInfo:
         if processing_delay is not None:
             dict["processing_delay"] = processing_delay
             self.processing_delay += [processing_delay]
-            print(id(self.processing_delay))
         if bandwidth is not None:
             dict["bandwidth"] = bandwidth
             self.bandwidth += [bandwidth]
@@ -55,7 +54,6 @@ class SysInfo:
             self.memory_usage += [memory_usage]
 
         self.infos += [dict]
-        print(self.infos)
 
     def store(self):
 

@@ -32,8 +32,6 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
         t2 = time.time()
         processing_delay = t2 - t1
         if serv_type == common.IMAGE_CLASSIFICATION:
-            # sys_info.processing_delay += [processing_delay]
-            print(id(processing_delay))
             sys_info.append(t1, processing_delay)
             print(result)
         elif serv_type == common.OBJECT_DETECTION:
@@ -75,7 +73,7 @@ if __name__ == '__main__':
                                              "'4' for OBJECT_DETECTION")
     # parser.add_argument('-ST', '--store', help="input store type demand, "
     #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
-    parser.add_argument('-r', '--reader', help="select video reader interface, "
+    parser.add_argument('-r', '--reader', help="select video reader interface, " 
                                                "'9' for READ_VIDEO_FILE, "
                                                "'10' for READ_REAL_FILE  "
                                                "and '11' for READ_VIRTUAL_FILE")
@@ -135,10 +133,12 @@ if __name__ == '__main__':
     preprocessor = manager.PreProcessor()
     sys_info = manager.SysInfo()
     local_store = manager.LocalStore()
-
+    frame_interval = int(read_config("read-frequency", "frame_interval"))
     while True:
         # get frames
-        frame = reader.read_frame()
+        for i in range(frame_interval):
+            if i == 0:
+                frame = reader.read_frame()
         # preprocessing frames
         if frame is None:
             sys_info.store()
