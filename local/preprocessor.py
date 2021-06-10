@@ -1,10 +1,8 @@
-import cv2
 from PIL import Image
 import os
 import subprocess
 import numpy as np
-# from matplotlib import image as matimg
-# from tools.read_config import read_config
+from loguru import logger
 
 
 class PreProcessor:
@@ -23,10 +21,13 @@ class PreProcessor:
         :param frame: images which needs to be adjust
         :return: file save path
         """
-        assert frame is not None
+        try:
+            assert frame is not None
+        except AssertionError as err:
+            logger.exception("preprocess error:", err)
         image = Image.fromarray(frame)
         result_image = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
-        frame = np.asarray(image)
+        frame = np.asarray(result_image)
         return frame
 
     def preprocess_by_qp(self, frame, qp):
@@ -36,8 +37,12 @@ class PreProcessor:
         :param qp: the quality number which image changes to
         :return: image frame, ndarray
         """
-        assert frame is not None
-        assert qp is not None
+        try:
+            assert frame is not None
+            assert qp is not None
+        except AssertionError as err:
+            logger.exception("preprocess qp error:", err)
+
         image = Image.fromarray(frame)
         # temporary_store = read_config("store-folder", "temporary_store")
         temporary_store = os.path.join(os.path.dirname(__file__), "../info_store/temporary_file")

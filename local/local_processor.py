@@ -10,7 +10,7 @@
 @desc:
 '''
 import os
-
+from loguru import logger
 import torch
 from torchvision.models import *
 import common
@@ -63,7 +63,8 @@ def load_model(selected_model):
                 break
         assert file_name is not None
     except AssertionError:
-        print("there is no matched file!")
+        logger.exception("there is no matched file!")
+
     weight_files_path = os.path.join(weight_folder, file_name)
     file_load = torch.load(weight_files_path)
     model = eval(selected_model)()

@@ -6,6 +6,7 @@ from backend_server.grpc_config import msg_transfer_pb2
 from tools.read_config import read_config
 from torchvision.models.detection import *
 from torchvision.models import *
+from loguru import logger
 
 
 def load_model_files_advance():
@@ -27,7 +28,7 @@ def load_model_files_advance():
                     break
             assert file_name is not None
         except AssertionError:
-            print("there is no matched file!")
+            logger.exception("there is no matched file!")
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
         globals.loaded_model[model] = file_load
@@ -58,8 +59,8 @@ def load_a_model(selected_model):
                     file_name = file
                     break
             assert file_name is not None
-        except AssertionError:
-            print("there is no matched file!")
+        except AssertionError as err:
+            logger.exception("there is no matched file!")
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
         globals.loaded_model[selected_model] = file_load

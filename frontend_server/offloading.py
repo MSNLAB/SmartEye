@@ -11,7 +11,7 @@
 """
 from tools import make_request
 from tools.transfer_files_tool import transfer_array_and_str
-
+from loguru import logger
 
 def send_frame(url, frame, selected_model):
     """Send the image frame to the transfer server.
@@ -36,8 +36,8 @@ def send_frame(url, frame, selected_model):
     }
     try:
         result_dict, start_time, processing_delay, arrive_transfer_server_time = make_request.make_request(url, **msg_dict)
-    except:
-        print("servers return nothing ")
+    except Exception as err:
+        logger.exception("servers return nothing")
     else:
         return result_dict, start_time,  processing_delay, arrive_transfer_server_time
 

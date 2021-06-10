@@ -11,6 +11,7 @@
 '''
 import os
 import datetime
+from loguru import logger
 
 
 class SysInfo:
@@ -38,11 +39,14 @@ class SysInfo:
         :param memory_usage: memory usage.
          :return: None.
         """
-        assert start_time is not None, "start_time can't be None"
-        assert (processing_delay is not None or
-               bandwidth is not None or
-               cpu_usage is not None or
-               memory_usage is not None), "at least one parameter is not None"
+        try:
+            assert start_time is not None, "start_time can't be None"
+            assert (processing_delay is not None or
+                   bandwidth is not None or
+                   cpu_usage is not None or
+                   memory_usage is not None), "at least one parameter is not None"
+        except AssertionError as err:
+            logger.exception("System information append error: ", err)
 
         dict = {"time": start_time}
 
@@ -61,6 +65,7 @@ class SysInfo:
 
         self.infos += [dict]
 
+    @logger.catch
     def store(self):
         """Store the system information into a file.
 
@@ -68,7 +73,6 @@ class SysInfo:
         """
         store_path = os.path.join(os.path.dirname(__file__), "..\\info_store\\system_information")
         info_store_path = os.path.join(store_path, self.file)
-        info_title = "time processing_delay bandwidth cpu_usage memory_usage"
         with open(info_store_path, 'w+') as f:
             for info in self.infos:
                 f.write(str(info) + '\n')

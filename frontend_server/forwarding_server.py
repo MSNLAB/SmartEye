@@ -4,7 +4,7 @@ from frontend_server.grpc_interface import get_grpc_reply
 import globals
 from frontend_server.monitor import server_monitor
 from tools.read_config import read_config
-
+from loguru import logger
 sys.path.append("../")
 from flask import Flask, request, jsonify
 import time
@@ -32,7 +32,10 @@ def image_handler():
     server_url = rpc_server_selection("random")
     globals.tasks_number[server_url] += 1
     t1 = time.time()
-    msg_reply = get_grpc_reply(server_url, **info_dict)
+    try:
+        msg_reply = get_grpc_reply(server_url, **info_dict)
+    except Exception as err:
+        logger.exception("Get result error:", err)
     globals.tasks_number[server_url] -= 1
     t2 = time.time()
     if msg_reply is None:

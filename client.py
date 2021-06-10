@@ -19,6 +19,11 @@ from tools.read_config import read_config
 from tools.transfer_files_tool import transfer_array_and_str
 import multiprocessing
 from multiprocessing import Pool
+from loguru import logger
+
+
+logger.remove(handler_id=None)
+logger.add("client.log", level="TRACE")
 
 
 def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model):
@@ -38,7 +43,7 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
             sys_info.append(t1, processing_delay)
             local_store.store_image(result)
         else:
-            print("Error: no specified service type")
+            logger.error("Seal error: no specified service type!")
 
     elif flag == common.OFFLOAD:
 
@@ -48,8 +53,8 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
         try:
             result_dict, start_time, processing_delay, arrive_transfer_server_time = \
                 send_frame(picture_url, frame, selected_model)
-        except:
-            print("wrong")
+        except Exception as err:
+            logger.exception("return back err!")
         else:
             bandwidth = file_size / arrive_transfer_server_time
             if serv_type == common.IMAGE_CLASSIFICATION:
@@ -62,7 +67,7 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
                 local_store.store_image(frame_handled)
                 sys_info.append(start_time, processing_delay, bandwidth)
             else:
-                print("Error: no specified service type")
+                logger.error("Seal error: no specified service type!")
 
 
 if __name__ == '__main__':
@@ -84,32 +89,33 @@ if __name__ == '__main__':
     input_file = args.file
     if input_file is not None:
         if not os.path.isfile(input_file):
-            print("Error: file not exists")
+            logger.error("Error: file not exists")
             sys.exit()
 
     serv_type = None
     if args.serv is not None:
         serv_type = int(args.serv)
     else:
-        print("Error: server type can not be None!")
+        logger.error("Error: server type can not be None!")
         sys.exit()
 
     read_type = None
     if args.reader is not None:
         read_type = int(args.reader)
     else:
-        print("Error: read type can not be None!")
+        logger.error("Error: read type can not be None!")
         sys.exit()
 
     if input_file is None and read_type == common.READ_VIDEO_FILE:
-        print("Error: input file is None and read type is read video file!")
-
+        logger.error("Error: input file is None and read type is read video file!")
+        sys.exit()
     # store_type = ""
     # video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store
     # if store_type is not None:
     #     store_type = int(args.store)
     globals.init()
+
     # subprocess, update the cpu_usage and memory_usage every ten seconds
     p = multiprocessing.Process(
         target=update_local_utilization,
@@ -123,16 +129,18 @@ if __name__ == '__main__':
     queue = multiprocessing.Manager().Queue(int(read_config("some-number", "queue_length")))
     pool = Pool(int(read_config("some-number", "subprocess_number")), globals.init, ())
 
-    BaseManager.register('LocalProcessor', LocalProcessor)   #Proxy
+    BaseManager.register('LocalProcessor', LocalProcessor)
     BaseManager.register('PreProcessor', PreProcessor)
     BaseManager.register('SysInfo', SysInfo, Proxy)
     BaseManager.register('LocalStore', LocalStore)
     manager = BaseManager()
     manager.start()
+
     local_processor = manager.LocalProcessor(input_file, serv_type)
     preprocessor = manager.PreProcessor()
     sys_info = manager.SysInfo()
     local_store = manager.LocalStore()
+
     frame_interval = int(read_config("read-frequency", "frame_interval"))
     while True:
         # get frames
