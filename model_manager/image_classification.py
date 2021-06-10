@@ -10,10 +10,10 @@ from PIL import Image
 
 
 def preprocess(img):
-    """
-    preprocess image which will be preprocessed
-    :param img: iamge
-    :return: image preprocessed
+    """Preprocess image which will be preprocessed
+
+    :param img: image
+    :return: preprocessed image
     """
     transform = transforms.Compose([
         transforms.Resize(256),
@@ -32,6 +32,11 @@ def preprocess(img):
 
 
 def load_model(selected_model):
+    """Load the weight file of selected model.
+
+    :param selected_model: The name of the model to load
+    :return: model: loaded model
+    """
 
     weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     try:
@@ -50,12 +55,15 @@ def load_model(selected_model):
 
 
 def image_classification(img, model):
+    """Image prediction.
 
-    # image preprocess
+    Predict the class of image and return the result.
+
+    :param img: image frame
+    :param model: loaded model
+    :return: predict result.
+    """
     batch_t = preprocess(img)
-    # load model
-    # model = load_model(model)
-    # prediction
     out = model(batch_t)
     classes_file = os.path.join(os.path.dirname(__file__), "imagenet_classes.txt")
 

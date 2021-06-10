@@ -12,14 +12,21 @@
 from tools import make_request
 from tools.transfer_files_tool import transfer_array_and_str
 
-"""
-transmission local interface: transmit data to server
-"""
 
-
-# picture interface
 def send_frame(url, frame, selected_model):
+    """Send the image frame to the transfer server.
 
+    Send the image frame to the transfer server, and get the result of server.
+    At the same time, calculate the time of total processing and arrive transfer server delay.
+
+    :param url: transfer server's url
+    :param frame: image frame to send to server
+    :param selected_model: model name to send to server
+    :return: result_dict: result dict returned from server
+             start_time: the start time of calculating the time
+             processing_delay: total processing time
+             arrive_transfer_server_time: the delay between client and transfer server
+    """
     frame_shape = frame.shape
     img_str = transfer_array_and_str(frame, "up")
     msg_dict = {

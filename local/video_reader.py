@@ -9,18 +9,17 @@
 @time: 2021/4/12 下午10:26
 @desc:
 '''
-import os
-import sys
 import cv2
-
 import common
 from tools.read_config import read_config
 
 
 class VideoReader:
-    """
-    Read image frames from camera or video files: input file path for reading video file;
-    input camera device number for reading camera
+    """Video Reader.
+
+    Read image frames from camera or video files:
+        input file path for reading video file;
+        input camera device number for reading camera;
     """
     def __init__(self, input_source, read_type):
         self.input_source = input_source
@@ -39,9 +38,8 @@ class VideoReader:
             self.cap = cv2.VideoCapture(video_stream_path)
 
     def read_frame(self):
-        """
-        file interface: read image frames from video file
-        :param: input_file: file path which will be read
+        """Read frame of video.
+
         :return: video frame in type class 'numpy.ndarray'
         """
         if self.cap.isOpened():

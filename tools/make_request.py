@@ -7,7 +7,7 @@ import numpy
 
 
 def make_request(url, **msg_dict):
-    """
+    """Send info to server.
 
     :param url: server url
     :param msg_dict:

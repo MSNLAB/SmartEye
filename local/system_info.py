@@ -9,16 +9,15 @@
 @time: 2021/4/16 下午2:41
 @desc:
 '''
-# import time
-# import psutil
-# from tools.read_config import read_config
 import os
 import datetime
 
 
 class SysInfo:
-    """
-    storing the system information of local and server
+    """Storing the system information of local and server
+
+    This is a system information class. it Stores every information of system execution,
+    such as cpu usage, process time.
     """
     def __init__(self):
         now = datetime.datetime.now()
@@ -30,8 +29,15 @@ class SysInfo:
         self.memory_usage = []
 
     def append(self, start_time, processing_delay=None, bandwidth=None, cpu_usage=None, memory_usage=None):
-        # cpu_usage = psutil.cpu_percent()
-        # memory_usage = psutil.virtual_memory().percent
+        """Add system info into list respectively.
+
+        :param start_time: the time of collecting system information.
+        :param processing_delay: the time of processing image data.
+        :param bandwidth: current bandwidth.
+        :param cpu_usage: cpu usage.
+        :param memory_usage: memory usage.
+         :return: None.
+        """
         assert start_time is not None, "start_time can't be None"
         assert (processing_delay is not None or
                bandwidth is not None or
@@ -56,7 +62,10 @@ class SysInfo:
         self.infos += [dict]
 
     def store(self):
+        """Store the system information into a file.
 
+        :return: None
+        """
         store_path = os.path.join(os.path.dirname(__file__), "..\\info_store\\system_information")
         info_store_path = os.path.join(store_path, self.file)
         info_title = "time processing_delay bandwidth cpu_usage memory_usage"
@@ -65,13 +74,7 @@ class SysInfo:
                 f.write(str(info) + '\n')
 
 
-# import collections
-#
-# SysInfo = collections.namedtuple('SysInfo',['service_delay', 'net_speed', 'cpu_usage'])
 if __name__ == "__main__":
 
-    # info = SysInfo("name")
-    # info.append("15")
-    # info.store()
     a = []
     print(a[-1])

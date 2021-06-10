@@ -6,8 +6,8 @@ from local import globals
 
 
 def get_local_utilization():
-    """
-    get the cpu usage and memory usage of client
+    """Get the cpu usage and memory usage of client
+
     :return: cpu usage and memory usage
     """
     cpu_usage = psutil.cpu_percent()
@@ -17,7 +17,12 @@ def get_local_utilization():
 
 
 def update_local_utilization(local_cpu_usage, local_memory_usage):
+    """Update local utilization including cpu usage and memory usage
 
+    :param local_cpu_usage: local cpu usage
+    :param local_memory_usage: local memory usage
+    :return: None
+    """
     while os.getppid():
 
         cpu_usage, memory_usage = get_local_utilization()

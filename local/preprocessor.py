@@ -8,13 +8,16 @@ import numpy as np
 
 
 class PreProcessor:
-    """
-    inputing video frames or directly a video, transfer in resolution, qp etc.
+    """The preprocess execution of image data.
+
+    Inpute video frames or directly a video file,
+    this class will transfer them to different resolution, qp etc.
     """
     def preprocess_image(self, frame, **msg_dict):
-        """
-        according to the image_size stored in message responsed by the server,
-        local adjusts the image size of image which will be sent to the server
+        """Preprocess image.
+
+        According to the image_size decided by Decision Engine,
+        this function adjusts the image size of which will be sent to the server.
 
         :param msg_dict: image size, support 100×100 poxels， 500x500 pixels
         :param frame: images which needs to be adjust
@@ -27,8 +30,8 @@ class PreProcessor:
         return frame
 
     def preprocess_by_qp(self, frame, qp):
-        """
-        change the image quality
+        """Change the image quality
+
         :param frame: image frame, ndarray
         :param qp: the quality number which image changes to
         :return: image frame, ndarray
@@ -45,8 +48,8 @@ class PreProcessor:
         return frame
 
     def preprocess_video(self, input_file, **b_r_dict):
-        """
-        adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
+        """Adjust the input_file's resolution and bitrate according to the parameter b_r_tuple
+
         :param input_file: video file path
         :param b_r_dict: the max b_r_tuple value of video transfered to
         :return: file save path

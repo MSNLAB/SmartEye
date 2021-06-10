@@ -16,6 +16,9 @@ image_classification_models = read_config("image-classification")
 
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
+    """
+
+    """
 
     def image_processor(self, request, context):
 
@@ -72,13 +75,8 @@ def serve():
 
     globals.init()
     load_model_files_advance()
-    # MAX_MESSAGE_LENGTH =
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
-        # options=[
-        #     ('grpc.max_send_message_length', 256 * 1024 * 1024),
-        #     ('grpc.max_receive_message_length', 256 * 1024 * 1024),
-        # ]
     )
     msg_transfer_pb2_grpc.add_MsgTransferServicer_to_server(
       MsgTransferServer(), server)

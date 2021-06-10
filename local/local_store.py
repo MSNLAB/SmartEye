@@ -17,9 +17,10 @@ import common
 
 
 class LocalStore:
-    """
-    according to the requirements, LocalStore stores the input video frame
-    as image or video in local directory
+    """Store results locally.
+
+    According to the requirements, LocalStore stores the input video frame
+    as image or video in local directory.
     """
 
     def __init__(self, store_type=None):
@@ -36,10 +37,10 @@ class LocalStore:
             )
 
     def store_image(self, frame):
-        """
-        store frame as image
+        """Store frame as image
+
         :param frame: image which will be stored, type numpy.narray
-        :return:
+        :return: None
         """
         if not os.path.exists(self.result_store_location):
             os.mkdir(self.result_store_location)
@@ -47,13 +48,12 @@ class LocalStore:
             image_path = os.path.join(self.result_store_location, "out"+str(self.n)+".png")
             cv2.imwrite(image_path, frame)
             self.n += 1
-            print(self.n)
         except Exception as err:
             print("save image fail:", err)
 
     def store_video(self, frame):
-        """
-        write a image frame into a video file.
+        """Write a image frame into a video file.
+
         :param frame: image which will be written, type numpy.ndarray
         :return: None
         """

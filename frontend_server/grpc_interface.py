@@ -3,10 +3,14 @@ from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 
 
 def get_grpc_reply(server_url, **info_dict):
-    """
-    send frame to handled server whose server number equals to server_number, get return the result struct
-    :param server_url: handled servers' url
-    :return: msg_reply
+    """Send frame to server and get result.
+
+    Send frame to processing server whose server number equals to server_number,
+    and get the result.
+
+    :param server_url: processing servers' url
+    :param info_dict: info sent from client, including selected_model, frame_shape and frame
+    :return: msg_reply: a data structure of grpc
     """
 
     options = [('grpc.max_receive_message_length', 256 * 1024 * 1024)]
@@ -24,10 +28,10 @@ def get_grpc_reply(server_url, **info_dict):
 
 
 def get_server_utilization(grpc_server):
-    """
-    get the cpu usage of grpc server
+    """Get the cpu usage of grpc server
+
     :param grpc_server: server's url, including port
-    :return: cpu usage
+    :return: the server's cpu usage
     """
     channel = grpc.insecure_channel(grpc_server)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
@@ -37,10 +41,11 @@ def get_server_utilization(grpc_server):
 
 
 def load_specified_model(grpc_server, model_name):
-    """
-    request grpc server to load the specified model
+    """Request a specified grpc server to load a specified model
+
     :param grpc_server: server url
     :param model_name: model name
+    :return: None
     """
     channel = grpc.insecure_channel(grpc_server)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)
@@ -50,8 +55,10 @@ def load_specified_model(grpc_server, model_name):
 
 
 def get_loaded_models(grpc_server):
-    """
-    get the loaded models' name from the server
+    """Get the loaded models' name from the server
+
+    :param grpc_server: server url
+    :return: loaded model list
     """
     channel = grpc.insecure_channel(grpc_server)
     stub = msg_transfer_pb2_grpc.MsgTransferStub(channel)

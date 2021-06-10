@@ -19,9 +19,14 @@ sched.start()
 
 @app.route('/image_handler', methods=['GET', 'POST'])
 def image_handler():
-    """
-    get info from local and then transfer to processing servers
-    :return:
+    """Images transfer interface.
+
+
+    Get info sent from local and transfer it to processing servers,
+    then collect the processing result returned from grpc server
+    and return the result to the client.
+
+    :return: return_dict
     """
     info_dict = request.form
     server_url = rpc_server_selection("random")
@@ -46,9 +51,10 @@ def image_handler():
 
 
 def rpc_server_selection(policy):
-    """
-    decide which server to send frame to
-    :return: server number
+    """Select a grpc server to which info will send.
+
+    :param policy decide the policy of selecting a grpc server
+    :return: server url
     """
     if policy == 'random':
         grpc_server = random_policy()

@@ -5,7 +5,8 @@ from local import globals
 
 
 class DecisionEngine:
-    """
+    """Decision engine
+
     decide the basic information of image and video:
         the size of single image,
         the bitrate and resolution of video
@@ -24,20 +25,31 @@ class DecisionEngine:
         self.image_classification_models = read_config("image-classification")
 
     def get_result(self, local_cpu_usage, local_memory_usage, sys_info):
-        """
-        decide to choose local processor or remote processor
-        :return: 'local' for local processor and 'remote' for remote processor
+        """Decide to choose local processor or remote processor
+
+        :param: local_cpu_usage: local cpu's usage
+        :param: local_memory_usage: local memory's usage
+        :param: sys_info: system information including cpu usage list and memory usage list
+        :return: flag: the flag of remote or local processing
+                 msg_dict: message dict
+                 selected_model: selected model name
         """
         if local_cpu_usage < 100 and local_memory_usage < 100:
             flag = common.LOCAL
-            # return common.LOCAL
         else:
             flag = common.OFFLOAD
-            # return common.OFFLOAD
+
         msg_dict, selected_model = self.get_decision(flag, sys_info)
         return flag, msg_dict, selected_model
 
-    def get_decision(self, flag, sys_info):   # sys_info=None
+    def get_decision(self, flag, sys_info):
+        """Decide the model and image resolution
+
+        :param flag: the flag of remote or local processing
+        :param: sys_info: system information including cpu usage list and memory usage list
+        :return: msg_dict: message dict
+                 selected_model: selected model name
+        """
 
         if flag == common.OFFLOAD:
             if self.requirement_type[0] == common.IMAGE_TYPE:
@@ -70,18 +82,22 @@ class DecisionEngine:
             return msg_dict, selected_model
 
     def decide_qp(self, processing_delay):
+        """Decide the image qp
 
+        :param processing_delay: processing delay
+        :return: qp number
+        """
         qp_list = [i for i in range(0, 52)]
         # select the first for test
         qp = qp_list[0]
         return qp
 
     def decide_image_size(self, processing_delay):
-        """
-        decide the image size according to the content of initial_dict
+        """Decide the image size according to the content of initial_dict
+
+        :param processing_delay: processing delay
         :return: image size dict
         """
-
         image_size_dict = {}
 
         image_size = (500, 500)
@@ -92,8 +108,9 @@ class DecisionEngine:
         return return_dict
 
     def decide_bitrate_and_resolution(self, processing_delay):
-        """
-        decide the image size according to the content of initial_dict
+        """Decide the image size according to the content of initial_dict
+
+        :param processing_delay: processing delay
         :return: bitrate and resolution dict
         """
         return_dict = {'bitrate': '1000k',
@@ -102,8 +119,10 @@ class DecisionEngine:
         return return_dict
 
     def decide_model(self, processing_delay, serv_type):
-        """
-        decide the computation model according to the content of initial_dict
+        """Decide the computation model according to the content of initial_dict
+
+        :param processing_delay: processing delay
+        :param serv_type: server type
         :return: selected model
         """
         if serv_type == common.IMAGE_CLASSIFICATION:
@@ -113,7 +132,11 @@ class DecisionEngine:
         return model
 
     def decide_local_model(self, serv_type):
+        """Decide local model
 
+        :param serv_type: server type
+        :return: selected model
+        """
         if serv_type == common.IMAGE_CLASSIFICATION:
             model = self.image_classification_models[0]
         else:

@@ -5,8 +5,8 @@ from frontend_server.grpc_interface import get_server_utilization
 
 
 def server_monitor():
-    """
-    update the cpu usage list and memory usage list every ten seconds.
+    """Update the cpu usage list and memory usage list every ten seconds.
+
     :return: None
     """
     globals.cpu_usage = []
@@ -16,6 +16,6 @@ def server_monitor():
         globals.cpu_usage.append(new_cpu_usage)
         globals.memory_usage.append(new_memory_usage)
 
-    print("cpu_usage:", globals.cpu_usage)
-    print("memory_usage", globals.memory_usage)
+    # print("cpu_usage:", globals.cpu_usage)
+    # print("memory_usage", globals.memory_usage)
 

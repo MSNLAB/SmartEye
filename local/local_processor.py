@@ -25,8 +25,9 @@ image_classification_models = read_config("image-classification")
 
 
 class LocalProcessor:
-    """
-    providing some local simple processing functions, such as simple neural network
+    """Process the image data in the local.
+
+    Provide some local simple processing functions, such as simple neural network
     """
     def __init__(self, input_file, serv_type, store_type=None):
 
@@ -34,6 +35,11 @@ class LocalProcessor:
         self.serv_type = serv_type
 
     def process(self, frame, selected_model):
+        """Process image.
+
+        :param frame: image frame to process
+        :param selected_model: selected model name
+        """
         model = load_model(selected_model)
         if selected_model in object_detection_models:
             frame_handled = object_detection.object_detection_api(frame, model, threshold=0.8)
@@ -44,8 +50,8 @@ class LocalProcessor:
 
 
 def load_model(selected_model):
-    """
-    load the specified model
+    """Load the specified model
+
     :param selected_model
     :return: model
     """
