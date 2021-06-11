@@ -21,21 +21,24 @@ class VideoReader:
         input file path for reading video file;
         input camera device number for reading camera;
     """
-    def __init__(self, input_source, read_type):
-        self.input_source = input_source
-        if read_type == common.READ_VIDEO_FILE or read_type == common.READ_VIRTUAL_CAMERA:
-            if self.input_source is None:
-                self.input_source = 1
+    def __init__(self, input_source, camera_type):
+        if input_source is not None:
+            self.input_source = input_source
             self.cap = cv2.VideoCapture(input_source)
-        elif read_type == common.READ_REAL_CAMERA:
-            account = read_config("camera-info", "account")
-            password = read_config("camera-info", "password")
-            ip_address = read_config("camera-info", "ip_address")
-            channel = int(read_config("camera-info", "channel"))
-            video_stream_path = "rtsp://%s:%s@%s/cam/realmonitor?channel=%d&subtype=0" % (
-                account, password, ip_address, channel)
+        elif camera_type is not None:
 
-            self.cap = cv2.VideoCapture(video_stream_path)
+            if camera_type == common.VIRTUAL_CAMERA:
+                self.input_source = 1
+                self.cap = cv2.VideoCapture(input_source)
+            elif camera_type == common.REAL_CAMERA:
+                account = read_config("camera-info", "account")
+                password = read_config("camera-info", "password")
+                ip_address = read_config("camera-info", "ip_address")
+                channel = int(read_config("camera-info", "channel"))
+                video_stream_path = "rtsp://%s:%s@%s/cam/realmonitor?channel=%d&subtype=0" % (
+                    account, password, ip_address, channel)
+
+                self.cap = cv2.VideoCapture(video_stream_path)
 
     def read_frame(self):
         """Read frame of video.

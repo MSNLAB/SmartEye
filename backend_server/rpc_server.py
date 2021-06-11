@@ -9,10 +9,12 @@ from model_manager import object_detection, image_classification
 from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
-
+from loguru import logger
 
 object_detection_models = read_config("object-detection")
 image_classification_models = read_config("image-classification")
+
+logger.add("grpc-server_{time}.log")
 
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
@@ -84,7 +86,6 @@ def image_handler(img, model, selected_model):
         msg_reply = msg_transfer_pb2.MsgReply(
             result=img_str, frame_shape=frame_handled_shape
         )
-        # print(len(img_str))
         return msg_reply
     else:
         result = image_classification.image_classification(img, model)

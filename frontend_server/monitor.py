@@ -1,5 +1,4 @@
-import os
-import time
+from loguru import logger
 import globals
 from frontend_server.grpc_interface import get_server_utilization
 
@@ -16,6 +15,6 @@ def server_monitor():
         globals.cpu_usage.append(new_cpu_usage)
         globals.memory_usage.append(new_memory_usage)
 
-    # print("cpu_usage:", globals.cpu_usage)
-    # print("memory_usage", globals.memory_usage)
+    logger.info("cpu_usage:", globals.cpu_usage)
+    logger.info("memory_usage", globals.memory_usage)
 

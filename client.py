@@ -22,13 +22,13 @@ from multiprocessing import Pool
 from loguru import logger
 
 
-logger.remove(handler_id=None)
+# logger.remove(handler_id=None)
 logger.add("client.log", level="TRACE")
 
 
-def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model):
+def worker(queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model):
 
-    picture_url = read_config("transfer-url", "picture_url")
+    image_url = read_config("transfer-url", "image_url")
     frame = queue.get()
 
     if flag == common.LOCAL:
@@ -36,6 +36,7 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
         result = local_processor.process(frame, selected_model)
         t2 = time.time()
         processing_delay = t2 - t1
+        logger.debug(processing_delay)
         if serv_type == common.IMAGE_CLASSIFICATION:
             sys_info.append(t1, processing_delay)
             print(result)
@@ -52,7 +53,7 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
         # send the video frame to the server
         try:
             result_dict, start_time, processing_delay, arrive_transfer_server_time = \
-                send_frame(picture_url, frame, selected_model)
+                send_frame(image_url, frame, selected_model)
         except Exception as err:
             logger.exception("return back err!")
         else:
@@ -73,15 +74,13 @@ def seal(queue, local_processor, preprocessor, sys_info, local_store, serv_type,
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--file', help='input video file')
+    parser.add_argument('-f', '--file', help='input video file')
+    parser.add_argument('-c', '--camera', help="input camera type, '9' for REAL_CAMERA, '10' for VIRTUAL_CAMERA")
     parser.add_argument('-s', '--serv', help="input service demand, '3' for IMAGE_CLASSIFICATION," 
                                              "'4' for OBJECT_DETECTION")
     # parser.add_argument('-ST', '--store', help="input store type demand, "
     #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
-    parser.add_argument('-r', '--reader', help="select video reader interface, " 
-                                               "'9' for READ_VIDEO_FILE, "
-                                               "'10' for READ_REAL_FILE  "
-                                               "and '11' for READ_VIRTUAL_FILE")
+
     args = parser.parse_args()
 
     file_type = common.IMAGE_TYPE
@@ -92,6 +91,10 @@ if __name__ == '__main__':
             logger.error("Error: file not exists")
             sys.exit()
 
+    camera_type = None
+    if args.camera is not None:
+        camera_type = int(args.camera)
+
     serv_type = None
     if args.serv is not None:
         serv_type = int(args.serv)
@@ -99,16 +102,10 @@ if __name__ == '__main__':
         logger.error("Error: server type can not be None!")
         sys.exit()
 
-    read_type = None
-    if args.reader is not None:
-        read_type = int(args.reader)
-    else:
-        logger.error("Error: read type can not be None!")
+    if input_file is None and camera_type is None:
+        logger.error("file and camera can not be None at the same time!")
         sys.exit()
 
-    if input_file is None and read_type == common.READ_VIDEO_FILE:
-        logger.error("Error: input file is None and read type is read video file!")
-        sys.exit()
     # store_type = ""
     # video_file_url = read_config("transfer-url", "video_file_url")
     # store_type = args.store
@@ -123,7 +120,7 @@ if __name__ == '__main__':
     )
     p.start()
 
-    reader = VideoReader(input_file, read_type)
+    reader = VideoReader(input_file, camera_type)
     decision_engine = DecisionEngine(file_type, serv_type)
 
     queue = multiprocessing.Manager().Queue(int(read_config("some-number", "queue_length")))
@@ -160,7 +157,7 @@ if __name__ == '__main__':
         )
         queue.put(frame)
         args = [queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model]
-        pool.apply(seal, args=args)
+        pool.apply_async(worker, args=args)
     pool.close()
     pool.join()
 

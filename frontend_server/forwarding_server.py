@@ -16,6 +16,8 @@ sched = BackgroundScheduler(daemon=True)
 sched.add_job(server_monitor, 'interval', seconds=int(read_config("monitor", "monitor_interval")))
 sched.start()
 
+logger.add("transfer-server_{time}.log")
+
 
 @app.route('/image_handler', methods=['GET', 'POST'])
 def image_handler():

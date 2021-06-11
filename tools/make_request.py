@@ -2,8 +2,7 @@ import base64
 import json
 from urllib import request, parse
 import time
-
-import numpy
+from loguru import logger
 
 
 def make_request(url, **msg_dict):
@@ -25,12 +24,18 @@ def make_request(url, **msg_dict):
         t2 = time.time()
         result = response.read().decode('utf-8')
     except:
-        print("get wrong from remote server!")
+        logger.exception("Error request server!")
     else:
         result_dict = json.loads(result)
-        processing_delay = t2 - t1
-        arrive_transfer_server_time = (processing_delay - result_dict["process_time"]) / 2
-        return result_dict, t1, processing_delay, arrive_transfer_server_time
+        try:
+            processing_delay = t2 - t1
+            arrive_transfer_server_time = (processing_delay - result_dict["process_time"]) / 2
+            assert processing_delay != 0
+            assert arrive_transfer_server_time != 0
+        except AssertionError as err:
+            logger.error("processing_delay or arrive_transfer_server_time is 0!")
+        else:
+            return result_dict, t1, processing_delay, arrive_transfer_server_time
 
 
 if __name__ == "__main__":
