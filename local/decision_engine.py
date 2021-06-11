@@ -1,7 +1,5 @@
 import common
-# from local.local_info import get_local_utilization
 from tools.read_config import read_config
-from local import globals
 
 
 class DecisionEngine:
@@ -34,7 +32,7 @@ class DecisionEngine:
                  msg_dict: message dict
                  selected_model: selected model name
         """
-        if local_cpu_usage < 100 and local_memory_usage < 100:
+        if local_cpu_usage < 0 and local_memory_usage < 100:
             flag = common.LOCAL
         else:
             flag = common.OFFLOAD

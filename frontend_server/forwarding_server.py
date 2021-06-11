@@ -3,9 +3,10 @@ from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilizatio
 from frontend_server.grpc_interface import get_grpc_reply
 import globals
 from frontend_server.monitor import server_monitor
+sys.path.append("../")
 from tools.read_config import read_config
 from loguru import logger
-sys.path.append("../")
+
 from flask import Flask, request, jsonify
 import time
 from apscheduler.schedulers.background import BackgroundScheduler

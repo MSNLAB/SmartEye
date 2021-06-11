@@ -14,7 +14,8 @@ def server_monitor():
         new_cpu_usage, new_memory_usage = get_server_utilization(grpc_server)
         globals.cpu_usage.append(new_cpu_usage)
         globals.memory_usage.append(new_memory_usage)
-
-    logger.info("cpu_usage:", globals.cpu_usage)
-    logger.info("memory_usage", globals.memory_usage)
+    # print("cpu_usage:", globals.cpu_usage)
+    # print("memory_usage", globals.memory_usage)
+    logger.info("cpu_usage:" + str(globals.cpu_usage))
+    logger.info("memory_usage" + str(globals.memory_usage))
 

@@ -1,7 +1,6 @@
 from concurrent import futures
 import grpc
 import sys
-
 from backend_server.model_controller import load_a_model, get_server_utilization, load_model_files_advance
 import globals
 sys.path.append("../")

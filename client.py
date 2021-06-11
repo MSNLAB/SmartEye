@@ -157,7 +157,8 @@ if __name__ == '__main__':
         )
         queue.put(frame)
         args = [queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model]
-        pool.apply_async(worker, args=args)
+        for i in range(int(read_config("some-number", "subprocess_number"))):
+            pool.apply_async(worker, args=args)
     pool.close()
     pool.join()
 

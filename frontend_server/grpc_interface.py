@@ -25,7 +25,8 @@ def get_grpc_reply(server_url, **info_dict):
     except:
         logger.exception("Error: GRPC reply error!")
         pass
-    return msg_reply
+    else:
+        return msg_reply
 
 
 def get_server_utilization(grpc_server):
