@@ -1,5 +1,6 @@
 import common
 from tools.read_config import read_config
+
 import random
 from loguru import logger
 
@@ -34,7 +35,7 @@ class DecisionEngine:
                  msg_dict: message dict
                  selected_model: selected model name
         """
-        if local_cpu_usage < 100 and local_memory_usage < 100:
+        if local_cpu_usage < 0 and local_memory_usage < 100:
             flag = common.LOCAL
         else:
             flag = common.OFFLOAD

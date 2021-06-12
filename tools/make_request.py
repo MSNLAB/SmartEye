@@ -27,6 +27,7 @@ def make_request(url, **msg_dict):
         logger.exception("Error request server!")
     else:
         result_dict = json.loads(result)
+        logger.debug(result_dict)
         try:
             processing_delay = t2 - t1
             arrive_transfer_server_time = (processing_delay - result_dict["process_time"]) / 2
@@ -35,6 +36,7 @@ def make_request(url, **msg_dict):
         except AssertionError as err:
             logger.error("processing_delay or arrive_transfer_server_time is 0!")
         else:
+            logger.debug("make request well!")
             return result_dict, t1, processing_delay, arrive_transfer_server_time
 
 

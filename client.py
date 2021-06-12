@@ -156,10 +156,12 @@ if __name__ == '__main__':
             sys_info
         )
         queue.put(frame)
+
         args = [
             queue, local_processor, preprocessor, sys_info, local_store,
             serv_type, flag, msg_dict, selected_model, loaded_model
         ]
+
         for i in range(int(read_config("some-number", "subprocess_number"))):
             pool.apply_async(worker, args=args)
     pool.close()
