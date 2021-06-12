@@ -5,7 +5,7 @@ from tools.transfer_files_tool import transfer_array_and_str
 from local.client_end import Client
 
 if __name__ == '__main__':
-    input_file = "../dog.jpg"
+    input_file = "dog.jpg"
     # input_file = 0
     # while True:
     #     try:

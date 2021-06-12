@@ -13,12 +13,10 @@ import os
 from loguru import logger
 import torch
 from torchvision.models import *
-import common
-# from backend_server.model_controller import load_a_model
 from model_manager import object_detection, image_classification
 from tools.read_config import read_config
 from torchvision.models.detection import *
-
+import local.globals
 
 object_detection_models = read_config("object-detection")
 image_classification_models = read_config("image-classification")
@@ -34,13 +32,15 @@ class LocalProcessor:
         self.input_file = input_file
         self.serv_type = serv_type
 
-    def process(self, frame, selected_model):
+    def process(self, frame, selected_model, loaded_model):
         """Process image.
 
         :param frame: image frame to process
         :param selected_model: selected model name
         """
-        model = load_model(selected_model)
+        model = eval(selected_model)()
+        model.load_state_dict(loaded_model[selected_model], False)
+        model.eval()
         if selected_model in object_detection_models:
             frame_handled = object_detection.object_detection_api(frame, model, threshold=0.8)
             return frame_handled
@@ -49,28 +49,29 @@ class LocalProcessor:
             return result
 
 
-def load_model(selected_model):
+def load_model():
     """Load the specified model
 
     :param selected_model
     :return: model
     """
+    loaded_model = {}
     weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
-    try:
-        for file in os.listdir(weight_folder):
-            if selected_model in file:
-                file_name = file
-                break
-        assert file_name is not None
-    except AssertionError:
-        logger.exception("there is no matched file!")
+    local_preload_models = read_config("local-loaded-models")
 
-    weight_files_path = os.path.join(weight_folder, file_name)
-    file_load = torch.load(weight_files_path)
-    model = eval(selected_model)()
-    model.load_state_dict(file_load, False)
-    model.eval()
-    return model
+    for model in local_preload_models:
+        try:
+            for file in os.listdir(weight_folder):
+                if model in file:
+                    file_name = file
+                    break
+            assert file_name is not None
+        except AssertionError:
+            logger.exception("there is no matched file!")
+        weight_files_path = os.path.join(weight_folder, file_name)
+        file_load = torch.load(weight_files_path)
+        loaded_model[model] = file_load
+    return loaded_model
 
 
 if __name__ == "__main__":

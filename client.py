@@ -8,7 +8,7 @@ import time
 from local import globals
 from local.decision_engine import DecisionEngine
 from local.local_info import update_local_utilization
-from local.local_processor import LocalProcessor
+from local.local_processor import LocalProcessor, load_model
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
 from local.preprocessor import PreProcessor
@@ -22,21 +22,19 @@ from multiprocessing import Pool
 from loguru import logger
 
 
-# logger.remove(handler_id=None)
-logger.add("client.log", level="TRACE")
-
-
-def worker(queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model):
+def worker(
+        queue, local_processor, preprocessor, sys_info, local_store,
+        serv_type, flag, msg_dict, selected_model, loaded_model
+):
 
     image_url = read_config("transfer-url", "image_url")
     frame = queue.get()
-
+    logger.debug("msg_dict:"+str(id(msg_dict)))
     if flag == common.LOCAL:
         t1 = time.time()
-        result = local_processor.process(frame, selected_model)
+        result = local_processor.process(frame, selected_model, loaded_model)
         t2 = time.time()
         processing_delay = t2 - t1
-        logger.debug(processing_delay)
         if serv_type == common.IMAGE_CLASSIFICATION:
             sys_info.append(t1, processing_delay)
             print(result)
@@ -111,8 +109,9 @@ if __name__ == '__main__':
     # store_type = args.store
     # if store_type is not None:
     #     store_type = int(args.store)
-    globals.init()
 
+    globals.init()
+    logger.add("log/client_{time}.log", level="TRACE")
     # subprocess, update the cpu_usage and memory_usage every ten seconds
     p = multiprocessing.Process(
         target=update_local_utilization,
@@ -125,6 +124,8 @@ if __name__ == '__main__':
 
     queue = multiprocessing.Manager().Queue(int(read_config("some-number", "queue_length")))
     pool = Pool(int(read_config("some-number", "subprocess_number")), globals.init, ())
+    model_manager = multiprocessing.Manager()
+    loaded_model = model_manager.dict(load_model())
 
     BaseManager.register('LocalProcessor', LocalProcessor)
     BaseManager.register('PreProcessor', PreProcessor)
@@ -132,7 +133,6 @@ if __name__ == '__main__':
     BaseManager.register('LocalStore', LocalStore)
     manager = BaseManager()
     manager.start()
-
     local_processor = manager.LocalProcessor(input_file, serv_type)
     preprocessor = manager.PreProcessor()
     sys_info = manager.SysInfo()
@@ -156,8 +156,12 @@ if __name__ == '__main__':
             sys_info
         )
         queue.put(frame)
-        args = [queue, local_processor, preprocessor, sys_info, local_store, serv_type, flag, msg_dict, selected_model]
-        pool.apply_async(worker, args=args)
+        args = [
+            queue, local_processor, preprocessor, sys_info, local_store,
+            serv_type, flag, msg_dict, selected_model, loaded_model
+        ]
+        for i in range(int(read_config("some-number", "subprocess_number"))):
+            pool.apply_async(worker, args=args)
     pool.close()
     pool.join()
 

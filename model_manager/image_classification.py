@@ -1,12 +1,10 @@
 import os
-# from tools import read_config
 import cv2
-# import torchvision
 from torchvision.models import *
-# from torchvision import models
 import torch
 from torchvision import transforms
 from PIL import Image
+from loguru import logger
 
 
 def preprocess(img):
@@ -73,7 +71,6 @@ def image_classification(img, model):
     _, index = torch.max(out, 1)
     percentage = torch.nn.functional.softmax(out, dim=1)[0] * 100
     result = classes[index[0]], percentage[index[0]].item()
-
     return result[0]
 
 

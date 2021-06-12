@@ -1,7 +1,7 @@
 import common
-# from local.local_info import get_local_utilization
 from tools.read_config import read_config
-from local import globals
+import random
+from loguru import logger
 
 
 class DecisionEngine:
@@ -125,9 +125,11 @@ class DecisionEngine:
         :return: selected model
         """
         if serv_type == common.IMAGE_CLASSIFICATION:
-            model = self.image_classification_models[0]
+            rdn = random.randint(0, len(read_config("image-classification"))-1)
+            model = self.image_classification_models[rdn]
         else:
-            model = self.object_detection_models[1]
+            rdn = random.randint(0, len(read_config("object-detection")) - 1)
+            model = self.object_detection_models[rdn]
         return model
 
     def decide_local_model(self, serv_type):
@@ -136,10 +138,11 @@ class DecisionEngine:
         :param serv_type: server type
         :return: selected model
         """
+        rdm = random.randint(0, 1)
         if serv_type == common.IMAGE_CLASSIFICATION:
-            model = self.image_classification_models[0]
+            model = self.image_classification_models[rdm]
         else:
-            model = self.object_detection_models[1]
+            model = self.object_detection_models[rdm+2]
         return model
 
 
