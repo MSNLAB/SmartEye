@@ -27,14 +27,12 @@ def get_prediction(img, threshold, model):
     transform = T.Compose([T.ToTensor()])
     img = transform(img)
     pred = model([img])
-    logger.debug(pred)
     pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())] # Get the Prediction Score
     pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())] # Bounding boxes
     pred_score = list(pred[0]['scores'].detach().numpy())
     pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
     pred_boxes = pred_boxes[:pred_t+1]
     pred_class = pred_class[:pred_t+1]
-    logger.debug(pred_class)
     return pred_boxes, pred_class
 
 
@@ -49,7 +47,6 @@ def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, th
         cv2.rectangle(img, boxes[i][0], boxes[i][1],color=(0, 255, 0), thickness=rect_th)
         # Write the prediction class
         cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
-    logger.debug("mark")
     return img
 
 

@@ -29,7 +29,7 @@ def worker(
 
     image_url = read_config("transfer-url", "image_url")
     frame = queue.get()
-    logger.debug("msg_dict:"+str(id(msg_dict)))
+    # logger.debug("msg_dict:"+str(id(msg_dict)))
     if flag == common.LOCAL:
         t1 = time.time()
         result = local_processor.process(frame, selected_model, loaded_model)
@@ -37,10 +37,11 @@ def worker(
         processing_delay = t2 - t1
         if serv_type == common.IMAGE_CLASSIFICATION:
             sys_info.append(t1, processing_delay)
-            print(result)
+            logger.info("local:"+result)
         elif serv_type == common.OBJECT_DETECTION:
             sys_info.append(t1, processing_delay)
             local_store.store_image(result)
+            logger.info("local object detection works well!")
         else:
             logger.error("Seal error: no specified service type!")
 
@@ -59,12 +60,13 @@ def worker(
             if serv_type == common.IMAGE_CLASSIFICATION:
                 result = result_dict["prediction"]
                 sys_info.append(start_time, processing_delay, bandwidth)
-                print(result)
+                logger.info("offload:"+result)
             elif serv_type == common.OBJECT_DETECTION:
                 frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
                 frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
                 local_store.store_image(frame_handled)
                 sys_info.append(start_time, processing_delay, bandwidth)
+                logger.info("offload object detection works well!")
             else:
                 logger.error("Seal error: no specified service type!")
 
@@ -73,16 +75,16 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', help='input video file')
-    parser.add_argument('-c', '--camera', help="input camera type, '9' for REAL_CAMERA, '10' for VIRTUAL_CAMERA")
-    parser.add_argument('-s', '--serv', help="input service demand, '3' for IMAGE_CLASSIFICATION," 
-                                             "'4' for OBJECT_DETECTION")
+    parser.add_argument('-c', '--camera', help="input camera type, 'rtsp' for Webcam, 'local' for local camera")
+    parser.add_argument('-s', '--serv', type=int, help="input service demand, '3' for IMAGE_CLASSIFICATION," 
+                                                       "'4' for OBJECT_DETECTION", required=True)
+    parser.add_argument('-i', '--interval', type=int, help="read frame interval between two frames", required=True)
     # parser.add_argument('-ST', '--store', help="input store type demand, "
     #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
-
     args = parser.parse_args()
 
     file_type = common.IMAGE_TYPE
-
+    interval = args.interval
     input_file = args.file
     if input_file is not None:
         if not os.path.isfile(input_file):
@@ -91,17 +93,16 @@ if __name__ == '__main__':
 
     camera_type = None
     if args.camera is not None:
-        camera_type = int(args.camera)
+        camera_type = args.camera
 
-    serv_type = None
-    if args.serv is not None:
-        serv_type = int(args.serv)
-    else:
-        logger.error("Error: server type can not be None!")
-        sys.exit()
+    serv_type = args.serv
 
     if input_file is None and camera_type is None:
         logger.error("file and camera can not be None at the same time!")
+        sys.exit()
+
+    if input_file is not None and camera_type is not None:
+        logger.error("Both file and camera can not have value at the same time!")
         sys.exit()
 
     # store_type = ""
@@ -138,12 +139,17 @@ if __name__ == '__main__':
     sys_info = manager.SysInfo()
     local_store = manager.LocalStore()
 
-    frame_interval = int(read_config("read-frequency", "frame_interval"))
     while True:
         # get frames
-        for i in range(frame_interval):
-            if i == 0:
-                frame = reader.read_frame()
+        if camera_type is not None:
+            frame = reader.read_frame()
+            time.sleep(interval)
+        elif input_file is not None:
+            for i in range(interval):
+                image = reader.read_frame()
+                if i == 0:
+                    frame = image
+
         # preprocessing frames
         if frame is None:
             sys_info.store()

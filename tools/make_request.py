@@ -27,7 +27,6 @@ def make_request(url, **msg_dict):
         logger.exception("Error request server!")
     else:
         result_dict = json.loads(result)
-        logger.debug(result_dict)
         try:
             processing_delay = t2 - t1
             arrive_transfer_server_time = (processing_delay - result_dict["process_time"]) / 2

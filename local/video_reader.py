@@ -29,16 +29,16 @@ class VideoReader:
 
             if camera_type == common.VIRTUAL_CAMERA:
                 self.input_source = 1
-                self.cap = cv2.VideoCapture(input_source)
+                self.cap = cv2.VideoCapture(self.input_source)
             elif camera_type == common.REAL_CAMERA:
                 account = read_config("camera-info", "account")
                 password = read_config("camera-info", "password")
                 ip_address = read_config("camera-info", "ip_address")
                 channel = int(read_config("camera-info", "channel"))
-                video_stream_path = "rtsp://%s:%s@%s/cam/realmonitor?channel=%d&subtype=0" % (
+                self.input_source = "rtsp://%s:%s@%s/cam/realmonitor?channel=%d&subtype=0" % (
                     account, password, ip_address, channel)
 
-                self.cap = cv2.VideoCapture(video_stream_path)
+                self.cap = cv2.VideoCapture(self.input_source)
 
     def read_frame(self):
         """Read frame of video.
