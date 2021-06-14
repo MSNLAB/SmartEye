@@ -112,7 +112,7 @@ if __name__ == '__main__':
     #     store_type = int(args.store)
 
     globals.init()
-    logger.add("log/client_{time}.log", level="TRACE")
+    logger.add("log/client_{time}.log", level="INFO")
     # subprocess, update the cpu_usage and memory_usage every ten seconds
     p = multiprocessing.Process(
         target=update_local_utilization,
@@ -161,6 +161,7 @@ if __name__ == '__main__':
             globals.local_memory_usage.value,
             sys_info
         )
+        logger.debug(selected_model)
         queue.put(frame)
 
         args = [

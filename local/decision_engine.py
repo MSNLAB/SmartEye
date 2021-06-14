@@ -131,6 +131,7 @@ class DecisionEngine:
         else:
             rdn = random.randint(0, len(read_config("object-detection")) - 1)
             model = self.object_detection_models[rdn]
+
         return model
 
     def decide_local_model(self, serv_type):
