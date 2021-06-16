@@ -53,3 +53,15 @@ if __name__ == '__main__':
         #     # print(frame_handled.shape)
         #     # cv2.imshow('frame', frame_handled)
         #     local.local_store.store_image(frame_handled)
+
+"""
+reserve for video interface
+# store_type = ""
+    # video_file_url = read_config("transfer-url", "video_file_url")
+    # store_type = args.store
+    # if store_type is not None:
+    #     store_type = int(args.store)
+    
+      # parser.add_argument('-ST', '--store', help="input store type demand, "
+    #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
+"""

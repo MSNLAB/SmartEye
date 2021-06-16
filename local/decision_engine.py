@@ -35,7 +35,7 @@ class DecisionEngine:
                  msg_dict: message dict
                  selected_model: selected model name
         """
-        if local_cpu_usage < 50 and local_memory_usage < 50:
+        if local_cpu_usage <= 100 and local_memory_usage <= 100:
             flag = common.LOCAL
         else:
             flag = common.OFFLOAD
@@ -71,12 +71,14 @@ class DecisionEngine:
 
             return msg_dict, selected_model
         else:
+
+            msg_dict = {}
             if self.requirement_type[0] == common.IMAGE_TYPE:
-                msg_dict = {}
+
                 selected_model = self.decide_local_model(self.requirement_type[1])
 
             elif self.requirement_type[0] == common.VIDEO_TYPE:
-                msg_dict = {}
+
                 selected_model = self.decide_local_model(self.requirement_type[1])
 
             return msg_dict, selected_model
@@ -144,12 +146,12 @@ class DecisionEngine:
         if serv_type == common.IMAGE_CLASSIFICATION:
             model = self.image_classification_models[rdm]
         else:
-            model = self.object_detection_models[rdm+2]
+            model = self.object_detection_models[rdm]
         return model
 
 
 if __name__ == '__main__':
 
-    initial_dict = {'service_delay':0, 'requirements':0, 'netcondition':0}
+    initial_dict = {'service_delay': 0, 'requirements': 0, 'netcondition': 0}
     # decision_engine(**initial_dict)
 

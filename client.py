@@ -1,6 +1,10 @@
 import sys
 import os
+from concurrent.futures.thread import ThreadPoolExecutor
 from multiprocessing.managers import BaseManager
+from multiprocessing.pool import ThreadPool
+
+import threadpool as threadpool
 
 import common
 import argparse
@@ -18,26 +22,26 @@ from local.video_reader import VideoReader
 from tools.read_config import read_config
 from tools.transfer_files_tool import transfer_array_and_str
 import multiprocessing
-from multiprocessing import Pool
 from loguru import logger
 
+global loaded_model
+loaded_model = load_model()
+global selected_model
+global msg_dict
 
-def worker(
-        queue, local_processor, preprocessor, sys_info, local_store,
-        serv_type, flag, msg_dict, selected_model, loaded_model
-):
 
-    image_url = read_config("transfer-url", "image_url")
-    frame = queue.get()
-    # logger.debug("msg_dict:"+str(id(msg_dict)))
-    if flag == common.LOCAL:
+def local_worker(serv_type, local_queue, sys_info, local_store, selected_model):
+
+    local_processor = LocalProcessor()
+    while True:
+        frame = local_queue.get()
         t1 = time.time()
         result = local_processor.process(frame, selected_model, loaded_model)
         t2 = time.time()
         processing_delay = t2 - t1
         if serv_type == common.IMAGE_CLASSIFICATION:
             sys_info.append(t1, processing_delay)
-            logger.info("local:"+result)
+            logger.info("local:" + result)
         elif serv_type == common.OBJECT_DETECTION:
             sys_info.append(t1, processing_delay)
             local_store.store_image(result)
@@ -45,7 +49,15 @@ def worker(
         else:
             logger.error("Seal error: no specified service type!")
 
-    elif flag == common.OFFLOAD:
+
+def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
+
+    # logger.debug("mark")
+    preprocessor = PreProcessor()
+    image_url = read_config("transfer-url", "image_url")
+    while True:
+        frame = offload_queue.get()
+        # logger.debug("msg_dict:"+str(id(msg_dict)))
 
         frame = preprocessor.preprocess_image(frame, **msg_dict)
         file_size = sys.getsizeof(frame)
@@ -61,12 +73,14 @@ def worker(
                 result = result_dict["prediction"]
                 sys_info.append(start_time, processing_delay, bandwidth)
                 logger.info("offload:"+result)
+
             elif serv_type == common.OBJECT_DETECTION:
                 frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
                 frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
                 local_store.store_image(frame_handled)
                 sys_info.append(start_time, processing_delay, bandwidth)
                 logger.info("offload object detection works well!")
+
             else:
                 logger.error("Seal error: no specified service type!")
 
@@ -79,12 +93,12 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--serv', type=int, help="input service demand, '3' for IMAGE_CLASSIFICATION," 
                                                        "'4' for OBJECT_DETECTION", required=True)
     parser.add_argument('-i', '--interval', type=int, help="read frame interval between two frames", required=True)
-    # parser.add_argument('-ST', '--store', help="input store type demand, "
-    #                                            "'0' for IMAGE, '1' for VIDEO, IMAGE By default")
     args = parser.parse_args()
 
     file_type = common.IMAGE_TYPE
+    serv_type = args.serv
     interval = args.interval
+
     input_file = args.file
     if input_file is not None:
         if not os.path.isfile(input_file):
@@ -95,8 +109,6 @@ if __name__ == '__main__':
     if args.camera is not None:
         camera_type = args.camera
 
-    serv_type = args.serv
-
     if input_file is None and camera_type is None:
         logger.error("file and camera can not be None at the same time!")
         sys.exit()
@@ -105,13 +117,8 @@ if __name__ == '__main__':
         logger.error("Both file and camera can not have value at the same time!")
         sys.exit()
 
-    # store_type = ""
-    # video_file_url = read_config("transfer-url", "video_file_url")
-    # store_type = args.store
-    # if store_type is not None:
-    #     store_type = int(args.store)
-
     globals.init()
+
     logger.add("log/client_{time}.log", level="INFO")
     # subprocess, update the cpu_usage and memory_usage every ten seconds
     p = multiprocessing.Process(
@@ -123,22 +130,34 @@ if __name__ == '__main__':
     reader = VideoReader(input_file, camera_type)
     decision_engine = DecisionEngine(file_type, serv_type)
 
-    queue = multiprocessing.Manager().Queue(int(read_config("some-number", "queue_length")))
-    pool = Pool(int(read_config("some-number", "subprocess_number")), globals.init, ())
-    model_manager = multiprocessing.Manager()
-    loaded_model = model_manager.dict(load_model())
+    local_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
+    offload_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
 
-    BaseManager.register('LocalProcessor', LocalProcessor)
-    BaseManager.register('PreProcessor', PreProcessor)
-    BaseManager.register('SysInfo', SysInfo, Proxy)
-    BaseManager.register('LocalStore', LocalStore)
-    manager = BaseManager()
-    manager.start()
-    local_processor = manager.LocalProcessor(input_file, serv_type)
-    preprocessor = manager.PreProcessor()
-    sys_info = manager.SysInfo()
-    local_store = manager.LocalStore()
+    # BaseManager.register('LocalStore', LocalStore)
+    # BaseManager.register('SysInfo', SysInfo, Proxy)
+    # manager = BaseManager()
+    # manager.start()
+    # local_store = manager.LocalStore()
+    # sys_info = manager.SysInfo()
 
+    local_store = LocalStore()
+    sys_info = SysInfo()
+
+    flag, msg_dict, selected_model = decision_engine.get_result(
+        globals.local_cpu_usage.value,
+        globals.local_memory_usage.value,
+        sys_info
+    )
+
+    executor = ThreadPoolExecutor(max_workers=2)
+
+    p = multiprocessing.Process(
+        target=local_worker,
+        args=(serv_type, local_queue, sys_info, local_store, selected_model)
+    )
+    p.start()
+
+    # logger.debug(local_store)
     while True:
         # get frames
         if camera_type is not None:
@@ -153,24 +172,30 @@ if __name__ == '__main__':
         # preprocessing frames
         if frame is None:
             sys_info.store()
-            p.terminate()
             print("service comes over!")
-            exit()
+            sys.exit()
+            p.terminate()
+
         flag, msg_dict, selected_model = decision_engine.get_result(
             globals.local_cpu_usage.value,
             globals.local_memory_usage.value,
             sys_info
         )
-        logger.debug(selected_model)
-        queue.put(frame)
+        logger.debug(flag)
 
-        args = [
-            queue, local_processor, preprocessor, sys_info, local_store,
-            serv_type, flag, msg_dict, selected_model, loaded_model
-        ]
+        if flag == common.LOCAL:
+            local_queue.put(frame)
+        elif flag == common.OFFLOAD:
+            offload_queue.put(frame)
+            task1 = executor.submit(offload_worker, serv_type, offload_queue, msg_dict, sys_info, local_store)
+            # task2 = executor.submit(offload_worker, serv_type, offload_queue, msg_dict, sys_info, local_store)
 
-        for i in range(int(read_config("some-number", "subprocess_number"))):
-            pool.apply_async(worker, args=args)
-    pool.close()
-    pool.join()
+            # if task1.done():
+            #     print(task1.result())
+            # if task2.done():
+            #     print(task2.result())
+        else:
+            logger.error("flag has wrong value!")
+            sys.exit()
+
 

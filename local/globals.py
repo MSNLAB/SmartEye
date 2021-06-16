@@ -9,3 +9,4 @@ def init():
     global local_memory_usage
     local_memory_usage = multiprocessing.Value("d", 0)
 
+

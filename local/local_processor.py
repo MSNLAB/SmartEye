@@ -27,10 +27,10 @@ class LocalProcessor:
 
     Provide some local simple processing functions, such as simple neural network
     """
-    def __init__(self, input_file, serv_type, store_type=None):
-
-        self.input_file = input_file
-        self.serv_type = serv_type
+    # def __init__(self, input_file, serv_type, store_type=None):
+    #
+    #     self.input_file = input_file
+    #     self.serv_type = serv_type
 
     def process(self, frame, selected_model, loaded_model):
         """Process image.
@@ -38,9 +38,12 @@ class LocalProcessor:
         :param frame: image frame to process
         :param selected_model: selected model name
         """
+
         model = eval(selected_model)()
+        # logger.debug(loaded_model[selected_model])
         model.load_state_dict(loaded_model[selected_model], False)
         model.eval()
+        # logger.debug(model)
         if selected_model in object_detection_models:
             frame_handled = object_detection.object_detection_api(frame, model, threshold=0.8)
             return frame_handled
