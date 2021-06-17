@@ -134,43 +134,6 @@ python3 main.py
 According to the tips information， you can input the video you want to process, and input some parameters for your demand.  
 
 
-## Advanced Usage
-We can start the controller to dynamically control the transcoding workers. To do this, we first need to add the information of the available VM instances or containers to the file **vm.list**. In this file, each line corresponds to the host name of an instance or a container. We can execute the command **hostname** to obtain the name of an instance or a container, and then, file the host name into the file **vm.list**. After that, we can start the controller.
-```bash
-python controller.py
-```
-We can observe the state of each worker in the MySQL database.
-```bash
-use morph
-select * from server_info;
-```
-The worker node will read the value of the field **state** from the database to control itself. 
-
-## Performance
-The duration of the test video file is 138 minutes. The resolution is 1920x1080, and the bitrate is 2399 kb/s. The video data is encoded in H.264, and the audio data is encoded in AAC. The CPU frequency of the servers is 2.10GHz. The master node is allocated with 8 CPU cores, and the memory size is 8GB. The worker node is allocated with 4 CPU cores, and the memory size is 2GB. We use the Docker for the resource allocation. 
-
-We first measure the video segmentation time for splitting the video file into equal-duration video blocks. The duration of each video block is 2 minutes. The FFmpeg command for the video segmentation is show as follow:
-
-```bash
-ffmpeg –i PV4h.mp4 -f segment -segment_time 120 -c copy -map 0 -segment_list PV4h.list PV4h_%03d_.mp4
-```
-
-The video segmentation time for the video file is 46 seconds.
-
-We then measure the transcoding time for the test video file with different number of transcoding workers. The target resolution is 480x360. We illustrate the transcoding time in the following table:
-
-| Worker Number  | FFmpeg | 1 | 5     | 10    | 15    | 20    | 25    | 30    |
-|------------------   |------  |------ |------   |------   |------   |------   |------   |------   |
-| Transcoding Time (s)  | 1775 | 1843 | 605   | 369   | 271   | 213   | 194   | 181   |
-| Speed-up Ratio    | 1x  | 0.96x | 2.9x  | 4.8x  | 6.5x  | 8.3x  | 9.1x  | 9.8x  |
-
-The transcoding time for using a standalone FFmpeg on a single server is 1775 seconds. If the system has only one active worker, the transcoding time is 1843 seconds, which is larger than the standalone ffmpeg. The overhead comes from the video segmentation, transmission, and concentration for transcoding the video file in a distributed manner. With more active workers to transcode the video blocks in parallel, the overall transcoding time decreases, achieving larger speed-up ratio. 
-
-The FFmpeg command for video block concentration is as follow
-```bash
-ffmpeg -f concat –i PV4h_480x360.list -c copy PV4h_480x360.mp4
-```
-The video block concentration time is 13 seconds. 
 
 
 
