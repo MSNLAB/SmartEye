@@ -18,7 +18,7 @@ Video2Edge is an opensource offloading framework for video analytics on edge. It
 
 The system architecture is shown in the following figure. The system is composed of the following layers:
 
-<img src="https://raw.githubusercontent.com/cap-ntu/Morph/master/DOC/system.png" width="40%" height="40%">
+<img src="https://raw.githubusercontent.com/MSNLAB/SmartEye/master/DOC/smarteye.png?token=ACM3B7KTTTTJRH7XAFH6MHLAZN76C" width="40%" height="40%">
 
 * client section
 
