@@ -1,4 +1,5 @@
-# Video2Edge: An Opensource Offloading Framework for Video Analytics on Edge
+# SmartEye: An Open Source Framework for Real-Time Video Analytics with Edge-Cloud Collaboration
+
 
 ## Contents 
 -------------------
