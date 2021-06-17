@@ -7,8 +7,7 @@
 * [Workflow](#workflow)
 * [Installation](#installation)
 * [Programming Interface](#programming-interface)
-* [Basic Usage](#basic-usage)
-* [Advanced Usage](#advanced-usage)
+* [Usage](#basic-usage)
 * [Performance](#performance)
 * [License](#license)
 * [Contact](#contact)
@@ -111,7 +110,7 @@ Step 3: For convenience, you can upload the whole project directly to each serve
 #such as:
 scp -r video2edge/ ****@ip_address:/home/user/video2edge
 ```
-## Basic Usage
+## Usage
 
 The easiest way to use this software is via command line. 
 
