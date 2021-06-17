@@ -13,9 +13,6 @@
 * [Contact](#contact)
 
 ## Overview
-Video2Edge is an opensource offloading framework for video analytics on edge. It can leverage the scalability of the cloud infrastructure to encode and transcode the video files in fast speed, and dynamically provision the computing resource to accommodate the time-varying workload. Video2Edge is implemented in Python. It can be accessed via RESTful API, command line interface (CLI), and RPC. 
-
-The system architecture is shown in the following figure. The system is composed of the following layers:
 
 <img src="https://raw.githubusercontent.com/MSNLAB/SmartEye/master/DOC/smarteye.png?token=ACM3B7KTTTTJRH7XAFH6MHLAZN76C" width="60%" height="60%">
 
