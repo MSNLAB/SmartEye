@@ -61,8 +61,10 @@ def image_classification(img, model):
     :param model: loaded model
     :return: predict result.
     """
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     batch_t = preprocess(img)
-    out = model(batch_t)
+    batch_t_gpu = batch_t.to(device)
+    out = model(batch_t_gpu)
     classes_file = os.path.join(os.path.dirname(__file__), "imagenet_classes.txt")
 
     with open(classes_file) as f:

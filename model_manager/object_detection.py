@@ -1,3 +1,4 @@
+import torch
 from PIL import Image
 from torchvision import transforms as T
 import cv2
@@ -26,10 +27,18 @@ def get_prediction(img, threshold, model):
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     transform = T.Compose([T.ToTensor()])
     img = transform(img)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    img = img.to(device)
     pred = model([img])
-    pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())] # Get the Prediction Score
-    pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())] # Bounding boxes
-    pred_score = list(pred[0]['scores'].detach().numpy())
+    if device == "cuda":
+        pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cuda().data.cpu().numpy())] # Get the Prediction Score
+        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())] # Bounding boxes
+        pred_score = list(pred[0]['scores'].detach().cpu().numpy())
+    else:
+        pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())]
+        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())]  # Bounding boxes
+        pred_score = list(pred[0]['scores'].detach().numpy())
+
     pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
     pred_boxes = pred_boxes[:pred_t+1]
     pred_class = pred_class[:pred_t+1]

@@ -133,13 +133,6 @@ if __name__ == '__main__':
     local_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
     offload_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
 
-    # BaseManager.register('LocalStore', LocalStore)
-    # BaseManager.register('SysInfo', SysInfo, Proxy)
-    # manager = BaseManager()
-    # manager.start()
-    # local_store = manager.LocalStore()
-    # sys_info = manager.SysInfo()
-
     local_store = LocalStore()
     sys_info = SysInfo()
 
@@ -173,8 +166,7 @@ if __name__ == '__main__':
         if frame is None:
             sys_info.store()
             print("service comes over!")
-            sys.exit()
-            p.terminate()
+            exit()
 
         flag, msg_dict, selected_model = decision_engine.get_result(
             globals.local_cpu_usage.value,
@@ -188,12 +180,6 @@ if __name__ == '__main__':
         elif flag == common.OFFLOAD:
             offload_queue.put(frame)
             task1 = executor.submit(offload_worker, serv_type, offload_queue, msg_dict, sys_info, local_store)
-            # task2 = executor.submit(offload_worker, serv_type, offload_queue, msg_dict, sys_info, local_store)
-
-            # if task1.done():
-            #     print(task1.result())
-            # if task2.done():
-            #     print(task2.result())
         else:
             logger.error("flag has wrong value!")
             sys.exit()

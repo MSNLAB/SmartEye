@@ -38,10 +38,11 @@ class LocalProcessor:
         :param frame: image frame to process
         :param selected_model: selected model name
         """
-
         model = eval(selected_model)()
         # logger.debug(loaded_model[selected_model])
         model.load_state_dict(loaded_model[selected_model], False)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
         model.eval()
         # logger.debug(model)
         if selected_model in object_detection_models:
