@@ -14,7 +14,7 @@
 
 ## Overview
 
-<img src="https://raw.githubusercontent.com/MSNLAB/SmartEye/master/DOC/smarteye.png?token=ACM3B7KTTTTJRH7XAFH6MHLAZN76C" width="60%" height="60%">
+<img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="60%" height="60%">
 
 * client section
 
