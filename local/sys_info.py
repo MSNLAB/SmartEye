@@ -4,14 +4,19 @@
 @author: XuezhiWang
 @license:
 @contact: 1050642597@qq.com
-@software: pycharm
-@file: system_information.py
-@time: 2021/4/16 下午2:41
 @desc:
 '''
 import os
-import datetime
+import time
+import psutil
 from loguru import logger
+
+
+def get_local_utilization():
+    """Get the CPU usage and memory usage"""
+    cpu_usage = psutil.cpu_percent()
+    memory_usage = psutil.virtual_memory().percent
+    return cpu_usage, memory_usage
 
 
 class SysInfo:
@@ -21,13 +26,17 @@ class SysInfo:
     such as cpu usage, process time.
     """
     def __init__(self):
-        now = datetime.datetime.now()
-        self.file = "SysInfo" + "_" + now.strftime('%a%b%d%H%M') + ".log"
-        self.infos = []
+        self.info = []
         self.cpu_usage = []
+        self.memory_usage = []
         self.bandwidth = []
         self.processing_delay = []
-        self.memory_usage = []
+
+    def update_local_utilization(self):
+        """Update local utilization including cpu usage and memory usage"""
+        cpu_usage, memory_usage = get_local_utilization()
+        self.cpu_usage.append(cpu_usage)
+        self.memory_usage.append(memory_usage)
 
     def append(self, start_time, processing_delay=None, bandwidth=None, cpu_usage=None, memory_usage=None):
         """Add system info into list respectively.
@@ -65,20 +74,7 @@ class SysInfo:
 
         self.infos += [dict]
 
-    @logger.catch
-    def store(self):
-        """Store the system information into a file.
-
-        :return: None
-        """
-        store_path = os.path.join(os.path.dirname(__file__), "..\\info_store\\system_information")
-        info_store_path = os.path.join(store_path, self.file)
-        with open(info_store_path, 'w+') as f:
-            for info in self.infos:
-                f.write(str(info) + '\n')
-
 
 if __name__ == "__main__":
-
     a = []
     print(a[-1])

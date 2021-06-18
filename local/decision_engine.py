@@ -1,7 +1,6 @@
+import random
 import common
 from tools.read_config import read_config
-
-import random
 from loguru import logger
 
 
@@ -25,7 +24,7 @@ class DecisionEngine:
         self.object_detection_models = read_config("object-detection")
         self.image_classification_models = read_config("image-classification")
 
-    def get_result(self, local_cpu_usage, local_memory_usage, sys_info):
+    def get_result(self, sys_info):
         """Decide to choose local processor or remote processor
 
         :param: local_cpu_usage: local cpu's usage
