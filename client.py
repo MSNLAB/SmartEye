@@ -81,7 +81,6 @@ def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', help='input video file')
     parser.add_argument('-c', '--camera', help="input camera type, 'rtsp' for Webcam, 'local' for local camera")
@@ -116,10 +115,8 @@ if __name__ == '__main__':
 
     logger.add("log/client_{time}.log", level="INFO")
     # subprocess, update the cpu_usage and memory_usage every ten seconds
-    p = multiprocessing.Process(
-        target=update_local_utilization,
-        args=(globals.local_cpu_usage, globals.local_memory_usage)
-    )
+    p = multiprocessing.Process(target=update_local_utilization,
+                                args=(globals.local_cpu_usage, globals.local_memory_usage))
     p.start()
 
     reader = VideoReader(input_file, camera_type)
@@ -131,12 +128,9 @@ if __name__ == '__main__':
     local_store = LocalStore()
     sys_info = SysInfo()
 
-    flag, msg_dict, selected_model = decision_engine.get_result(
-        globals.local_cpu_usage.value,
-        globals.local_memory_usage.value,
-        sys_info
-    )
-
+    flag, msg_dict, selected_model = decision_engine.get_result(globals.local_cpu_usage.value,
+                                                                globals.local_memory_usage.value,
+                                                                sys_info)
     executor = ThreadPoolExecutor(max_workers=2)
 
     p = multiprocessing.Process(
