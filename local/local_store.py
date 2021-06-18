@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
-'''
-@author: XuezhiWang
-@license:
-@contact: 1050642597@qq.com
-@software: pycharm
-@file: local_store.py
-@time: 2021/4/16 下午2:25
-@desc:
-'''
 import os
 import cv2
 import datetime
@@ -61,8 +50,5 @@ class LocalStore:
         except Exception as err:
             print("write frame into video fail", err)
 
-
-if __name__ == "__main__":
-    local_store = LocalStore()
 
 
