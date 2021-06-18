@@ -3,11 +3,11 @@ from tools.read_config import read_config
 
 
 class VideoReader:
-    def __init__(self, input_source=None, rtsp_camera=None):
+    def __init__(self, input_source=None, rtsp_camera=False):
         self.input_source = None
-        if input_source:
+        if input_source is not None:
             self.input_source = input_source
-        elif rtsp_camera:
+        elif rtsp_camera is True:
             account = read_config("camera-info", "account")
             password = read_config("camera-info", "password")
             ip_address = read_config("camera-info", "ip_address")
