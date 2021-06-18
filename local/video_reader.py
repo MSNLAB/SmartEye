@@ -16,7 +16,6 @@ class VideoReader:
                                 % (account, password, ip_address, channel)
         self.cap = cv2.VideoCapture(self.input_source)
 
-     """read a video frame from the camera or video file, return type: numpy.ndarray"""
     def read_frame(self):
         if self.cap.isOpened():
             ret, frame = self.cap.read()
