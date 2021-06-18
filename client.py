@@ -5,14 +5,14 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import common
 import argparse
 import time
-from local import globals
+import threading
 from local.decision_engine import DecisionEngine
 from local.local_info import update_local_utilization
 from local.local_processor import LocalProcessor, load_model
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
 from local.preprocessor import PreProcessor
-from local.system_info import SysInfo
+from local.sys_info import SysInfo
 from local.video_reader import VideoReader
 from tools.read_config import read_config
 from tools.transfer_files_tool import transfer_array_and_str
@@ -24,7 +24,7 @@ global selected_model
 global msg_dict
 
 
-def local_worker(serv_type, local_queue, sys_info, local_store, selected_model):
+def local_worker(serv_type, local_queue, sys_info, local_store):
     local_processor = LocalProcessor()
     while True:
         frame = local_queue.get()
@@ -43,12 +43,9 @@ def local_worker(serv_type, local_queue, sys_info, local_store, selected_model):
             logger.error("no specified service type")
 
 
-def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
+def offload_worker(serv_type, frame, msg_dict, sys_info, local_store):
     preprocessor = PreProcessor()
     image_url = read_config("transfer-url", "image_url")
-
-    frame = offload_queue.get()
-    # logger.debug("msg_dict:"+str(id(msg_dict)))
 
     frame = preprocessor.preprocess_image(frame, **msg_dict)
     file_size = sys.getsizeof(frame)
@@ -77,15 +74,18 @@ def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', help='input video file')
-    parser.add_argument('-c', '--camera', help="input camera type, 'rtsp' for Webcam, 'local' for local camera")
-    parser.add_argument('-s', '--serv', type=int, help="input service demand, '3' for IMAGE_CLASSIFICATION," 
+    parser.add_argument('-c', '--camera', help="input camera type, "
+                                               "'rtsp' for Webcam, "
+                                               "'local' for local camera")
+    parser.add_argument('-s', '--serv', type=int, help="input service demand,"
+                                                       "'3' for IMAGE_CLASSIFICATION," 
                                                        "'4' for OBJECT_DETECTION", required=True)
-    parser.add_argument('-i', '--interval', type=int, help="read frame interval between two frames", required=True)
+    parser.add_argument('-i', '--interval', type=int, help="interval between reading two frames in ms", required=True)
     args = parser.parse_args()
 
     file_type = common.IMAGE_TYPE
     serv_type = args.serv
-    interval = args.interval
+    INTERVAL = args.interval / 1000.0   # change into seconds
 
     input_file = args.file
     if input_file is not None:
@@ -105,10 +105,8 @@ if __name__ == '__main__':
         logger.error("use either video file or camera")
         sys.exit()
 
-    globals.init()
-    loaded_model = load_model()
-
     logger.add("log/client_{time}.log", level="INFO")
+    loaded_model = load_model()
 
     reader = VideoReader(input_file, camera_type)
     decision_engine = DecisionEngine(file_type, serv_type)
@@ -116,47 +114,35 @@ if __name__ == '__main__':
     sys_info = SysInfo()
 
     local_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
-    offload_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
 
-    flag, msg_dict, selected_model = decision_engine.get_result(globals.local_cpu_usage.value,
-                                                                globals.local_memory_usage.value,
-                                                                sys_info)
+    # start the thread pool for processing offloading requests
     executor = ThreadPoolExecutor(max_workers=2)
-
-    p = multiprocessing.Process(target=local_worker,
-                                args=(serv_type, local_queue, sys_info, local_store, selected_model))
-    p.start()
+    # start the process for local inference
+    local_processor = multiprocessing.Process(target=local_worker,
+                                              args=(serv_type, local_queue, sys_info, local_store))
+    local_processor.start()
 
     while True:
-        # read frames from video files or camera
-        if camera_type is not None:
-            frame = reader.read_frame()
-        elif input_file is not None:
-            for i in range(interval):
-                image = reader.read_frame()
-                if i == 0:
-                    frame = image
-
-        # preprocessing frames
+        # read frames from video file or camera
+        frame = reader.read_frame()
         if frame is None:
-            sys_info.store()
-            print("service comes over!")
-            exit()
-
-        flag, msg_dict, selected_model = decision_engine.get_result(
-            globals.local_cpu_usage.value,
-            globals.local_memory_usage.value,
-            sys_info
-        )
-        logger.debug(flag)
-
-        if flag == common.LOCAL:
-            local_queue.put(frame)
-        elif flag == common.OFFLOAD:
-            offload_queue.put(frame)
-            task1 = executor.submit(offload_worker, serv_type, offload_queue, msg_dict, sys_info, local_store)
-        else:
-            logger.error("flag has wrong value!")
+            logger.error("service comes over!")
             sys.exit()
+
+        t_start = time.time()
+        location, msg_dict, selected_model = decision_engine.get_result(sys_info)
+        logger.debug(location)
+
+        if location == common.LOCAL:
+            local_queue.put(frame)
+        elif location == common.OFFLOAD:
+            task1 = executor.submit(offload_worker, serv_type, frame, msg_dict, sys_info, local_store)
+
+        # sleep until the duration of INTERVAL seconds has passed
+        t_end = time.time()
+        if t_end - t_start < INTERVAL:
+            dur = INTERVAL - (t_end - t_start)
+            time.sleep(dur)
+
 
 
