@@ -25,9 +25,9 @@ import multiprocessing
 from loguru import logger
 
 global loaded_model
-loaded_model = load_model()
 global selected_model
 global msg_dict
+loaded_model = load_model()
 
 
 def local_worker(serv_type, local_queue, sys_info, local_store, selected_model):
