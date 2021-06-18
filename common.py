@@ -7,5 +7,10 @@ OBJECT_DETECTION = 4
 LOCAL = 6
 OFFLOAD = 7
 
-REAL_CAMERA = 'rtsp'
-VIRTUAL_CAMERA = 'local'
+global loaded_model
+global sys_info
+
+
+
+
+
