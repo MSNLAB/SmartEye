@@ -22,32 +22,28 @@ from loguru import logger
 global loaded_model
 global selected_model
 global msg_dict
-loaded_model = load_model()
 
 
 def local_worker(serv_type, local_queue, sys_info, local_store, selected_model):
-
     local_processor = LocalProcessor()
     while True:
         frame = local_queue.get()
-        t1 = time.time()
+        t_start = time.time()
         result = local_processor.process(frame, selected_model, loaded_model)
-        t2 = time.time()
-        processing_delay = t2 - t1
+        t_end = time.time()
+        processing_delay = t_end - t_start
         if serv_type == common.IMAGE_CLASSIFICATION:
-            sys_info.append(t1, processing_delay)
+            sys_info.append(t_start, processing_delay)
             logger.info("local:" + result)
         elif serv_type == common.OBJECT_DETECTION:
-            sys_info.append(t1, processing_delay)
+            sys_info.append(t_end, processing_delay)
             local_store.store_image(result)
             logger.info("local object detection works well!")
         else:
-            logger.error("Seal error: no specified service type!")
+            logger.error("no specified service type")
 
 
 def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
-
-    # logger.debug("mark")
     preprocessor = PreProcessor()
     image_url = read_config("transfer-url", "image_url")
 
@@ -68,14 +64,12 @@ def offload_worker(serv_type, offload_queue, msg_dict, sys_info, local_store):
             result = result_dict["prediction"]
             sys_info.append(start_time, processing_delay, bandwidth)
             logger.info("offload:"+result)
-
         elif serv_type == common.OBJECT_DETECTION:
             frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
             frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
             local_store.store_image(frame_handled)
             sys_info.append(start_time, processing_delay, bandwidth)
             logger.info("offload object detection works well!")
-
         else:
             logger.error("Seal error: no specified service type!")
 
@@ -96,7 +90,7 @@ if __name__ == '__main__':
     input_file = args.file
     if input_file is not None:
         if not os.path.isfile(input_file):
-            logger.error("Error: file not exists")
+            logger.error("input video file does not exist")
             sys.exit()
 
     camera_type = None
@@ -104,47 +98,39 @@ if __name__ == '__main__':
         camera_type = args.camera
 
     if input_file is None and camera_type is None:
-        logger.error("file and camera can not be None at the same time!")
+        logger.error("input video file and camera type cannot be both None")
         sys.exit()
 
     if input_file is not None and camera_type is not None:
-        logger.error("Both file and camera can not have value at the same time!")
+        logger.error("use either video file or camera")
         sys.exit()
 
     globals.init()
+    loaded_model = load_model()
 
     logger.add("log/client_{time}.log", level="INFO")
-    # subprocess, update the cpu_usage and memory_usage every ten seconds
-    p = multiprocessing.Process(target=update_local_utilization,
-                                args=(globals.local_cpu_usage, globals.local_memory_usage))
-    p.start()
 
     reader = VideoReader(input_file, camera_type)
     decision_engine = DecisionEngine(file_type, serv_type)
+    local_store = LocalStore()
+    sys_info = SysInfo()
 
     local_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
     offload_queue = multiprocessing.Queue(int(read_config("some-number", "queue_length")))
-
-    local_store = LocalStore()
-    sys_info = SysInfo()
 
     flag, msg_dict, selected_model = decision_engine.get_result(globals.local_cpu_usage.value,
                                                                 globals.local_memory_usage.value,
                                                                 sys_info)
     executor = ThreadPoolExecutor(max_workers=2)
 
-    p = multiprocessing.Process(
-        target=local_worker,
-        args=(serv_type, local_queue, sys_info, local_store, selected_model)
-    )
+    p = multiprocessing.Process(target=local_worker,
+                                args=(serv_type, local_queue, sys_info, local_store, selected_model))
     p.start()
 
-    # logger.debug(local_store)
     while True:
-        # get frames
+        # read frames from video files or camera
         if camera_type is not None:
             frame = reader.read_frame()
-            time.sleep(interval)
         elif input_file is not None:
             for i in range(interval):
                 image = reader.read_frame()
