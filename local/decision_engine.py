@@ -29,6 +29,12 @@ class DecisionEngine:
         selected_model = None
         return pro_location, pre_proc, selected_model
 
+    def threshold_offload_policy(self):
+        pass
+
+    def delay_precision_tradeoff(self):
+        pass
+
     def get_decision(self, policy):
         return self.policy_set[policy]()
 
