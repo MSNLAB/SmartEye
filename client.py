@@ -1,10 +1,6 @@
 import sys
 import os
 from concurrent.futures.thread import ThreadPoolExecutor
-from multiprocessing.managers import BaseManager
-from multiprocessing.pool import ThreadPool
-
-import threadpool as threadpool
 
 import common
 import argparse
@@ -16,7 +12,6 @@ from local.local_processor import LocalProcessor, load_model
 from local.local_store import LocalStore
 from frontend_server.offloading import send_frame
 from local.preprocessor import PreProcessor
-from local.proxy import Proxy
 from local.system_info import SysInfo
 from local.video_reader import VideoReader
 from tools.read_config import read_config
