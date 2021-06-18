@@ -6,28 +6,17 @@ from loguru import logger
 
 
 class PreProcessor:
-    """The preprocess execution of image data.
+    def __init__(self, frame):
+        self.frame = frame
 
-    Inpute video frames or directly a video file,
-    this class will transfer them to different resolution, qp etc.
-    """
-    def preprocess_image(self, frame, **msg_dict):
-        """Preprocess image.
-
-        According to the image_size decided by Decision Engine,
-        this function adjusts the image size of which will be sent to the server.
-
-        :param msg_dict: image size, support 100×100 poxels， 500x500 pixels
-        :param frame: images which needs to be adjust
-        :return: file save path
+    def preprocess(self, **msg_dict):
         """
-        try:
-            assert frame is not None
-        except AssertionError as err:
-            logger.exception("preprocess error:", err)
-        image = Image.fromarray(frame)
-        result_image = image.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
-        frame = np.asarray(result_image)
+        Preprocess the video frame based on the resolution decided by the decision engine
+        msg_dict: image size, support 100×100 poxels 500x500 pixels
+        """
+        frame = Image.fromarray(self.frame)
+        frame = frame.resize(tuple(msg_dict['image_size']), Image.ANTIALIAS)
+        frame = np.asarray(frame)
         return frame
 
     def preprocess_by_qp(self, frame, qp):
@@ -37,11 +26,6 @@ class PreProcessor:
         :param qp: the quality number which image changes to
         :return: image frame, ndarray
         """
-        try:
-            assert frame is not None
-            assert qp is not None
-        except AssertionError as err:
-            logger.exception("preprocess qp error:", err)
 
         image = Image.fromarray(frame)
         # temporary_store = read_config("store-folder", "temporary_store")
@@ -70,9 +54,3 @@ class PreProcessor:
 
         subprocess.Popen(cmd)
         return file_path
-
-
-if __name__ == '__main__':
-
-    # image_size_adjust((500, 500), './gile1.jpg')
-    pass
