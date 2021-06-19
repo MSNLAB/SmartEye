@@ -49,8 +49,8 @@ if __name__ == '__main__':
 
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
-    decision_engine = DecisionEngine(file_type, serv_type)
     edge_globals.sys_info = SysInfo()
+    decision_engine = DecisionEngine(edge_globals.sys_info)
 
     # start the thread pool for processing offloading requests
     WORKER_NUM = read_config("edge-setting", "worker_number")
@@ -73,23 +73,20 @@ if __name__ == '__main__':
         # obtain the CPU and memory usage
         edge_globals.sys_info.update_local_utilization()
 
-        '''
-        make decision on video frame processing
-        pro_location: local processing or offloading
-        pre_proc: how to pre-process the video frame
-        selected_model: selected model for inference
-        '''
-        pro_location, pre_proc, selected_model = decision_engine.get_result(edge_globals.sys_info)
-
         # create the inference as a task
         task_id = id_gen()
-        task = Task(frame, task_id, serv_type, selected_model)
+        task = Task(task_id, frame, serv_type)
+
+        # obtain the control policy from the configuration file
+        edge_policy = read_config("edge-setting", "control_policy")
+        # make decision on video frame processing
+        task = decision_engine.get_decision(edge_policy, task)
 
         # local processing on the edge
-        if pro_location == edge_globals.LOCAL:
+        if task.location == edge_globals.LOCAL:
             task_queue.put(task)
         # offload to the cloud for processing
-        elif pro_location == edge_globals.OFFLOAD:
+        elif task.location == edge_globals.OFFLOAD:
             executor.submit(offload_worker, task)
 
         # sleep until the duration of INTERVAL seconds has passed

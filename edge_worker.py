@@ -7,10 +7,8 @@ from loguru import logger
 from tools.read_config import read_config
 from tools.transfer_files_tool import transfer_array_and_str
 from frontend_server.offloading import send_frame
-from local.preprocessor import PreProcessor
-from local.local_processor import LocalProcessor
-from edge_globals import sys_info
-from edge_globals import loaded_model
+from local.preprocessor import preprocess
+from model_manager import object_detection, image_classification
 
 # the video frame handler of the forwarding server
 frame_handler = read_config("flask-url", "video_frame_url")
@@ -22,48 +20,66 @@ def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
 
 
 class Task:
-    def __init__(self, frame, task_id, serv_type, model):
-        self.frame = frame
+    def __init__(self, task_id, frame, serv_type):
         self.task_id = task_id
+        self.frame = frame
         self.serv_type = serv_type
-        self.selected_model = model
+        self.selected_model = None
+        self.location = None
+        self.new_size = None
+        self.new_qp = None
+
+
+def local_inference(task):
+    """local inference for a video frame"""
+    model = edge_globals.loaded_model[task.selected_model]
+    if task.serv_type == edge_globals.OBJECT_DETECTION:
+        result = object_detection.object_detection_api(task.frame, model, threshold=0.8)
+        return result
+    if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
+        result = image_classification.image_classification(task.frame, model)
+        return result
 
 
 def local_worker(task_queue):
-    local_processor = LocalProcessor()
     while True:
+        # get a task from the queue
         task = task_queue.get()
         t_start = time.time()
-        preprocessor = PreProcessor(task.frame)
-        frame = preprocessor.preprocess(**task.msg_dict)
-        result = local_processor.process(task.frame, task.model, loaded_model)
+        # preprocess the task
+        task = preprocess(task)
+        # locally process the task
+        result = local_inference(task)
         t_end = time.time()
         processing_delay = t_end - t_start
+        # record the processing delay
+        edge_globals.sys_info.append_local_delay(t_start, processing_delay)
+
         if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
-            sys_info.append_local_delay(t_start, processing_delay)
+            logger.info("to be added ...")
         elif task.serv_type == edge_globals.OBJECT_DETECTION:
-            sys_info.append_offload_delay(t_start, processing_delay)
+            logger.info("to be added ....")
 
 
 def offload_worker(task):
-    preprocessor = PreProcessor()
-
-    frame = preprocessor.preprocess_image(task.frame, **task.msg_dict)
-    file_size = sys.getsizeof(frame)
+    task = preprocess(task)
+    file_size = sys.getsizeof(task.frame)
+    t_start = time.time()
     # send the video frame to the server
     try:
         result_dict, start_time, processing_delay, arrive_transfer_server_time = \
-            send_frame(frame_handler, frame, selected_model)
+            send_frame(frame_handler, task.frame, task.model)
     except Exception as err:
-        logger.exception("return back err!")
+        logger.exception("offloading error")
     else:
+        # record the bandwidth and the processing delay
         bandwidth = file_size / arrive_transfer_server_time
+        edge_globals.sys_info.append_bandwidth(t_start, bandwidth)
+        edge_globals.sys_info.append_offload_delay(t_start, processing_delay)
+
         if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
-            sys_info.append(start_time, processing_delay, bandwidth)
             logger.info("offload:"+result)
         elif task.serv_type == edge_globals.OBJECT_DETECTION:
             frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
             frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
-            sys_info.append(start_time, processing_delay, bandwidth)
-            logger.info("offload object detection works well!")
