@@ -38,12 +38,14 @@ def get_prediction(img, threshold, model):
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())]
         pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())]
         pred_score = list(pred[0]['scores'].detach().numpy())
-
-
-    pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
-    pred_boxes = pred_boxes[:pred_t+1]
-    pred_class = pred_class[:pred_t+1]
-    return pred_boxes, pred_class
+    try:
+        pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
+    except IndexError:
+        return None, None
+    else:
+        pred_boxes = pred_boxes[:pred_t+1]
+        pred_class = pred_class[:pred_t+1]
+        return pred_boxes, pred_class
 
 
 def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
@@ -51,12 +53,14 @@ def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, th
     boxes, pred_cls = get_prediction(img_path, threshold, model)
     # img = cv2.imread(img_path) # Read image with cv2
     img = cv2.cvtColor(img_path, cv2.COLOR_BGR2RGB)
-    # return str(boxes), str(pred_cls), img
+
+    if boxes is None and pred_cls is None:
+        return img
     for i in range(len(boxes)):
         # Draw Rectangle with the coordinates
         cv2.rectangle(img, boxes[i][0], boxes[i][1], color=(0, 255, 0), thickness=rect_th)
         # Write the prediction class
-        cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
+        cv2.putText(img, pred_cls[i], boxes[i][0], cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
     return img
 
 

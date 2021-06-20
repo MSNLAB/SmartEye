@@ -34,6 +34,7 @@ def delay_precision_tradeoff(task):
 
 
 class DecisionEngine:
+
     def __init__(self, sys_info):
         self.sys_info = sys_info
         self.policy_set = {"always_local_fastest_model": always_local_fastest_model,
@@ -46,15 +47,5 @@ class DecisionEngine:
         # save the frame for differencing in the next time
         self.last_frame = task.frame
         return task
-
-
-
-
-
-
-
-
-
-
 
 
