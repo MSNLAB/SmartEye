@@ -45,7 +45,7 @@ def local_worker(task_queue):
 
     while True:
         # get a task from the queue
-        task = task_queue.get()
+        task = task_queue.get(block=True)
         t_start = time.time()
         # locally process the task
         t1 = time.time()

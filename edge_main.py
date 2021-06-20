@@ -50,8 +50,6 @@ if __name__ == '__main__':
     # load the video analytics models into memory
     edge_globals.loaded_model = load_models(edge_object_detection_model)
 
-    # logger.debug(edge_globals.loaded_model.keys())
-
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
     edge_globals.sys_info = SysInfo()
@@ -63,7 +61,7 @@ if __name__ == '__main__':
     executor = ThreadPoolExecutor(max_workers=WORKER_NUM)
 
     # the queue for local processing task passing
-    task_queue = queue.Queue()
+    task_queue = queue.Queue(int(read_config("edge-setting", "queue_maxsize")))
     # start the thread for local inference
     local_processor = threading.Thread(target=local_worker, args=(task_queue, ))
     local_processor.start()
@@ -87,11 +85,9 @@ if __name__ == '__main__':
         edge_policy = read_config("edge-setting", "control_policy")
         # make decision on video frame processing
         task = decision_engine.get_decision(edge_policy, task)
-        # logger.debug("after decision:")
-        # logger.debug(task)
         # local processing on the edge
         if task.location == edge_globals.LOCAL:
-            task_queue.put(task)
+            task_queue.put(task, block=True)
         # offload to the cloud for processing
         elif task.location == edge_globals.OFFLOAD:
             executor.submit(offload_worker, task)
