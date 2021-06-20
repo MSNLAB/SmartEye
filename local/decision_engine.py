@@ -1,7 +1,8 @@
 import edge_globals
-from model_manager.model_cache import edge_object_detection_model
-from model_manager.model_cache import cloud_object_detection_model
+from config.model_info import edge_object_detection_model
+from config.model_info import cloud_object_detection_model
 from model_manager.model_cache import get_fastest_model
+from loguru import logger
 
 resolution_list = [(240, 352), (360, 480), (480, 858), (720, 1280)]
 qp_value = [30, 40, 50, 60, 70, 80, 90]

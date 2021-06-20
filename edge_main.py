@@ -7,7 +7,7 @@ import edge_globals
 import argparse
 import time
 from local.decision_engine import DecisionEngine
-from model_manager.model_cache import load_model
+from model_manager.model_cache import load_models
 from local.sys_info import SysInfo
 from local.video_reader import VideoReader
 from loguru import logger
@@ -45,7 +45,9 @@ if __name__ == '__main__':
         sys.exit()
 
     # load the video analytics models into memory
-    edge_globals.loaded_model = load_model()
+    edge_globals.loaded_model = load_models(read_config("object-detection"))
+
+    # logger.debug(edge_globals.loaded_model.keys())
 
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     decision_engine = DecisionEngine(edge_globals.sys_info)
 
     # start the thread pool for processing offloading requests
-    WORKER_NUM = read_config("edge-setting", "worker_number")
+    WORKER_NUM = int(read_config("edge-setting", "worker_number"))
     executor = ThreadPoolExecutor(max_workers=WORKER_NUM)
 
     # the queue for local processing task passing
@@ -81,7 +83,8 @@ if __name__ == '__main__':
         edge_policy = read_config("edge-setting", "control_policy")
         # make decision on video frame processing
         task = decision_engine.get_decision(edge_policy, task)
-
+        # logger.debug("after decision:")
+        # logger.debug(task)
         # local processing on the edge
         if task.location == edge_globals.LOCAL:
             task_queue.put(task)

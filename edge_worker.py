@@ -32,6 +32,8 @@ class Task:
 
 def local_inference(task):
     """local inference for a video frame"""
+    # logger.debug(task.selected_model)
+    logger.debug(task.selected_model)
     model = edge_globals.loaded_model[task.selected_model]
     if task.serv_type == edge_globals.OBJECT_DETECTION:
         result = object_detection.object_detection_api(task.frame, model, threshold=0.8)
@@ -46,8 +48,6 @@ def local_worker(task_queue):
         # get a task from the queue
         task = task_queue.get()
         t_start = time.time()
-        # preprocess the task
-        task = preprocess(task)
         # locally process the task
         result = local_inference(task)
         t_end = time.time()

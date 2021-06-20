@@ -28,12 +28,12 @@ def load_models(model_list):
     return loaded_model
 
 
-def get_fastest_model(model_list, delay_type):
+def get_fastest_model(model_list):
     fast_model = None
     min_delay = float('inf')
     for model in model_list:
         if model in model_lib.keys():
-            delay = model_lib[model][delay_type]
+            delay = model_lib[model]["tx2_delay"]
             if delay < min_delay:
                 fast_model = model
                 min_delay = delay

@@ -31,13 +31,14 @@ def get_prediction(img, threshold, model):
     img = img.to(device)
     pred = model([img])
     if device == "cuda":
-        pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cuda().data.cpu().numpy())] # Get the Prediction Score
-        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())] # Bounding boxes
+        pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cuda().data.cpu().numpy())]
+        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
         pred_score = list(pred[0]['scores'].detach().cpu().numpy())
     else:
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].numpy())]
-        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())]  # Bounding boxes
+        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().numpy())]
         pred_score = list(pred[0]['scores'].detach().numpy())
+
 
     pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
     pred_boxes = pred_boxes[:pred_t+1]
@@ -53,7 +54,7 @@ def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, th
     # return str(boxes), str(pred_cls), img
     for i in range(len(boxes)):
         # Draw Rectangle with the coordinates
-        cv2.rectangle(img, boxes[i][0], boxes[i][1],color=(0, 255, 0), thickness=rect_th)
+        cv2.rectangle(img, boxes[i][0], boxes[i][1], color=(0, 255, 0), thickness=rect_th)
         # Write the prediction class
         cv2.putText(img,pred_cls[i], boxes[i][0],  cv2.FONT_HERSHEY_SIMPLEX, text_size, (0, 255, 0), thickness=text_th)
     return img
