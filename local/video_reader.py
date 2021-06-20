@@ -3,6 +3,7 @@ from tools.read_config import read_config
 
 
 class VideoReader:
+
     def __init__(self, input_source=None, rtsp_camera=False):
         self.input_source = None
         if input_source is not None:

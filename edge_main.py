@@ -6,7 +6,10 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import edge_globals
 import argparse
 import time
+
+from config.model_info import edge_object_detection_model
 from local.decision_engine import DecisionEngine
+from local.local_store import DataStore
 from model_manager.model_cache import load_models
 from local.sys_info import SysInfo
 from local.video_reader import VideoReader
@@ -45,13 +48,14 @@ if __name__ == '__main__':
         sys.exit()
 
     # load the video analytics models into memory
-    edge_globals.loaded_model = load_models(read_config("object-detection"))
+    edge_globals.loaded_model = load_models(edge_object_detection_model)
 
     # logger.debug(edge_globals.loaded_model.keys())
 
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
     edge_globals.sys_info = SysInfo()
+    edge_globals.datastore = DataStore()
     decision_engine = DecisionEngine(edge_globals.sys_info)
 
     # start the thread pool for processing offloading requests

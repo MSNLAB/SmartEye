@@ -28,9 +28,11 @@ def get_prediction(img, threshold, model):
     transform = T.Compose([T.ToTensor()])
     img = transform(img)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.debug(device)
+    logger.debug(type(device))
     img = img.to(device)
     pred = model([img])
-    if device == "cuda":
+    if torch.cuda.is_available():
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cuda().data.cpu().numpy())]
         pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
         pred_score = list(pred[0]['scores'].detach().cpu().numpy())
