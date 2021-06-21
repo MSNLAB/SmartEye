@@ -1,4 +1,5 @@
 import sys
+from config.model_info import edge_object_detection_model
 import os
 import queue
 import threading
@@ -6,16 +7,14 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import edge_globals
 import argparse
 import time
-
-from config.model_info import edge_object_detection_model
 from local.decision_engine import DecisionEngine
-from local.local_store import DataStore
 from model_manager.model_cache import load_models
 from local.sys_info import SysInfo
 from local.video_reader import VideoReader
 from loguru import logger
 from edge_worker import local_worker, offload_worker, Task, id_gen
 from tools.read_config import read_config
+from local.local_store import DataStore
 
 
 if __name__ == '__main__':
@@ -34,7 +33,6 @@ if __name__ == '__main__':
     file_type = edge_globals.IMAGE_TYPE
     serv_type = args.serv
     INTERVAL = args.interval / 1000.0   # convert into seconds
-
     input_file = args.file
     if input_file is not None:
         if os.path.isfile(input_file) is False and input_file.isdigit() is False:
@@ -53,9 +51,8 @@ if __name__ == '__main__':
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
     edge_globals.sys_info = SysInfo()
-    edge_globals.datastore = DataStore()
     decision_engine = DecisionEngine(edge_globals.sys_info)
-
+    edge_globals.datastore = DataStore()
     # start the thread pool for processing offloading requests
     WORKER_NUM = int(read_config("edge-setting", "worker_number"))
     executor = ThreadPoolExecutor(max_workers=WORKER_NUM)
@@ -68,11 +65,12 @@ if __name__ == '__main__':
 
     # read frames from video file or camera in loop
     while True:
+         
         frame = reader.read_frame()
+    
         if frame is None:
-            logger.error("fail to read a video frame")
             sys.exit()
-
+    
         t_start = time.time()
         # obtain the CPU and memory usage
         edge_globals.sys_info.update_local_utilization()
@@ -85,15 +83,19 @@ if __name__ == '__main__':
         edge_policy = read_config("edge-setting", "control_policy")
         # make decision on video frame processing
         task = decision_engine.get_decision(edge_policy, task)
+    
         # local processing on the edge
         if task.location == edge_globals.LOCAL:
+
             task_queue.put(task, block=True)
+            
         # offload to the cloud for processing
         elif task.location == edge_globals.OFFLOAD:
             executor.submit(offload_worker, task)
 
         # sleep until the duration of INTERVAL seconds has passed
         t_end = time.time()
+
         if t_end - t_start < INTERVAL:
             dur = INTERVAL - (t_end - t_start)
             time.sleep(dur)

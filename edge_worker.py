@@ -32,6 +32,8 @@ class Task:
 
 def local_inference(task):
     """local inference for a video frame"""
+    
+
     model = edge_globals.loaded_model[task.selected_model]
     if task.serv_type == edge_globals.OBJECT_DETECTION:
         result = object_detection.object_detection_api(task.frame, model, threshold=0.8)
@@ -42,19 +44,18 @@ def local_inference(task):
 
 
 def local_worker(task_queue):
-
+    
     while True:
+         
         # get a task from the queue
         task = task_queue.get(block=True)
+    
         t_start = time.time()
         # locally process the task
-        t1 = time.time()
         result = local_inference(task)
-        logger.debug(task.selected_model)
-        t2 = time.time()
-        logger.debug("processing_delay:"+str(t2-t1))
         t_end = time.time()
         processing_delay = t_end - t_start
+    
         # record the processing delay
         edge_globals.sys_info.append_local_delay(t_start, processing_delay)
 
@@ -72,7 +73,7 @@ def offload_worker(task):
     # send the video frame to the server
     try:
         result_dict, start_time, processing_delay, arrive_transfer_server_time = \
-            send_frame(frame_handler, task.frame, task.model)
+            send_frame(frame_handler, task.frame, task.selected_model)
     except Exception as err:
         logger.exception("offloading error")
     else:

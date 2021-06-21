@@ -104,7 +104,8 @@ def serve():
 
     globals.loaded_model = load_models(cloud_object_detection_model)
     server = grpc.server(
-        futures.ThreadPoolExecutor(max_workers=10),
+        futures.ThreadPoolExecutor(max_workers=1),
+        maximum_concurrent_rpcs=10
     )
     msg_transfer_pb2_grpc.add_MsgTransferServicer_to_server(
       MsgTransferServer(), server)
