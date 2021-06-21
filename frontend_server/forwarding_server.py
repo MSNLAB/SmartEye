@@ -3,7 +3,7 @@ from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilizatio
 from frontend_server.grpc_interface import get_grpc_reply
 import globals
 from frontend_server.monitor import server_monitor
-sys.path.append("../")
+sys.path.append("../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/")
 from tools.read_config import read_config
 from loguru import logger
 
@@ -17,7 +17,7 @@ sched = BackgroundScheduler(daemon=True)
 sched.add_job(server_monitor, 'interval', seconds=int(read_config("monitor", "monitor_interval")))
 sched.start()
 
-logger.add("transfer-server_{time}.log")
+logger.add("log/transfer-server_{time}.log")
 
 
 @app.route('/image_handler', methods=['GET', 'POST'])
@@ -32,6 +32,7 @@ def image_handler():
     :return: return_dict
     """
     info_dict = request.form
+    logger.debug(info_dict["selected_model"])
     server_url = rpc_server_selection("random")
     globals.tasks_number[server_url] += 1
     t1 = time.time()

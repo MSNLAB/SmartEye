@@ -36,7 +36,8 @@ def load_model(selected_model):
     :return: model: loaded model
     """
 
-    weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
+    weight_folder = os.path.join(os.path.dirname(__file__),
+                                 "../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/cv_model")
     try:
         for file in os.listdir(weight_folder):
             if selected_model in file:

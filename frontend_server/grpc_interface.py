@@ -21,7 +21,7 @@ def get_grpc_reply(server_url, **info_dict):
         model=info_dict["selected_model"], frame=info_dict["frame"], frame_shape=info_dict["frame_shape"]
     )
     try:
-        msg_reply = stub.image_processor(msg_request, timeout=1)
+        msg_reply = stub.image_processor(msg_request)
     except:
         logger.exception("Error: GRPC reply error!")
         pass

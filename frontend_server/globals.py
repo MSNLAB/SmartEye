@@ -1,5 +1,6 @@
 import multiprocessing
-
+import sys
+sys.path.append("../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/")
 from tools.read_config import read_config
 
 
