@@ -1,8 +1,13 @@
 from concurrent import futures
 import grpc
 import sys
+
+from backend_server import backend_globals
 from backend_server.model_controller import load_a_model, get_server_utilization, load_model_files_advance
-import globals
+
+from config.model_info import cloud_object_detection_model
+from model_manager.model_cache import load_models
+
 sys.path.append("../../Downloads/SmartEye/")
 from model_manager import object_detection, image_classification
 from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
@@ -96,10 +101,15 @@ def image_handler(img, model, selected_model):
 
 def serve():
 
-    globals.init()
-    load_model_files_advance()
+    MAX_MESSAGE_LENGTH = 256 * 1024 * 1024
+    logger.info("grpc server loading...")
+    backend_globals.loaded_model = load_models(cloud_object_detection_model)
+    logger.info("server models have loaded!")
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
+        maximum_concurrent_rpcs=10,
+        options=[('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
+                 ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH), ]
     )
     msg_transfer_pb2_grpc.add_MsgTransferServicer_to_server(
       MsgTransferServer(), server)
