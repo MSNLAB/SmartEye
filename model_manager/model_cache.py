@@ -9,16 +9,13 @@ from torchvision.models.detection import *
 
 def load_models(model_list):
     loaded_model = {}
-    weight_folder = os.path.join(os.path.dirname(__file__),
-                                 "../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/cv_model")
-
+    weight_folder = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/cv_model")
+    
     for model_name in model_list:
         if model_name in model_lib.keys():
             weight_files_path = os.path.join(weight_folder, model_lib[model_name]['model_path'])
             # load the weight file
             file_load = torch.load(weight_files_path)
-            
-            logger.debug(model_name)
             model = eval(model_name)()
             model.load_state_dict(file_load, False)
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -41,7 +38,7 @@ def get_fastest_model(model_list):
                 fast_model = model
                 min_delay = delay
     return fast_model
-
+    #return 'retinanet_resnet50_fpn'
 
 def get_most_precise_model(model_list):
     precise_model = None

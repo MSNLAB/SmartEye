@@ -69,15 +69,17 @@ if __name__ == '__main__':
         frame = reader.read_frame()
     
         if frame is None:
+            
+            logger.info("Service come over!")
             sys.exit()
     
-        t_start = time.time()
         # obtain the CPU and memory usage
         edge_globals.sys_info.update_local_utilization()
 
         # create the inference as a task
         task_id = id_gen()
-        task = Task(task_id, frame, serv_type)
+        t_start = time.time()
+        task = Task(task_id, frame, serv_type, t_start)
 
         # obtain the control policy from the configuration file
         edge_policy = read_config("edge-setting", "control_policy")
@@ -88,6 +90,7 @@ if __name__ == '__main__':
         if task.location == edge_globals.LOCAL:
 
             task_queue.put(task, block=True)
+           # logger.debug(edge_globals.sys_info.local_delay)
             
         # offload to the cloud for processing
         elif task.location == edge_globals.OFFLOAD:

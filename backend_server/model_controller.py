@@ -17,8 +17,7 @@ def load_model_files_advance():
 
     :return: None
     """
-    weight_folder = os.path.join(os.path.dirname(__file__),
-                                 "../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/cv_model")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/cv_model")
     preload_models = read_config("preload-models")
 
     for model in preload_models:
@@ -33,7 +32,6 @@ def load_model_files_advance():
         weight_files_path = os.path.join(weight_folder, file_name)
         file_load = torch.load(weight_files_path)
         globals.loaded_model[model] = file_load
-        logger.debug(model+"has been loaded!")
 
 
 def load_a_model(selected_model):
@@ -54,8 +52,7 @@ def load_a_model(selected_model):
         model = eval(selected_model)()
         model.load_state_dict(globals.loaded_model[selected_model], False)
     else:
-        weight_folder = os.path.join(os.path.dirname(__file__),
-                                     "../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/cv_model")
+        weight_folder = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/cv_model")
         try:
             for file in os.listdir(weight_folder):
                 if selected_model in file:

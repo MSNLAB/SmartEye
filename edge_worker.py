@@ -20,10 +20,12 @@ def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
 
 
 class Task:
-    def __init__(self, task_id, frame, serv_type):
+
+    def __init__(self, task_id, frame, serv_type, t_start):
         self.task_id = task_id
         self.frame = frame
         self.serv_type = serv_type
+        self.t_start = t_start
         self.selected_model = None
         self.location = None
         self.new_size = None
@@ -48,43 +50,65 @@ def local_worker(task_queue):
     while True:
          
         # get a task from the queue
-        task = task_queue.get(block=True)
-    
-        t_start = time.time()
-        # locally process the task
-        result = local_inference(task)
-        t_end = time.time()
-        processing_delay = t_end - t_start
-    
-        # record the processing delay
-        edge_globals.sys_info.append_local_delay(t_start, processing_delay)
 
-        if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
-            logger.info("image classification result:"+result)
-        elif task.serv_type == edge_globals.OBJECT_DETECTION:
-            logger.info("object detection works well! please go to info_store/handled_result to check.")
-            edge_globals.datastore.store_image(result)
+        try:
+            task = task_queue.get(block=True, timeout=10)
+        except Exception:
+            sum = 0
+            for item in edge_globals.sys_info.local_delay:
+                sum += item.value
+            average_local_delay = sum / len(edge_globals.sys_info.local_delay)
+            logger.info("average local delay:"+str(average_local_delay))
+        else:
+        #t_start = time.time()
+        # locally process the task
+           # if len(edge_globals.sys_info.local_delay) != 0:
+            #    logger.debug("list:"+str(edge_globals.sys_info.local_delay[0].value))
+            t_start = task.t_start
+            result = local_inference(task)
+            t_end = time.time()
+            processing_delay = t_end - t_start
+            logger.info("t_start:"+str(task.t_start))
+            logger.info("t_end:"+str(t_end))
+            logger.info("local_processing_delay:"+str(processing_delay))   
+            # record the processing delay
+            edge_globals.sys_info.append_local_delay(t_start, processing_delay)
+
+            if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
+                logger.info("image classification result:"+result)
+            elif task.serv_type == edge_globals.OBJECT_DETECTION:
+                logger.info("object detection works well! please go to info_store/handled_result to check.")
+                edge_globals.datastore.store_image(result)
 
 
 def offload_worker(task):
-    task = preprocess(task)
+    #task = preprocess(task)
     file_size = sys.getsizeof(task.frame)
     t_start = time.time()
     # send the video frame to the server
     try:
         result_dict, start_time, processing_delay, arrive_transfer_server_time = \
             send_frame(frame_handler, task.frame, task.selected_model)
+        t_end = time.time()
     except Exception as err:
         logger.exception("offloading error")
     else:
+        # logger.debug(task.serv_type)
+        total_processing_delay = t_end - task.t_start
         # record the bandwidth and the processing delay
         bandwidth = file_size / arrive_transfer_server_time
         edge_globals.sys_info.append_bandwidth(t_start, bandwidth)
+       # logger.debug("mark1")
         edge_globals.sys_info.append_offload_delay(t_start, processing_delay)
-
+        logger.debug("cloud processing delay:"+str(total_processing_delay))
+        logger.debug(edge_globals.OBJECT_DETECTION)
         if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
             logger.info("offload:"+result)
+    
         elif task.serv_type == edge_globals.OBJECT_DETECTION:
+            logger.debug(task.serv_type)
             frame_shape = tuple(int(s) for s in result_dict["frame_shape"][1:-1].split(","))
             frame_handled = transfer_array_and_str(result_dict["result"], 'down').reshape(frame_shape)
+            edge_globals.datastore.store_image(frame_handled)
+            logger.info("cloud process image well!")

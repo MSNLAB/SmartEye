@@ -14,8 +14,7 @@ def video_frame_resize(frame, new_size):
 def video_frame_change_qp(frame, qp):
     """Change the image quality"""
     image = Image.fromarray(frame)
-    temporary_store = os.path.join(os.path.dirname(__file__),
-                                   "../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/info_store/temporary_file")
+    temporary_store = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/info_store/temporary_file")
     n = random.randrange(0, 1000)
     file_path = os.path.join(temporary_store, 'temporary_' + str(n) + '.jpg')
     image.save(file_path, quality=qp)

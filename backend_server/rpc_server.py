@@ -1,22 +1,19 @@
 from concurrent import futures
 import grpc
 import sys
-import globals
-sys.path.append("../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/")
 from backend_server.model_controller import load_a_model, get_server_utilization, load_model_files_advance
+import globals
+sys.path.append("../../Downloads/SmartEye/")
 from model_manager import object_detection, image_classification
 from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
 from tools.transfer_files_tool import transfer_array_and_str
 from tools.read_config import read_config
 from loguru import logger
-from config.model_info import cloud_object_detection_model
-from model_manager.model_cache import load_models
-
 
 object_detection_models = read_config("object-detection")
 image_classification_models = read_config("image-classification")
 
-logger.add("log/grpc-server_{time}.log")
+logger.add("grpc-server_{time}.log")
 
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
@@ -32,13 +29,10 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         Get the image process request from the client, process it and return the result.
 
         """
-        logger.debug("mark")
-
         selected_model = request.model
-        logger.debug(selected_model)
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
-        model = globals.loaded_model[selected_model]
+        model = load_a_model(selected_model)
         img = transfer_array_and_str(frame, 'down').reshape(frame_shape)
         msg_reply = image_handler(img, model, selected_model)
 
@@ -102,10 +96,10 @@ def image_handler(img, model, selected_model):
 
 def serve():
 
-    globals.loaded_model = load_models(cloud_object_detection_model)
+    globals.init()
+    load_model_files_advance()
     server = grpc.server(
-        futures.ThreadPoolExecutor(max_workers=1),
-        maximum_concurrent_rpcs=10
+        futures.ThreadPoolExecutor(max_workers=10),
     )
     msg_transfer_pb2_grpc.add_MsgTransferServicer_to_server(
       MsgTransferServer(), server)
