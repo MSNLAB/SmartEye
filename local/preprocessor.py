@@ -3,12 +3,15 @@ import os
 import random
 import numpy as np
 
+from local.local_store import DataStore
+from local.video_reader import VideoReader
+
 
 def video_frame_resize(frame, new_size):
     frame = Image.fromarray(frame)
-    wpercent = (new_size / float(frame.size[0]))
-    hsize = int((float(frame.size[1]) * float(wpercent)))
-    frame = frame.resize((new_size, hsize), Image.ANTIALIAS)
+    wpercent = (new_size / float(frame.size[1]))
+    hsize = int((float(frame.size[0]) * float(wpercent)))
+    frame = frame.resize((hsize, new_size), Image.ANTIALIAS)
     frame = np.asarray(frame)
     return frame
 
@@ -35,4 +38,17 @@ def preprocess(task):
         task.frame = video_frame_change_qp(task.frame, task.new_qp)
 
     return task
+
+
+if __name__ == "__main__":
+
+    video = "../VIRAT_S_000200_00_000100_000171.mp4"
+    reader = VideoReader(video)
+    datastore = DataStore()
+    while True:
+        frame = reader.read_frame()
+
+        frame = video_frame_resize(frame, 240)
+
+        datastore.store_image(frame)
 

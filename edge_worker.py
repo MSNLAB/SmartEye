@@ -70,8 +70,7 @@ def local_worker(task_queue):
             result = local_inference(task)
             t_end = time.time()
             processing_delay = t_end - t_start
-            logger.info("t_start:"+str(task.t_start))
-            logger.info("t_end:"+str(t_end))
+
             logger.info("local_processing_delay:"+str(processing_delay))   
             # record the processing delay
             edge_globals.sys_info.append_local_delay(t_start, processing_delay)

@@ -24,12 +24,11 @@ class DataStore:
 
     def __init__(self, store_type=None):
         time = datetime.datetime.now()
-        store_path = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/info_store/handled_result")
+        store_path = os.path.join(os.path.dirname(__file__), "../info_store/handled_result")
         self.n = 0
         self.result_store_location = os.path.join(
             store_path, time.strftime('%a%b%d%H%M')
         )
-        logger.debug(self.result_store_location)
         if store_type == edge_globals.VIDEO_TYPE:
             video_name = time.strftime('%a%b%d%H%M') + ".mp4"
             self.out = cv2.VideoWriter(
