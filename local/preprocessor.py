@@ -7,11 +7,11 @@ from local.local_store import DataStore
 from local.video_reader import VideoReader
 
 
-def video_frame_resize(frame, new_size):
+def video_frame_resize(frame, new_height):
     frame = Image.fromarray(frame)
-    wpercent = (new_size / float(frame.size[1]))
-    hsize = int((float(frame.size[0]) * float(wpercent)))
-    frame = frame.resize((hsize, new_size), Image.ANTIALIAS)
+    hpercent = (new_height / float(frame.size[1]))
+    wsize = int((float(frame.size[0]) * float(hpercent)))
+    frame = frame.resize((wsize, new_height), Image.ANTIALIAS)
     frame = np.asarray(frame)
     return frame
 
