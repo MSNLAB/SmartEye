@@ -28,8 +28,6 @@ def get_prediction(img, threshold, model):
     transform = T.Compose([T.ToTensor()])
     img = transform(img)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.debug(device)
-    logger.debug(type(device))
     img = img.to(device)
     pred = model([img])
     if torch.cuda.is_available():
