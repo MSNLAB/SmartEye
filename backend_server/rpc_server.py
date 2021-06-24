@@ -1,8 +1,11 @@
+import os
 from concurrent import futures
 import grpc
 import sys
-import globals
-sys.path.append("../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/")
+
+import torch
+import backend_globals
+sys.path.append("../")
 from backend_server.model_controller import load_a_model, get_server_utilization, load_model_files_advance
 from model_manager import object_detection, image_classification
 from backend_server.grpc_config import msg_transfer_pb2_grpc, msg_transfer_pb2
@@ -18,6 +21,9 @@ image_classification_models = read_config("image-classification")
 
 logger.add("log/grpc-server_{time}.log")
 
+if torch.cuda.is_available():
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
     """gRPC server stub.
@@ -32,13 +38,10 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         Get the image process request from the client, process it and return the result.
 
         """
-        logger.debug("mark")
-
         selected_model = request.model
-        logger.debug(selected_model)
         frame = request.frame
         frame_shape = tuple(int(s) for s in request.frame_shape[1:-1].split(","))
-        model = globals.loaded_model[selected_model]
+        model = backend_globals.loaded_model[selected_model]
         img = transfer_array_and_str(frame, 'down').reshape(frame_shape)
         msg_reply = image_handler(img, model, selected_model)
 
@@ -59,7 +62,7 @@ class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
         Return the loaded model names in the server.
         """
         loaded_model_name_reply = msg_transfer_pb2.Loaded_Model_Name_Reply(
-            loaded_model_name=str(globals.loaded_model.keys())
+            loaded_model_name=str(backend_globals.loaded_model.keys())
         )
         return loaded_model_name_reply
 
@@ -101,8 +104,9 @@ def image_handler(img, model, selected_model):
 
 
 def serve():
-
-    globals.loaded_model = load_models(cloud_object_detection_model)
+    logger.info("grpc server loading...")
+    backend_globals.loaded_model = load_models(cloud_object_detection_model)
+    logger.info("server models have loaded!")
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=1),
         maximum_concurrent_rpcs=10

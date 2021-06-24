@@ -6,7 +6,9 @@ import numpy as np
 
 def video_frame_resize(frame, new_size):
     frame = Image.fromarray(frame)
-    frame = frame.resize(new_size, Image.ANTIALIAS)
+    wpercent = (new_size / float(frame.size[0]))
+    hsize = int((float(frame.size[1]) * float(wpercent)))
+    frame = frame.resize((new_size, hsize), Image.ANTIALIAS)
     frame = np.asarray(frame)
     return frame
 
@@ -34,3 +36,4 @@ def preprocess(task):
         task.frame = video_frame_change_qp(task.frame, task.new_qp)
 
     return task
+

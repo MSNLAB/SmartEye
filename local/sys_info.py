@@ -33,6 +33,7 @@ class SysInfo:
         self.local_delay.append(data)
 
     def append_offload_delay(self, cur_time, delay):
+
         data = Data(cur_time, delay)
         self.offload_delay.append(data)
 
