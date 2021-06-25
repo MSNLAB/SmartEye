@@ -13,6 +13,7 @@ from tools import make_request
 from tools.transfer_files_tool import transfer_array_and_str
 from loguru import logger
 
+
 def send_frame(url, frame, selected_model):
     """Send the image frame to the transfer server.
 

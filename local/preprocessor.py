@@ -3,9 +3,6 @@ import os
 import random
 import numpy as np
 
-from local.local_store import DataStore
-from local.video_reader import VideoReader
-
 
 def video_frame_resize(frame, new_height):
 
@@ -40,17 +37,4 @@ def preprocess(task):
 
     return task
 
-
-if __name__ == "__main__":
-
-    video = "../out437.png"
-    reader = VideoReader(video)
-    datastore = DataStore()
-    while True:
-        frame = reader.read_frame()
-        # print(frame)
-
-        frame = video_frame_resize(frame, 720)
-
-        datastore.store_image(frame)
 

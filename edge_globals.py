@@ -10,6 +10,7 @@ OFFLOAD = 1
 global loaded_model
 global sys_info
 global datastore
+global thread
 
 
 

@@ -48,7 +48,6 @@ if __name__ == '__main__':
 
     # load the video analytics models into memory)
     edge_globals.loaded_model = load_models(edge_object_detection_model)
-    # logger.info("edge models have been loaded!")
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
     edge_globals.sys_info = SysInfo()
@@ -64,20 +63,15 @@ if __name__ == '__main__':
     local_processor = threading.Thread(target=local_worker, args=(task_queue, ))
     local_processor.start()
     
-    n = 0
+    # n = 0
     # read frames from video file or camera in loop
     while True:
         
         frame = reader.read_frame()
-        
-        n += 1
-        if n % 180 != 0:
-            continue
         if frame is None:
             wait(edge_globals.thread)
-           # print(len(edge_globals.sys_info.offload_delay))
+
             cloud_average_process_delay = np.average([p.value for p in edge_globals.sys_info.offload_delay])
-            logger.info("cloud average process delay:"+str(cloud_average_process_delay))
             logger.info("Service come over!")
             sys.exit()
     
@@ -99,16 +93,11 @@ if __name__ == '__main__':
 
             task_queue.put(task, block=True)
             edge_globals.sys_info.local_pending_task += 1
-           # logger.debug(edge_globals.sys_info.local_delay)
             
         # offload to the cloud for processing
         elif task.location == edge_globals.OFFLOAD:
-    
            edge_globals.thread = [executor.submit(offload_worker, task)]
-            #if thread.done():
-            #   cloud_average_process_delay = np.average([p.value for p in edge_globals.sys_info.offload_delay])
-            #   logger.info("cloud average process delay:"+str(cloud_average_process_delay))
-        # sleep until the duration of INTERVAL seconds has passed
+
         t_end = time.time()
 
         if t_end - t_start < INTERVAL:

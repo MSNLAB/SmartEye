@@ -9,7 +9,7 @@ from torchvision.models.detection import *
 
 def load_models(model_list):
     loaded_model = {}
-    weight_folder = os.path.join(os.path.dirname(__file__), "../../Downloads/SmartEye/cv_model")
+    weight_folder = os.path.join(os.path.dirname(__file__), "../cv_model")
     
     for model_name in model_list:
         if model_name in model_lib.keys():
@@ -38,7 +38,7 @@ def get_fastest_model(model_list):
                 fast_model = model
                 min_delay = delay
     return fast_model
-    #return 'retinanet_resnet50_fpn'
+
 
 def get_most_precise_model(model_list):
     precise_model = None

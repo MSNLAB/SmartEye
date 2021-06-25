@@ -39,10 +39,3 @@ def compose_video(picture_folder_path, video_path):
     subprocess.Popen(cmd)
     return video_name
 
-
-if __name__ == '__main__':
-
-    t1 = time.time()
-    extract_frames("D:/Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Documents/video2edge/85652500-1-192.mp4")
-    t2 = time.time()
-    print('%s' % (t2 - t1))

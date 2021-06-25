@@ -1,9 +1,9 @@
 import sys
 from dispatch_policy import random_policy, shortest_queue, lowest_cpu_utilization
 from frontend_server.grpc_interface import get_grpc_reply
-import globals
+import frontend_globals
 from frontend_server.monitor import server_monitor
-sys.path.append("../../../../Ubuntu_1804.2019.522.0_x64/rootfs/home/wxz/Downloads/SmartEye/")
+sys.path.append("../")
 from tools.read_config import read_config
 from loguru import logger
 
@@ -34,13 +34,13 @@ def image_handler():
     info_dict = request.form
     logger.debug(info_dict["selected_model"])
     server_url = rpc_server_selection("random")
-    globals.tasks_number[server_url] += 1
+    frontend_globals.tasks_number[server_url] += 1
     t1 = time.time()
     try:
         msg_reply = get_grpc_reply(server_url, **info_dict)
     except Exception as err:
         logger.exception("Get result error:", err)
-    globals.tasks_number[server_url] -= 1
+    frontend_globals.tasks_number[server_url] -= 1
     t2 = time.time()
     if msg_reply is None:
         return None
@@ -74,5 +74,5 @@ def rpc_server_selection(policy):
 
 if __name__ == '__main__':
 
-    globals.init()
+    frontend_globals.init()
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

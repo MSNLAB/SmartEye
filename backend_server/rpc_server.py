@@ -21,8 +21,8 @@ image_classification_models = read_config("image-classification")
 
 logger.add("log/grpc-server_{time}.log")
 
-if torch.cuda.is_available():
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# if torch.cuda.is_available():
+#     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 class MsgTransferServer(msg_transfer_pb2_grpc.MsgTransferServicer):
@@ -104,12 +104,18 @@ def image_handler(img, model, selected_model):
 
 
 def serve():
+
     logger.info("grpc server loading...")
     backend_globals.loaded_model = load_models(cloud_object_detection_model)
     logger.info("server models have loaded!")
+    MAX_MESSAGE_LENGTH = 256 * 1024 * 1024
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=1),
-        maximum_concurrent_rpcs=10
+        maximum_concurrent_rpcs=10,
+        options=[
+            ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
+            ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
+        ]
     )
     msg_transfer_pb2_grpc.add_MsgTransferServicer_to_server(
       MsgTransferServer(), server)
@@ -119,7 +125,6 @@ def serve():
 
 
 if __name__ == '__main__':
-    # logging.basicConfig()
+
     serve()
 
-    # load_model_files_advance().values()

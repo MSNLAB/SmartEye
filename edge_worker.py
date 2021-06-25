@@ -10,6 +10,8 @@ from frontend_server.offloading import send_frame
 from local.preprocessor import preprocess
 from model_manager import object_detection, image_classification
 import numpy as np
+
+
 # the video frame handler of the forwarding server
 frame_handler = read_config("flask-url", "video_frame_url")
 
@@ -49,13 +51,12 @@ def local_worker(task_queue):
     while True:
          
         # get a task from the queue
-
         try:
             task = task_queue.get(block=True, timeout=10)
             edge_globals.sys_info.local_pending_task -= 1
         except Exception:
             average_local_delay = np.average([p.value for p in edge_globals.sys_info.local_delay])
-            logger.info("average local delay:"+str(average_local_delay))
+            # logger.info("average local delay:"+str(average_local_delay))
             sys.exit()
         else:
             # locally process the task
@@ -64,7 +65,7 @@ def local_worker(task_queue):
             t_end = time.time()
             processing_delay = t_end - t_start
 
-            logger.info("local_processing_delay:"+str(processing_delay))   
+            # logger.info("local_processing_delay:"+str(processing_delay))
             # record the processing delay
             edge_globals.sys_info.append_local_delay(t_start, processing_delay)
 
@@ -78,7 +79,7 @@ def local_worker(task_queue):
 def offload_worker(task):
     task = preprocess(task)
     file_size = sys.getsizeof(task.frame)
-    #t_start = time.time()
+
     # send the video frame to the server
     
     try:
@@ -88,18 +89,12 @@ def offload_worker(task):
     except Exception as err:
         logger.exception("offloading error")
     else:
-        # logger.debug(task.serv_type)
         total_processing_delay = t_end - task.t_start
         # record the bandwidth and the processing delay
         bandwidth = file_size / arrive_transfer_server_time
-        #logger.debug("mark")
-       # logger.debug("bandwidth:"+str(bandwidth))
-       # logger.debug(edge_globals.sys_info.offload_delay)
         edge_globals.sys_info.append_bandwidth(task.t_start, bandwidth)
-       # logger.debug("mark1")
         edge_globals.sys_info.append_offload_delay(task.t_start, total_processing_delay)
-        logger.debug("cloud processing delay:"+str(total_processing_delay))
-    
+
         if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
             result = result_dict["prediction"]
             logger.info("offload:"+result)

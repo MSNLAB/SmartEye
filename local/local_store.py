@@ -15,6 +15,7 @@ import datetime
 import edge_globals
 from loguru import logger
 
+
 class DataStore:
     """Store results locally.
 
@@ -62,8 +63,5 @@ class DataStore:
         except Exception as err:
             print("write frame into video fail", err)
 
-
-if __name__ == "__main__":
-    local_store = LocalStore()
 
 

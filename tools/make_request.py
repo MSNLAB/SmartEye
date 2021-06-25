@@ -35,13 +35,7 @@ def make_request(url, **msg_dict):
         except AssertionError as err:
             logger.error("processing_delay or arrive_transfer_server_time is 0!")
         else:
-            logger.debug("make request well!")
+            # logger.debug("make request well!")
             return result_dict, t1, processing_delay, arrive_transfer_server_time
 
 
-if __name__ == "__main__":
-    url = "1"
-    service_delay = 0
-    service_type = 0
-    net_condition = 0
-    make_request(url, service_delay, service_type, net_condition)
