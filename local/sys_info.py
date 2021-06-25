@@ -23,6 +23,7 @@ class SysInfo:
         self.local_delay = []
         self.offload_delay = []
         self.bandwidth = []
+        self.local_pending_task = 0
 
     def update_local_utilization(self):
         """Update local utilization including cpu usage and memory usage"""

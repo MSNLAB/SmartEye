@@ -29,6 +29,7 @@ class DataStore:
         self.result_store_location = os.path.join(
             store_path, time.strftime('%a%b%d%H%M')
         )
+        print(self.result_store_location)
         if store_type == edge_globals.VIDEO_TYPE:
             video_name = time.strftime('%a%b%d%H%M') + ".mp4"
             self.out = cv2.VideoWriter(

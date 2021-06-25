@@ -98,6 +98,7 @@ if __name__ == '__main__':
         if task.location == edge_globals.LOCAL:
 
             task_queue.put(task, block=True)
+            edge_globals.sys_info.local_pending_task += 1
            # logger.debug(edge_globals.sys_info.local_delay)
             
         # offload to the cloud for processing

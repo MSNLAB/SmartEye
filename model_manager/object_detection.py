@@ -22,7 +22,7 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 ]
 
 
-def get_prediction(img, threshold, model):
+def get_prediction(img, threshold, model, img_id):
 
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     transform = T.Compose([T.ToTensor()])
@@ -30,6 +30,10 @@ def get_prediction(img, threshold, model):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     img = img.to(device)
     pred = model([img])
+    dict = {}
+    dict[img_id] = pred
+    with open("1080p_info.txt", 'w+') as f:
+        f.write(dict)
     if torch.cuda.is_available():
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cuda().data.cpu().numpy())]
         pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
@@ -48,9 +52,10 @@ def get_prediction(img, threshold, model):
         return pred_boxes, pred_class
 
 
-def object_detection_api(img_path, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
+def object_detection_api(img_path, img_id, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
 
-    boxes, pred_cls = get_prediction(img_path, threshold, model)
+    boxes, pred_cls = get_prediction(img_path, threshold, model, img_id)
+
     # img = cv2.imread(img_path) # Read image with cv2
     img = cv2.cvtColor(img_path, cv2.COLOR_BGR2RGB)
 

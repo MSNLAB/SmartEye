@@ -8,6 +8,7 @@ from local.video_reader import VideoReader
 
 
 def video_frame_resize(frame, new_height):
+
     frame = Image.fromarray(frame)
     hpercent = (new_height / float(frame.size[1]))
     wsize = int((float(frame.size[0]) * float(hpercent)))
@@ -42,13 +43,14 @@ def preprocess(task):
 
 if __name__ == "__main__":
 
-    video = "../VIRAT_S_000200_00_000100_000171.mp4"
+    video = "../out437.png"
     reader = VideoReader(video)
     datastore = DataStore()
     while True:
         frame = reader.read_frame()
+        # print(frame)
 
-        frame = video_frame_resize(frame, 240)
+        frame = video_frame_resize(frame, 720)
 
         datastore.store_image(frame)
 

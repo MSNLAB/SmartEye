@@ -34,11 +34,10 @@ class Task:
 
 def local_inference(task):
     """local inference for a video frame"""
-    
 
     model = edge_globals.loaded_model[task.selected_model]
     if task.serv_type == edge_globals.OBJECT_DETECTION:
-        result = object_detection.object_detection_api(task.frame, model, threshold=0.8)
+        result = object_detection.object_detection_api(task.frame, task.task_id, model, threshold=0.8)
         return result
     if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
         result = image_classification.image_classification(task.frame, model)
@@ -53,19 +52,13 @@ def local_worker(task_queue):
 
         try:
             task = task_queue.get(block=True, timeout=10)
+            edge_globals.sys_info.local_pending_task -= 1
         except Exception:
             average_local_delay = np.average([p.value for p in edge_globals.sys_info.local_delay])
-            # sum = 0
-            #for item in edge_globals.sys_info.local_delay:
-            #    sum += item.value
-           # average_local_delay = sum / len(edge_globals.sys_info.local_delay)
             logger.info("average local delay:"+str(average_local_delay))
             sys.exit()
         else:
-        #t_start = time.time()
-        # locally process the task
-           # if len(edge_globals.sys_info.local_delay) != 0:
-            #    logger.debug("list:"+str(edge_globals.sys_info.local_delay[0].value))
+            # locally process the task
             t_start = task.t_start
             result = local_inference(task)
             t_end = time.time()
@@ -83,7 +76,7 @@ def local_worker(task_queue):
 
 
 def offload_worker(task):
-    #task = preprocess(task)
+    task = preprocess(task)
     file_size = sys.getsizeof(task.frame)
     #t_start = time.time()
     # send the video frame to the server
