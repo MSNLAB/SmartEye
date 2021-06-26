@@ -1,16 +1,7 @@
 ## SmartEye: An Open Source Framework for Real-Time Video Analytics with Edge-Cloud Collaboration
 
 
-## Contents 
--------------------
-* [Overview](#overview)
-* [Workflow](#workflow)
-* [Installation](#installation)
-* [Programming Interface](#programming-interface)
-* [Usage](#basic-usage)
-* [Performance](#performance)
-* [License](#license)
-* [Contact](#contact)
+
 
 ## Overview
 
