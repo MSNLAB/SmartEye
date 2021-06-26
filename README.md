@@ -114,7 +114,7 @@ Step 3: For convenience, you can upload the whole project directly to each serve
 #such as:
 scp -r SmartEye/ your_account@ip_address:/home/user/
 ```
-###Deployment and usage
+### Deployment and usage
 
 The easiest way to use this software is via command line. 
 
@@ -140,7 +140,8 @@ cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
 
-###remarks
+### remarks
+
 There are three policies you can use to process your video:
   1. always_local_fastest_model
   2. always_cloud_lowest_delay
