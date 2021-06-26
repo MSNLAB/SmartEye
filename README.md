@@ -5,21 +5,20 @@
 
 ## Overview
 
-<img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="60%" height="60%">
+<img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="50%" height="50%">
 
-* client section
+* Edge Node
 
-The client section 
+The main functionalities of the edge node include video frame reading, video preprocessing, local inference, offloading, and decision making. The edge node reads video frames from the camera or video files and preprocesses the video frames. After preprocessing, the inference for a video frame can be performed on the edge node or offloaded to the cloud for execution. The edge node has a decision engine to make the video preprocessing and offloading decisions based on the control policies.
 
-The client mainly includes three functions: one is the file reading interface, which is used to read the video files to be processed. The second is the decision engine, which determines the resolution and other information according to the current network state (network speed, delay, etc.). The third is the preprocessing function, which preprocesses the image file according to the decision result of the decision engine; Fourth, the local processing function, for some simple structure of the image, can be directly processed locally, do not have to send to the server.
 
-* forwarding server
+* Forwarding Server
 
-It receives data from the client and sends the data to a processing server for processing through a series of decisions. The decision-making method includes random selection and selection according to the CPU utilization of each server. Then get the processing result and return it to the client.
+The forwarding server serves as the cloud's gateway to respond to the edge node's offloading requests. When offloading an inference task, the edge node submits an HTTP request to the forwarding server by attaching the video frame. The forwarding server dispatches the inference requests to the backend servers based on the forwarding policy. The forwarding server also monitors the resource utilization, workload, and loaded models of each backend server and uses the backend servers' status information to make dispatch decisions.
 
-* Processing server
+* Inference Server
 
-The processing server consists of two parts, one is data preprocessing, which can process the image into usable format. The second part is the prediction part, which includes two functions：image recognition and object detection, both of which are processed by the pre training model in pytorch.
+The inference servers are provisioned in the cloud to conduct video analytics inferences. Each inference server loads several DNN models for video analytics. The inference servers receive the offloaded tasks from the forwarding server and make inferences with the specified models.
 
 ## Installation
 
