@@ -131,7 +131,7 @@ cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
 
-### remarks
+### Remarks
 
 There are three policies you can use to process your video:
   1. always_local_fastest_model
