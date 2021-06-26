@@ -68,7 +68,7 @@ Clone the code from Github
 ```bash
 git clone git@github.com:MSNLAB/SmartEye.git
 ```
-### configuration file
+### Configuration file
 
 Revise the configuration file **SmartEye/config/config.ini**.
 
@@ -100,7 +100,7 @@ initial_url's=5000
 [object-detection]
 ```
 
-### Deployment and usage
+### Deployment and Usage
 
 For convenience, you can upload the whole project directly to each server  
 ```bash
