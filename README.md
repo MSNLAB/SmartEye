@@ -49,9 +49,8 @@ System Requirement
 * [ubuntu 18.04](http://releases.ubuntu.com/18.04/)
 * [Python 3.6.9](https://www.python.org/downloads/release/python-369/)
 * [Jetpack 4.5](https://developer.nvidia.com/jetpack-sdk-45-archive)
-* [cuda 11.0]
-* [pytorch 1.8.0]
-* [torchvision 0.9.0]
+* [cuda 11.0](https://developer.nvidia.com/cuda-11.0-update1-download-archive?target_os=Linux&target_arch=x86_64)
+* [pytorch 1.8.0](https://pytorch.org/)
 
 Please click the above links for the installation of the dependent software.
 
@@ -83,7 +82,7 @@ pip3 install psutil
 pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
 ```
-
+## Usage
 
 Step 1: Clone the code from Github
 
@@ -129,7 +128,7 @@ Step 3: For convenience, you can upload the whole project directly to each serve
 #such as:
 scp -r video2edge/ ****@ip_address:/home/user/video2edge
 ```
-## Usage
+
 
 The easiest way to use this software is via command line. 
 
