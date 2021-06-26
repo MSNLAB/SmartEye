@@ -82,13 +82,12 @@ git clone git@github.com:MSNLAB/SmartEye.git
 
 Revise the configuration file **SmartEye/config/config.ini**.
 
-All executable programs read the configuration information from config.ini.
+All executable programs read the configuration information from **config/config.ini**.
 Make sure each item is set with appropriate value according to your system configuration.
 ```bash
 
 # the IP address of the servers
-There are three servers in the configuration file, one is for frontend server under the "flask-url" label, 
-others are for grpc servers or handled servers under the "grpc-url" label. They are all initialized with "127.0.0.1"
+There are three servers in the configuration file, one is for frontend server under the "flask-url" label, others are for grpc servers or handled servers under the "grpc-url" label. They are all initialized with "127.0.0.1"
 Also, you can add more server urls under the "grpc-url" label, it's ok. 
 For the servers,  you just need to change the ip of yours.
 All the ports in the urls don't need to change, unless you want to change one.
@@ -130,7 +129,7 @@ CUDA_VISIBLE_DEVICES=your_nvidia_number python3 rpc_server.py
 Step 2: loading the project on the flask server. 
 ```bash
 cd ~/SmartEye/frontend_server/
-nohup python3 forwarding_server.py
+nohup python3 forwarding_server.py > log.log 2>&1 &
 ```
 
 Step 3: execute your task in the TX, the edge.
@@ -148,12 +147,12 @@ There are three policies you can use to process your video:
   2. always_cloud_lowest_delay
   3. threshold_offload_policy
 For the "always_local_fastest_model" pocily, the video will be processed only in the edge with the fastest model.
-For the "always_cloud_lowest_delay" pocily, the video will be processed only in the cloud with the most precised model
+For the "always_cloud_lowest_delay" pocily, the video will be processed only in the cloud with the most precise model.
 For the "threshold_offload_policy" policy, the video will be processed in both edge and cloud.
 
-You can choose one of these three policies by changing the label "control_policy" under the "edge-setting" in config/config.ini.
+You can choose one of these three policies by changing the label "control_policy" under the "edge-setting" in **config/config.ini**.
 
-Also, if you want to read the camera you have, please change the appropriate items in the label "camera-info" in the config/config.ini.
+Also, if you want to read the camera you have, please change the appropriate items in the label "camera-info" in the **config/config.ini**.
 
 
 
