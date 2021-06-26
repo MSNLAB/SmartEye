@@ -49,7 +49,9 @@ System Requirement
 * [ubuntu 18.04](http://releases.ubuntu.com/18.04/)
 * [Python 3.6.9](https://www.python.org/downloads/release/python-369/)
 * [Jetpack 4.5](https://developer.nvidia.com/jetpack-sdk-45-archive)
-* [cuda]
+* [cuda 11.0]
+* [pytorch 1.8.0]
+* [torchvision 0.9.0]
 
 Please click the above links for the installation of the dependent software.
 
@@ -59,32 +61,25 @@ There are three parts in this installation:
 part 1: install libraries in Jetson TX2, as edge cloud.
 ```bash
 sudo apt update
-sudo apt install python3-pip
 pip3 install loguru
 pip3 install psutil
-# install pytorch
-wget https://nvidia.box.com/shared/static/p57jwntv436lfrd78inwl7iml6p13fzh.whl -O torch-1.8.0-cp36-cp36m-linux_aarch64.whl
-sudo apt-get install python3-pip libopenblas-base libopenmpi-dev 
-pip3 install Cython
-pip3 install numpy torch-1.8.0-cp36-cp36m-linux_aarch64.whl
-# install torchvision
-sudo apt-get install libjpeg-dev zlib1g-dev libpython3-dev libavcodec-dev libavformat-dev libswscale-dev
-git clone --branch v0.9.0 https://github.com/pytorch/vision torchvision   # see below for version of torchvision to download
-cd torchvision
-export BUILD_VERSION=0.x.0  # where 0.x.0 is the torchvision version  
-python3 setup.py install --user
+pip3 install configparser
+pip3 install opencv-contrib-python
 ```
 
 part 2: install libraries in transfer server.
 ```bash
-sudo apt update    
+sudo apt update
 sudo apt install grpc
-pip3 install apscheduler
 sudo apt install flask
+pip3 install apscheduler
+pip3 install loguru
 ```
 
 part 3: install libraries in backend server.
 ```bash
+pip3 install loguru
+pip3 install psutil
 pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
 ```
