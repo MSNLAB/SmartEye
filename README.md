@@ -70,53 +70,54 @@ pip3 install psutil
 pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
 ```
+
 ## Usage
 
-### configuration file
-Step 1: Clone the code from Github
+Clone the code from Github
 
 ```bash
 git clone git@github.com:MSNLAB/SmartEye.git
 ```
-Step 2: Revise the configuration file **SmartEye/config/config.ini**
+### configuration file
+
+Revise the configuration file **SmartEye/config/config.ini**.
 
 All executable programs read the configuration information from config.ini.
 Make sure each item is set with appropriate value according to your system configuration.
 ```bash
 
-#the IP address of the servers
-there are three servers in the configuration file, one is for frontend server under the "flask-url" label, 
+# the IP address of the servers
+There are three servers in the configuration file, one is for frontend server under the "flask-url" label, 
 others are for grpc servers or handled servers under the "grpc-url" label. They are all initialized with "127.0.0.1"
 Also, you can add more server urls under the "grpc-url" label, it's ok. 
 For the servers,  you just need to change the ip of yours.
 All the ports in the urls don't need to change, unless you want to change one.
 
-#Should change ip address
+# Should change ip address
 [grpc-url]
 url0=127.0.0.1:50051
 url1=127.0.0.1:50051
 [flask-url]
 video_frame_url=http://127.0.0.1:5000/image_handler
 
-#Remain unchanged
+# Remain unchanged
 url0's port=50051
 url1's port=50051
 initial_url's=5000
 
-#Remain unchanged labels' content
+# Remain unchanged labels' content
 [preload-models]
 [image-classification]
 [object-detection]
 ```
 
-Step 3: For convenience, you can upload the whole project directly to each server  
-```bash
-#such as:
-scp -r SmartEye/ your_account@ip_address:/home/user/
-```
 ### Deployment and usage
 
-The easiest way to use this software is via command line. 
+For convenience, you can upload the whole project directly to each server  
+```bash
+# such as:
+scp -r SmartEye/ your_account@ip_address:/home/user/
+```
 
 * To execute a video process task, there are three steps to go:  
 
@@ -135,7 +136,7 @@ nohup python3 forwarding_server.py
 Step 3: execute your task in the TX, the edge.
 According to the tips information， you can input the video you want to process, and input some parameters for your demand.
 ```bash
-#such as
+# such as
 cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
