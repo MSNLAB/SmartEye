@@ -87,35 +87,32 @@ pip3 install grpcio-tools googleapis-common-protos
 Step 1: Clone the code from Github
 
 ```bash
-git clone git@github.com:MSNLAB/video2edge.git
+git clone git@github.com:MSNLAB/SmartEye.git
 ```
-
-Step 2: Revise the configuration file **video2edge/config/config.ini**
+Step 2: Revise the configuration file **SmartEye/config/config.ini**
 
 All executable programs read the configuration information from config.ini.
 Make sure each item is set with appropriate value according to your system configuration.
 ```bash
 
 #the IP address of the servers
-there are three servers in the configuration file, one is for forwarding server under the "transfer-url" label, 
-others are for grpc servers or handled servers under the "handled-server" label. They are all initialized with "127.0.0.1"
-Also, you can add more server urls under the "handled-server" label, it's ok. 
-Under the "transfer-url" label, there are initial_url and picture_url, you just need to change the ip.
+there are three servers in the configuration file, one is for frontend server under the "flask-url" label, 
+others are for grpc servers or handled servers under the "grpc-url" label. They are all initialized with "127.0.0.1"
+Also, you can add more server urls under the "grpc-url" label, it's ok. 
+For the servers,  you just need to change the ip of yours.
 All the ports in the urls don't need to change, unless you want to change one.
 
 #Should change ip address
 [grpc-url]
-url0=localhost:50051
-url1=localhost:50051
-[transfer-url]
-initial_url=http://39.99.145.157:5000/initial
-picture_url=http://39.99.145.157:5000/pictures_handler
+url0=127.0.0.1:50051
+url1=127.0.0.1:50051
+[flask-url]
+video_frame_url=http://127.0.0.1:5000/image_handler
 
 #Remain unchanged
 url0's port=50051
 url1's port=50051
 initial_url's=5000
-picture_url's=5000
 
 #Remain unchanged labels' content
 [preload-models]
@@ -126,29 +123,32 @@ picture_url's=5000
 Step 3: For convenience, you can upload the whole project directly to each server  
 ```bash
 #such as:
-scp -r video2edge/ ****@ip_address:/home/user/video2edge
+scp -r SmartEye/ your_account@ip_address:/home/user/
 ```
-
-
 The easiest way to use this software is via command line. 
 
-* Submit a image classification task by the command line  
+* To execute a video process task, there are three steps to go:  
 
-Step 1: loading the project on forwarding server 
+Step 1: loading the project on every grpc server. if you have more than one grpc servers, load them one by one. Remember to change it to your own graphics card number.
 ```bash
-python3 ~/video2edge/server/forwarding_server.py
+cd ~/SmartEye/backend_server/
+CUDA_VISIBLE_DEVICES=your_nvidia_number python3 rpc_server.py
 ```
 
-Step 2: loading the project on processing servers, there are more than one, but the execution is the same. 
+Step 2: loading the project on the flask server. 
 ```bash
-python3 ~/video2edge/server/grpc/python/msg_transfer_service.py
+cd ~/SmartEye/frontend_server/
+nohup python3 forwarding_server.py
 ```
 
-Step 3: using the service on the client end
+Step 3: execute your task in the TX, the edge.
+According to the tips information， you can input the video you want to process, and input some parameters for your demand.
 ```bash
-python3 main.py
+#such as
+cd ~/SmartEye
+python3 edge_main -f your_video -s 1 -i 50
 ```
-According to the tips information， you can input the video you want to process, and input some parameters for your demand.  
+  
 
 
 
