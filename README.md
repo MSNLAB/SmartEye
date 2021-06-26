@@ -30,18 +30,6 @@ It receives data from the client and sends the data to a processing server for p
 
 The processing server consists of two parts, one is data preprocessing, which can process the image into usable format. The second part is the prediction part, which includes two functions：image recognition and object detection, both of which are processed by the pre training model in pytorch.
 
-## Workflow
-
-<img src="https://raw.githubusercontent.com/cap-ntu/Morph/master/DOC/workflow.png" width="80%" height="80%">
-
-The user submits a processing task by providing the video path, being read by virtual camera or derectly video interface. Together with some other parameters, such as service type(image classification or object detection), the client will be initialized. At the same time, preprocessing module, local process module, decision engine module and local store module will be initialized too. In this time, client will get the current network condition, for example, service delay, net speed. Then, Decision Engine makes some decisions for data transfer, such as image resolution. And client will transfer these information to preprocess module. And the preprocess module processes the images according to the parameters. Last, client transfer these images which have been processed to the transfer server. For some images of simple structure, i preserve local process interface. 
-
-Once the forwarding server get the data from client, the server will decide to send to which Processing server and send data to it.
-
-when the processing server get the data from forwarding server, the server will preprocess the data first, letting the image conform to the format of predictions. Then processing server will make predictions respectively. Last, return the results to forwarding server.
-
-forwarding server return the result directly to the client,and the client will print the result or store the result respectively according to the service type. 
-
 ## Installation
 
 System Requirement
@@ -148,9 +136,18 @@ According to the tips information， you can input the video you want to process
 cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
-  
+##remarks
+There are three policies you can use to process your video:
+  1. always_local_fastest_model
+  2. always_cloud_lowest_delay
+  3. threshold_offload_policy
+For the "always_local_fastest_model" pocily, the video will be processed only in the edge with the fastest model.
+For the "always_cloud_lowest_delay" pocily, the video will be processed only in the cloud with the most precised model
+For the "threshold_offload_policy" policy, the video will be processed in both edge and cloud.
 
+You can choose one of these three policies by changing the label "control_policy" under the "edge-setting" in config/config.ini.
 
+Also, if you want to read the camera you have, please change the appropriate items in the label "camera-info" in the config/config.ini.
 
 
 
