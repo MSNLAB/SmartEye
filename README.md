@@ -72,6 +72,7 @@ pip3 install grpcio-tools googleapis-common-protos
 ```
 ## Usage
 
+### configuration file
 Step 1: Clone the code from Github
 
 ```bash
@@ -113,6 +114,7 @@ Step 3: For convenience, you can upload the whole project directly to each serve
 #such as:
 scp -r SmartEye/ your_account@ip_address:/home/user/
 ```
+###Deployment and usage
 The easiest way to use this software is via command line. 
 
 * To execute a video process task, there are three steps to go:  
@@ -136,7 +138,7 @@ According to the tips information， you can input the video you want to process
 cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
-##remarks
+###remarks
 There are three policies you can use to process your video:
   1. always_local_fastest_model
   2. always_cloud_lowest_delay
