@@ -62,20 +62,19 @@ Revise the configuration file **SmartEye/config/config.ini**.
 The edge node, forwarding server, and background inference servers read the configuration from **config/config.ini**.
 Make sure each item is set with appropriate value according to your system configuration.
 
-the IP address of the servers
+**Step 1: configure the IP addresses of the backend inference servers and the forwarding server.**
 
 ```bash
-# Should change ip address
+# the IP addresses of the backend inference servers
 [grpc-url]
-url0=127.0.0.1:50051
-url1=127.0.0.1:50051
-[flask-url]
-video_frame_url=http://127.0.0.1:5000/image_handler
+url0=server_1_ip:50051
+url1=server_2_ip:50051
 
-# Remain unchanged
-url0's port=50051
-url1's port=50051
-initial_url's=5000
+# the IP address of the forwarding server
+[flask-url]
+video_frame_url=http://forwarding_server_ip:5000/image_handler
+
+# the IP ports should be leaved unchanged
 ```
 
 There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
