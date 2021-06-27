@@ -82,13 +82,14 @@ Also, you can add more server urls under the "grpc-url" label, it's ok.
 For the servers,  You just need to change to your own IP address.
 All the ports in the urls don't need to change， unless you want to change one.
 
-### Deployment and Usage
+### Deployment
 
-For convenience, you can upload the whole project directly to each server.  
+You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers for deployment.  
 ```bash
-# such as:
-scp -r SmartEye/ your_account@ip_address:/home/user/
+scp -r SmartEye/ server_account@server_ip_address:target_path
 ```
+
+### Usage
 
 * To execute a video process task, there are three steps to go:  
 
