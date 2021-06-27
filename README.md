@@ -114,10 +114,10 @@ cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
 Command introduction：
-    1.'-f', '--file', input video file or local camera
-    2.'-r', '--rtsp', use the RTSP camera
-    3.'-s', '--serv', type int, input service demand,  default value "1" for OBJECT_DETECTION
-    4.'-i', '--interval', type int, interval between reading two frames in ms
+    1. '-f', '--file', input video file or local camera  
+    2. '-r', '--rtsp', use the RTSP camera
+    3. '-s', '--serv', type int, input service demand,  default value "1" for OBJECT_DETECTION
+    4. '-i', '--interval', type int, interval between reading two frames in ms
 every command needs one of -f and -r, but -s and -i are nessary.
 
 ### Remarks
