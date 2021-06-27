@@ -121,14 +121,15 @@ python3 edge_main -f your_video_path -s 1 -i 50
 ### Remarks
 
 There are three policies you can use to process your video:
-  1. always_local_fastest_model
-  2. always_cloud_lowest_delay
-  3. threshold_offload_policy
-For the "always_local_fastest_model" policy, the video will be processed only in the edge with the fastest model.
-For the "always_cloud_lowest_delay" policy, the video will be processed only in the cloud with the most precise model.
-For the "threshold_offload_policy" policy, the video will be processed in both edge and cloud.
+1. always_local_fastest_model
+2. always_cloud_lowest_delay
+3. threshold_offload_policy
 
-You can choose one of these three policies by changing the label "control_policy" under the "edge-setting" in **config/config.ini**.
+**always_local_fastest_model:** the inference is only conducted on the edge with the fastest model without preprocessing.  
+**always_cloud_lowest_delay:** the inference is conducted only in the cloud with the most accurate model, and video frames are downsized before offloading.  
+**threshold_offload_policy:** if the number of local pending tasks is less than a threshold (i.e., 2), the inference for the next video frame will be conducted on the edge node with the fastest model; otherwise, the next video frame will be first downsized and then offloaded to the cloud for inference with the most accurate model.
+
+You can choose one of these three policies by changing the value of **control_policy** under the **edge-setting** section in **config/config.ini**.
 
 Also, if you want to read the camera you have, please change the appropriate items in the label "camera-info" in the **config/config.ini**.
 
