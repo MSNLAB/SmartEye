@@ -23,9 +23,10 @@ if __name__ == '__main__':
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-f', '--file', help="input video file or local camera")
     group.add_argument('-r', '--rtsp', help="RTSP camera", action='store_true')
-    parser.add_argument('-s', '--serv', type=int, help="input service demand,"
-                                                       "0 for IMAGE_CLASSIFICATION," 
-                                                       "1 for OBJECT_DETECTION", required=True)
+    parser.add_argument('-s', '--serv', type=int, default=1,
+                        help="input service demand, 1 for OBJECT_DETECTION",
+                        required=True
+                        )
     parser.add_argument('-i', '--interval', type=int, help="interval between reading two frames in ms", required=True)
     args = parser.parse_args()
 
