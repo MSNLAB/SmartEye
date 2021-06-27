@@ -50,14 +50,12 @@ pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
 ```
 
-## Usage
-
-Clone the code from Github.
+# 1. Clone the code from Github.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
 ```
-### Configuration file
+# 2. Revise the configuration file
 
 Revise the configuration file **SmartEye/config/config.ini**.
 
