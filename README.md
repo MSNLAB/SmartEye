@@ -1,13 +1,11 @@
-SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration. The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend worker layer that processes the offloaded tasks with specified DNN models.
-
 ## Overview
+SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration. The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend worker layer that processes the offloaded tasks with specified DNN models.
 
 <img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="50%" height="50%">
 
 * Edge Node
 
 The main functionalities of the edge node include video frame reading, video preprocessing, local inference, offloading, and decision making. The edge node reads video frames from the camera or video files and preprocesses the video frames. After preprocessing, the inference for a video frame can be performed on the edge node or offloaded to the cloud for execution. The edge node has a decision engine to make the video preprocessing and offloading decisions based on the control policies.
-
 
 * Forwarding Server
 
