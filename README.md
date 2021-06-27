@@ -118,6 +118,12 @@ According to the tips information， you can input the video you want to process
 cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
+Command introduction：
+    '-f', '--file', input video file or local camera
+    '-r', '--rtsp', use the RTSP camera
+    '-s', '--serv', type int, input service demand, "0" for IMAGE_CLASSIFICATION, "1" for OBJECT_DETECTION
+    '-i', '--interval', type int, interval between reading two frames in ms
+every command needs one of -f and -r, but -s and -i are nessary.
 
 ### Remarks
 
