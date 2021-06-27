@@ -50,19 +50,19 @@ pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
 ```
 
-# 1. Clone the code from Github.
+### 1. Clone the code from Github.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
 ```
-# 2. Revise the configuration file
+### 2. Revise the configuration file
 
 Revise the configuration file **SmartEye/config/config.ini**.
 
 The edge node, forwarding server, and background inference servers read the configuration from **config/config.ini**.
 Make sure each item is set with appropriate value according to your system configuration.
 
-# the IP address of the servers
+the IP address of the servers
 
 ```bash
 # Should change ip address
