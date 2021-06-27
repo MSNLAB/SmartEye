@@ -1,7 +1,4 @@
-## SmartEye: An Open Source Framework for Real-Time Video Analytics with Edge-Cloud Collaboration
-
-
-
+SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration. The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend worker layer that processes the offloaded tasks with specified DNN models.
 
 ## Overview
 
