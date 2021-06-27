@@ -33,7 +33,7 @@ pip3 install configparser
 pip3 install opencv-contrib-python
 ```
 
-Part 2: install libraries in the forwarding server.
+Part 2: install libraries in the flask server.
 ```bash
 sudo apt update
 sudo apt install grpc
@@ -52,7 +52,7 @@ pip3 install grpcio-tools googleapis-common-protos
 
 ## Usage
 
-Clone the code from Github
+Clone the code from Github.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
@@ -66,10 +66,10 @@ Make sure each item is set with appropriate value according to your system confi
 ```bash
 
 # the IP address of the servers
-There are three servers in the configuration file, one is for frontend server under the "flask-url" label, others are for grpc servers or handled servers under the "grpc-url" label. They are all initialized with "127.0.0.1"
+There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
 Also, you can add more server urls under the "grpc-url" label, it's ok. 
-For the servers,  you just need to change the ip of yours.
-All the ports in the urls don't need to change, unless you want to change one.
+For the servers,  You just need to change to your own IP address.
+All the ports in the urls don't need to change， unless you want to change one.
 
 # Should change ip address
 [grpc-url]
@@ -86,7 +86,7 @@ initial_url's=5000
 
 ### Deployment and Usage
 
-For convenience, you can upload the whole project directly to each server  
+For convenience, you can upload the whole project directly to each server.  
 ```bash
 # such as:
 scp -r SmartEye/ your_account@ip_address:/home/user/
@@ -94,19 +94,19 @@ scp -r SmartEye/ your_account@ip_address:/home/user/
 
 * To execute a video process task, there are three steps to go:  
 
-Step 1: loading the project on every grpc server. if you have more than one grpc servers, load them one by one. Remember to change it to your own graphics card number.
+Step 1: load the project on every grpc server. If you have more than one grpc server, load them one by one. Remember to change it to your own graphics card number.
 ```bash
 cd ~/SmartEye/backend_server/
 CUDA_VISIBLE_DEVICES=your_nvidia_number python3 rpc_server.py
 ```
 
-Step 2: loading the project on the flask server. 
+Step 2: load the project on the flask server. 
 ```bash
 cd ~/SmartEye/frontend_server/
 nohup python3 forwarding_server.py > log.log 2>&1 &
 ```
 
-Step 3: execute your task in the TX, the edge.
+Step 3: execute your task in the TX2, the edge.
 According to the tips information， you can input the video you want to process, and input some parameters for your demand.
 ```bash
 # such as
@@ -118,7 +118,7 @@ python3 edge_main -f your_video -s 1 -i 50
     '-r', '--rtsp', use the RTSP camera  
     '-s', '--serv', type int, input service demand,  default value "1" for OBJECT_DETECTION 
     '-i', '--interval', type int, interval between reading two frames in ms
-Every command needs one of -f and -r, but -s and -i are nessary.
+Every command needs one of the parameters "-f" or "-r", but both "-s" and "-i" are necessary.
 
 ### Remarks
 
@@ -126,8 +126,8 @@ There are three policies you can use to process your video:
   1. always_local_fastest_model
   2. always_cloud_lowest_delay
   3. threshold_offload_policy
-For the "always_local_fastest_model" pocily, the video will be processed only in the edge with the fastest model.
-For the "always_cloud_lowest_delay" pocily, the video will be processed only in the cloud with the most precise model.
+For the "always_local_fastest_model" policy, the video will be processed only in the edge with the fastest model.
+For the "always_cloud_lowest_delay" policy, the video will be processed only in the cloud with the most precise model.
 For the "threshold_offload_policy" policy, the video will be processed in both edge and cloud.
 
 You can choose one of these three policies by changing the label "control_policy" under the "edge-setting" in **config/config.ini**.
