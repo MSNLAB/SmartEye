@@ -1,17 +1,13 @@
 ## Overview
-SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration. The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend worker layer that processes the offloaded tasks with specified DNN models.
+**SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration.** The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend worker layer that processes the offloaded tasks with specified DNN models.
 
 <img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="50%" height="50%">
 
-* Edge Node
+**Edge Node:** The main functionalities of the edge node include video frame reading, video preprocessing, local inference, offloading, and decision making. The edge node reads video frames from the camera or video files and preprocesses the video frames. After preprocessing, the inference for a video frame can be performed on the edge node or offloaded to the cloud for execution. The edge node has a decision engine to make the video preprocessing and offloading decisions based on the control policies.
 
-The main functionalities of the edge node include video frame reading, video preprocessing, local inference, offloading, and decision making. The edge node reads video frames from the camera or video files and preprocesses the video frames. After preprocessing, the inference for a video frame can be performed on the edge node or offloaded to the cloud for execution. The edge node has a decision engine to make the video preprocessing and offloading decisions based on the control policies.
+**Forwarding Server:** The forwarding server serves as the cloud's gateway to respond to the edge node's offloading requests. When offloading an inference task, the edge node submits an HTTP request to the forwarding server by attaching the video frame. The forwarding server dispatches the inference requests to the backend servers based on the forwarding policy. The forwarding server also monitors the resource utilization, workload, and loaded models of each backend server and uses the backend servers' status information to make dispatch decisions.
 
-* Forwarding Server
-
-The forwarding server serves as the cloud's gateway to respond to the edge node's offloading requests. When offloading an inference task, the edge node submits an HTTP request to the forwarding server by attaching the video frame. The forwarding server dispatches the inference requests to the backend servers based on the forwarding policy. The forwarding server also monitors the resource utilization, workload, and loaded models of each backend server and uses the backend servers' status information to make dispatch decisions.
-
-* Inference Server
+**Inference Server: **
 
 The inference servers are provisioned in the cloud to conduct video analytics inferences. Each inference server loads several DNN models for video analytics. The inference servers receive the offloaded tasks from the forwarding server and make inferences with the specified models.
 
