@@ -35,7 +35,7 @@ Please click the above links for the installation of the dependent software.
 It may require to install some lacked libraries, e.g., opencv, torchvision, torch, psutil, grpc, flask.
 There are three parts in this installation:
 
-part 1: install libraries in Jetson TX2, as edge cloud.
+Part 1: install libraries in the edge node.
 ```bash
 sudo apt update
 pip3 install loguru
@@ -44,7 +44,7 @@ pip3 install configparser
 pip3 install opencv-contrib-python
 ```
 
-part 2: install libraries in transfer server.
+Part 2: install libraries in the forwarding server.
 ```bash
 sudo apt update
 sudo apt install grpc
@@ -53,7 +53,7 @@ pip3 install apscheduler
 pip3 install loguru
 ```
 
-part 3: install libraries in backend server.
+Part 3: install libraries in the backend inference server.
 ```bash
 pip3 install loguru
 pip3 install psutil
