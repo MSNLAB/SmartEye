@@ -82,11 +82,6 @@ video_frame_url=http://127.0.0.1:5000/image_handler
 url0's port=50051
 url1's port=50051
 initial_url's=5000
-
-# Remain unchanged labels' content
-[preload-models]
-[image-classification]
-[object-detection]
 ```
 
 ### Deployment and Usage
@@ -121,7 +116,7 @@ python3 edge_main -f your_video -s 1 -i 50
 Command introduction：
     '-f', '--file', input video file or local camera
     '-r', '--rtsp', use the RTSP camera
-    '-s', '--serv', type int, input service demand, "0" for IMAGE_CLASSIFICATION, "1" for OBJECT_DETECTION
+    '-s', '--serv', type int, input service demand,  default value "1" for OBJECT_DETECTION
     '-i', '--interval', type int, interval between reading two frames in ms
 every command needs one of -f and -r, but -s and -i are nessary.
 
