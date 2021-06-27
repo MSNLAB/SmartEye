@@ -91,27 +91,27 @@ scp -r SmartEye/ server_account@server_ip_address:target_path
 
 ### Usage
 
-* To execute a video process task, there are three steps to go:  
+To start the service, there are three steps to go:  
 
-Step 1: load the project on every grpc server. If you have more than one grpc server, load them one by one. Remember to change it to your own graphics card number.
+Step 1: start every backend inference server. If you have more than one inference server, start them one by one. The GPU used by the inference server can be specified in the command line. 
 ```bash
 cd ~/SmartEye/backend_server/
-CUDA_VISIBLE_DEVICES=your_nvidia_number python3 rpc_server.py
+CUDA_VISIBLE_DEVICES=gpu_device_number python3 rpc_server.py
 ```
 
-Step 2: load the project on the flask server. 
+Step 2: start the forwarding server. 
 ```bash
 cd ~/SmartEye/frontend_server/
 nohup python3 forwarding_server.py > log.log 2>&1 &
 ```
 
-Step 3: execute your task in the TX2, the edge.
+Step 3: start the edge node.
 According to the tips information， you can input the video you want to process, and input some parameters for your demand.
 ```bash
-# such as
 cd ~/SmartEye
 python3 edge_main -f your_video -s 1 -i 50
 ```
+
 #### Command introduction：
     '-f', '--file', input video file or local camera   
     '-r', '--rtsp', use the RTSP camera  
