@@ -118,7 +118,7 @@ python3 edge_main -f your_video_path -s 1 -i 50
 -i, --interval: type int, interval between reading two frames in ms
 
 
-### Remarks
+### Advanced Usage
 
 There are three policies you can use to process your video:
 1. always_local_fastest_model
