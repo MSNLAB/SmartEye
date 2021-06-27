@@ -55,7 +55,7 @@ pip3 install grpcio-tools googleapis-common-protos
 Clone the code from Github
 
 ```bash
-git clone git@github.com:MSNLAB/SmartEye.git
+git clone https://github.com/MSNLAB/SmartEye.git
 ```
 ### Configuration file
 
