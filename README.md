@@ -61,16 +61,12 @@ git clone https://github.com/MSNLAB/SmartEye.git
 
 Revise the configuration file **SmartEye/config/config.ini**.
 
-All executable programs read the configuration information from **config/config.ini**.
+The edge node, forwarding server, and background inference servers read the configuration from **config/config.ini**.
 Make sure each item is set with appropriate value according to your system configuration.
-```bash
 
 # the IP address of the servers
-There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
-Also, you can add more server urls under the "grpc-url" label, it's ok. 
-For the servers,  You just need to change to your own IP address.
-All the ports in the urls don't need to change， unless you want to change one.
 
+```bash
 # Should change ip address
 [grpc-url]
 url0=127.0.0.1:50051
@@ -83,6 +79,11 @@ url0's port=50051
 url1's port=50051
 initial_url's=5000
 ```
+
+There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
+Also, you can add more server urls under the "grpc-url" label, it's ok. 
+For the servers,  You just need to change to your own IP address.
+All the ports in the urls don't need to change， unless you want to change one.
 
 ### Deployment and Usage
 
