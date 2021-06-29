@@ -126,16 +126,40 @@ nohup python3 forwarding_server.py > server.log 2>&1 &
 ```
 
 **Step 3:** start the edge node.
-According to the tips information， you can input the video you want to process, and input some parameters for your demand.
+
+### Use the following command for reading video frames from a local video file
 ```bash
 cd ~/SmartEye
 python3 edge_main -f your_video_path -i 50
 ```
 
--f, --file: input video file or local camera   
--r, --rtsp: use the RTSP camera  
--i, --interval: type int, interval between reading two frames in ms
+-f, --file: the path of a local video file  
+-i, --interval: type int, interval between reading two frames in millisecond (ms)
 
+### If the edge node reads video frames from an RTSP camera, you need to first configure **config/config.ini**.
+```bash
+[camera-info]
+account=your_account
+password=your_password
+ip_address=camera_ip
+channel=1
+```
+Then you can use the following command for reading from the specified camera
+```bash
+cd ~/SmartEye
+python3 edge_main --rtsp -i 50
+```
+-r, --rtsp: use the RTSP camera  
+-i, --interval: type int, interval between reading two frames in ms 
+
+### If the edge node reads from a local physically connected camera, use the following command 
+replace device_no with your real camera device no, e.g., 0
+```bash
+cd ~/SmartEye
+python3 edge_main -f device_no -i 50
+```
+-f, --file: the device number of a local camera  
+-i, --interval: type int, interval between reading two frames in millisecond (ms)
 
 ### Advanced Usage
 
