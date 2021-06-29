@@ -113,6 +113,12 @@ cd ~/SmartEye/backend_server/
 CUDA_VISIBLE_DEVICES=gpu_device_number python3 rpc_server.py
 ```
 
+If you are using servers without GPU, you can start the server with the following command line.
+```bash
+cd ~/SmartEye/backend_server/
+nohup python3 rpc_server.py > error_msg &
+```
+
 **Step 2:** start the forwarding server. 
 ```bash
 cd ~/SmartEye/frontend_server/
