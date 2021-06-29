@@ -159,7 +159,9 @@ python3 edge_main -f device_no -i 50
 -f, --file: the device number of a local camera  
 -i, --interval: type int, interval between reading two frames in millisecond (ms)
 
-## IV. Advanced Usage
+## IV. Policy Configuration or Customization
+
+You can choose one of the following three policies by changing the value of **control_policy** under the **edge-setting** section in **config/config.ini**.
 
 There are three policies you can use to process your video:
 1. always_local_fastest_model
@@ -169,11 +171,6 @@ There are three policies you can use to process your video:
 **always_local_fastest_model:** the inference is only conducted on the edge with the fastest model without preprocessing.  
 **always_cloud_lowest_delay:** the inference is conducted only in the cloud with the most accurate model, and video frames are downsized before offloading.  
 **threshold_offload_policy:** if the number of local pending tasks is less than a threshold (i.e., 2), the inference for the next video frame will be conducted on the edge node with the fastest model; otherwise, the next video frame will be first downsized and then offloaded to the cloud for inference with the most accurate model.
-
-You can choose one of these three policies by changing the value of **control_policy** under the **edge-setting** section in **config/config.ini**.
-
-Also, if you want to read the camera you have, please change the appropriate items in the label "camera-info" in the **config/config.ini**.
-
 
 
 ## V. License
