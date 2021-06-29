@@ -39,7 +39,7 @@ def local_inference(task):
 
     model = edge_globals.loaded_model[task.selected_model]
     if task.serv_type == edge_globals.OBJECT_DETECTION:
-        result = object_detection.object_detection_api(task.frame, task.task_id, model, threshold=0.8)
+        result = object_detection.object_detection_api(task.frame, model, threshold=0.8)
         return result
     if task.serv_type == edge_globals.IMAGE_CLASSIFICATION:
         result = image_classification.image_classification(task.frame, model)

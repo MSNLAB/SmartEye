@@ -88,7 +88,7 @@ if __name__ == '__main__':
         edge_policy = read_config("edge-setting", "control_policy")
         # make decision on video frame processing
         task = decision_engine.get_decision(edge_policy, task)
-        logger.debug(task.selected_model)
+    
         # local processing on the edge
         if task.location == edge_globals.LOCAL:
 
