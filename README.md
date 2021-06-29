@@ -109,7 +109,7 @@ CUDA_VISIBLE_DEVICES=gpu_device_number python3 rpc_server.py
 **Step 2:** start the forwarding server. 
 ```bash
 cd ~/SmartEye/frontend_server/
-nohup python3 forwarding_server.py > log.log 2>&1 &
+nohup python3 forwarding_server.py > server.log 2>&1 &
 ```
 
 **Step 3:** start the edge node.
