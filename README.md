@@ -55,6 +55,8 @@ You need to install the git lfs tool to clone the large DNN models from this rep
 For deb linux user, you can download and install with the following command.
 ```bash
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.python.sh | bash
+sudo apt-get install git-lfs
+git lfs install
 ```
 Check out this [website](https://github.com/git-lfs/git-lfs/releases/tag/v2.13.3) for downloading.
 After installing the git lfs tool, you can clone this program in this way.
