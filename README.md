@@ -175,7 +175,7 @@ There are three policies you can use to process your video:
 **threshold_offload_policy:** if the number of local pending tasks is less than a threshold (i.e., 2), the inference for the next video frame will be conducted on the edge node with the fastest model; otherwise, the next video frame will be first downsized and then offloaded to the cloud for inference with the most accurate model.
 
 **If you want to customize the control policy of the edge node, you can proceed with the following steps:**
-1. define a **policy functon** in **decision_engine.py**, and add the policies for video frame preprocessing, model selection, and offloading.
+1. define a **policy functon** in **decision_engine.py**, and implement the policies for video frame preprocessing, model selection, and offloading.
 2. add the function name into **self.policy_set** of the __init__()function of class **DecisionEngine**.
 3. changing the value of **control_policy** into the name of your policy function under the **edge-setting** section in **config/config.ini**.
 
