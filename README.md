@@ -58,8 +58,8 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.pytho
 sudo apt-get install git-lfs
 git lfs install
 ```
-Check out this [website](https://github.com/git-lfs/git-lfs/releases/tag/v2.13.3) for downloading.
-After installing the git lfs tool, you can clone this program in this way.
+
+After installing the git lfs tool, you can clone the souce code of this project from GitHub.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
