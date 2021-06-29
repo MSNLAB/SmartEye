@@ -51,6 +51,13 @@ pip3 install grpcio-tools googleapis-common-protos
 ```
 
 ### 1. Clone the code from Github.
+Because of some large files in this program, you need to install lfs tool to clone the SmartEye.
+For deb linux user, you can download in this way.
+```bash
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.python.sh | bash
+```
+Check out this [website](https://github.com/git-lfs/git-lfs/releases/tag/v2.13.3) for downloading.
+After installing the git lfs tool, you can clone this program in this way.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
