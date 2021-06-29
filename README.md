@@ -1,4 +1,4 @@
-## Overview
+## I. Overview
 **SmartEye is an open source framework for real-time video analytics by leveraging the edge-cloud collaboration.** The system consists of 1) an on-edge processing layer which enables video preprocessing, model selection, on-edge inference, and task offloading; 2) a request forwarding layer which serves as a gateway of the cloud and forwards the offloaded tasks to backend workers; and 3) a backend inference layer that processes the offloaded tasks with specified DNN models.
 
 <img src="https://raw.githubusercontent.com/GuanyuACT/Public/master/smarteye.png" width="50%" height="50%">
@@ -9,7 +9,7 @@
 
 **- The Inference Server** are provisioned in the cloud to conduct video analytics inferences. Each inference server loads several DNN models for video analytics. The inference servers receive the offloaded tasks from the forwarding server and make inferences with the specified models.
 
-## Installation
+## II. Installation
 
 System Requirements
 
@@ -73,7 +73,7 @@ Make sure each item is set with appropriate value according to your system confi
 
 **Step 1: configure the IP addresses of the backend inference servers and the forwarding server.**
 
-### Configure the IP addresses of the backend inference servers. 
+#### Configure the IP addresses of the backend inference servers. 
 Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. 
 You can add lines in this format as many as your backend inference servers under the [grpc-url] section.
 
@@ -85,7 +85,7 @@ url1=server_2_ip:50051
 
 ```
 
-### Configure the IP address of the forwarding server. 
+#### Configure the IP address of the forwarding server. 
 Replace the forwarding_server_ip with the real IP address of your forwarding server, and leave the IP port number and the other parts unchanged.
 
 ```bash
@@ -96,14 +96,14 @@ video_frame_url=http://forwarding_server_ip:5000/image_handler
 ```
 
 
-### Deployment
+#### Deployment
 
 You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers respectively for deployment. You can use  the scp command to do it. 
 ```bash
 scp -r SmartEye/ server_account@server_ip_address:target_path
 ```
 
-### Usage
+## III. Usage
 
 To start the service, there are three steps to go:  
 
@@ -127,7 +127,7 @@ nohup python3 forwarding_server.py > server.log 2>&1 &
 
 **Step 3:** start the edge node.
 
-### Use the following command for reading video frames from a local video file
+#### Use the following command for reading video frames from a local video file
 ```bash
 cd ~/SmartEye
 python3 edge_main -f your_video_path -i 50
@@ -136,7 +136,7 @@ python3 edge_main -f your_video_path -i 50
 -f, --file: the path of a local video file  
 -i, --interval: type int, interval between reading two frames in millisecond (ms)
 
-### If the edge node reads video frames from an RTSP camera, you need to first configure **config/config.ini**.
+#### If the edge node reads video frames from an RTSP camera, you need to first configure **config/config.ini**.
 ```bash
 [camera-info]
 account=your_account
@@ -152,7 +152,7 @@ python3 edge_main --rtsp -i 50
 -r, --rtsp: use the RTSP camera  
 -i, --interval: type int, interval between reading two frames in ms 
 
-### If the edge node reads from a local physically connected camera, use the following command 
+#### If the edge node reads from a local physically connected camera, use the following command 
 replace device_no with your real camera device no, e.g., 0
 ```bash
 cd ~/SmartEye
@@ -161,7 +161,7 @@ python3 edge_main -f device_no -i 50
 -f, --file: the device number of a local camera  
 -i, --interval: type int, interval between reading two frames in millisecond (ms)
 
-### Advanced Usage
+## IV. Advanced Usage
 
 There are three policies you can use to process your video:
 1. always_local_fastest_model
@@ -178,7 +178,7 @@ Also, if you want to read the camera you have, please change the appropriate ite
 
 
 
-## License
+## V. License
 THIS SOFTWARE IS RELEASED UNDER THE MIT LICENSE (MIT)
 Copyright (c), 2021, NUST SCE
 
@@ -188,7 +188,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## Contact
+## VI. Contact
 If you find any problem with this software, please feel free to contact us, your feedback is appreciated. 
 
 Email: guanyugao@gmail.com; gygao@njust.edu.cn
