@@ -59,7 +59,7 @@ sudo apt-get install git-lfs
 git lfs install
 ```
 
-After installing the git lfs tool, you can clone the souce code of this project from GitHub.
+After installing Git LFS, you can clone the souce code of this project from GitHub.
 
 ```bash
 git clone https://github.com/MSNLAB/SmartEye.git
@@ -74,16 +74,15 @@ Make sure each item is set with appropriate value according to your system confi
 **Step 1: configure the IP addresses of the backend inference servers and the forwarding server.**
 
 ```bash
-# the IP addresses of the backend inference servers
+# configure the IP addresses of the backend inference servers. Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. You can add lines in this format as many as your backend inference servers.
 [grpc-url]
 url0=server_1_ip:50051
 url1=server_2_ip:50051
 
-# the IP address of the forwarding server
+# Configure the IP address of the forwarding server. Replace the forwarding_server_ip with the real IP address of your forwarding server, and leave the IP port number and the other parts unchanged.
 [flask-url]
 video_frame_url=http://forwarding_server_ip:5000/image_handler
 
-# the IP ports should be leaved unchanged
 ```
 
 There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
