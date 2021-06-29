@@ -159,7 +159,7 @@ python3 edge_main -f device_no -i 50
 -f, --file: the device number of a local camera  
 -i, --interval: type int, interval between reading two frames in millisecond (ms)
 
-#### You can check the results for object detection under the folder of info_system/handled_result.
+#### You can visually check the results for object detection under the folder of info_system/handled_result.
 
 ## IV. Policy Configuration or Customization
 
