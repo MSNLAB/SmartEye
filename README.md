@@ -33,7 +33,7 @@ pip3 install configparser
 pip3 install opencv-contrib-python
 ```
 
-Part 2: install libraries in the flask server.
+Part 2: install libraries in the forwarding server.
 ```bash
 sudo apt update
 sudo apt install grpc
