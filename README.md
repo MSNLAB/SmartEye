@@ -116,12 +116,11 @@ nohup python3 forwarding_server.py > server.log 2>&1 &
 According to the tips information， you can input the video you want to process, and input some parameters for your demand.
 ```bash
 cd ~/SmartEye
-python3 edge_main -f your_video_path -s 1 -i 50
+python3 edge_main -f your_video_path -i 50
 ```
 
 -f, --file: input video file or local camera   
 -r, --rtsp: use the RTSP camera  
--s, --serv: type int, input service demand,  default value "1" for OBJECT_DETECTION   
 -i, --interval: type int, interval between reading two frames in ms
 
 
