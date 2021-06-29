@@ -95,13 +95,10 @@ video_frame_url=http://forwarding_server_ip:5000/image_handler
 
 ```
 
-Also, you can add more server urls under the "grpc-url" label, it's ok. 
-For the servers,  You just need to change to your own IP address.
-All the ports in the urls don't need to change， unless you want to change one.
 
 ### Deployment
 
-You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers for deployment.  
+You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers respectively for deployment.  
 ```bash
 scp -r SmartEye/ server_account@server_ip_address:target_path
 ```
