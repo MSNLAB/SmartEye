@@ -98,7 +98,7 @@ video_frame_url=http://forwarding_server_ip:5000/image_handler
 
 ### Deployment
 
-You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers respectively for deployment.  
+You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers respectively for deployment. You can use  the scp command to do it. 
 ```bash
 scp -r SmartEye/ server_account@server_ip_address:target_path
 ```
