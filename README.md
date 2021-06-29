@@ -27,27 +27,30 @@ There are three parts in this installation:
 Part 1: install libraries in the edge node.
 ```bash
 sudo apt update
+sudo apt install libopencv-dev
 pip3 install loguru
 pip3 install psutil
 pip3 install configparser
-pip3 install opencv-contrib-python
 ```
 
 Part 2: install libraries in the forwarding server.
 ```bash
-sudo apt update
-sudo apt install grpc
-sudo apt install flask
+pip3 install grpcio
+pip3 install grpcio-tools googleapis-common-protos
+pip3 install flask
 pip3 install apscheduler
 pip3 install loguru
 ```
 
 Part 3: install libraries in the backend inference server.
 ```bash
+sudo apt update
+sudo apt install libopencv-dev
 pip3 install loguru
 pip3 install psutil
 pip3 install grpcio
 pip3 install grpcio-tools googleapis-common-protos
+
 ```
 
 ### 1. Clone the code from Github.
