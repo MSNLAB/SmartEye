@@ -131,7 +131,7 @@ nohup python3 forwarding_server.py > server.log 2>&1 &
 #### Use the following command for reading video frames from a local video file
 ```bash
 cd ~/SmartEye
-python3 edge_main -f your_video_path -i 50
+python3 edge_main.py -f your_video_path -i 50
 ```
 
 -f, --file: the path of a local video file  
