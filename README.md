@@ -75,7 +75,7 @@ Make sure each item is set with appropriate value according to your system confi
 
 ### Configure the IP addresses of the backend inference servers. 
 Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. 
-You can add lines in this format as many as your backend inference servers.
+You can add lines in this format as many as your backend inference servers under the [grpc-url] section.
 
 ```bash
 
@@ -95,7 +95,6 @@ video_frame_url=http://forwarding_server_ip:5000/image_handler
 
 ```
 
-There are three servers in the configuration file. The first one is a flask server under the "flask-url" label, others are grpc servers under the "grpc-url" label. They are all initialized with the ip "127.0.0.1"
 Also, you can add more server urls under the "grpc-url" label, it's ok. 
 For the servers,  You just need to change to your own IP address.
 All the ports in the urls don't need to change， unless you want to change one.
