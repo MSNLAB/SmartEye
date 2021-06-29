@@ -73,13 +73,22 @@ Make sure each item is set with appropriate value according to your system confi
 
 **Step 1: configure the IP addresses of the backend inference servers and the forwarding server.**
 
+# configure the IP addresses of the backend inference servers. 
+Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. 
+You can add lines in this format as many as your backend inference servers.
+
 ```bash
-# configure the IP addresses of the backend inference servers. Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. You can add lines in this format as many as your backend inference servers.
+
 [grpc-url]
 url0=server_1_ip:50051
 url1=server_2_ip:50051
 
-# Configure the IP address of the forwarding server. Replace the forwarding_server_ip with the real IP address of your forwarding server, and leave the IP port number and the other parts unchanged.
+```
+
+Configure the IP address of the forwarding server. Replace the forwarding_server_ip with the real IP address of your forwarding server, and leave the IP port number and the other parts unchanged.
+
+```bash
+
 [flask-url]
 video_frame_url=http://forwarding_server_ip:5000/image_handler
 
