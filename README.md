@@ -71,8 +71,6 @@ Revise the configuration file **SmartEye/config/config.ini**.
 The edge node, forwarding server, and background inference servers read the configuration from **config/config.ini**.
 Make sure each item is set with appropriate value according to your system configuration.
 
-**Step 1: configure the IP addresses of the backend inference servers and the forwarding server.**
-
 #### Configure the IP addresses of the backend inference servers. 
 Replace 'server_1_ip' with the real IP address of your server, and leave the IP port number unchanged. 
 You can add lines in this format as many as your backend inference servers under the [grpc-url] section.
@@ -96,7 +94,7 @@ video_frame_url=http://forwarding_server_ip:5000/image_handler
 ```
 
 
-#### Deployment
+#### 3. Deployment
 
 You can copy the configured source codes to the edge node, the forwarding server, and the backend inference servers respectively for deployment. You can use  the scp command to do it. 
 ```bash
