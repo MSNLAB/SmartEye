@@ -11,7 +11,7 @@
 
 ## Installation
 
-System Requirement
+System Requirements
 
 * [ubuntu 18.04](http://releases.ubuntu.com/18.04/)
 * [Python 3.6.9](https://www.python.org/downloads/release/python-369/)
@@ -51,7 +51,7 @@ pip3 install grpcio-tools googleapis-common-protos
 ```
 
 ### 1. Clone the code from Github.
-You need to install the git lfs tool to clone the large DNN models from this repository.
+You need to install the Git Large File Storage (LFS) to clone the large DNN models from this repository.
 For deb linux user, you can download and install with the following command.
 ```bash
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.python.sh | bash
