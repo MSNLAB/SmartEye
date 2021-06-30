@@ -32,7 +32,6 @@ def image_handler():
     :return: return_dict
     """
     info_dict = request.form
-    logger.debug(info_dict["selected_model"])
     server_url = rpc_server_selection("random")
     frontend_globals.tasks_number[server_url] += 1
     t1 = time.time()

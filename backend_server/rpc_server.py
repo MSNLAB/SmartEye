@@ -121,6 +121,7 @@ def serve():
       MsgTransferServer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
+    logger.info("server start!")
     server.wait_for_termination()
 
 

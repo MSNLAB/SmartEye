@@ -48,7 +48,10 @@ if __name__ == '__main__':
         sys.exit()
 
     # load the video analytics models into memory)
-    edge_globals.loaded_model = load_models(edge_object_detection_model)
+    if read_config("edge-setting", "control_policy") != "always_cloud_lowest_delay":
+        logger.info("local models are loading...")
+        edge_globals.loaded_model = load_models(edge_object_detection_model)
+        logger.info("local models have loaded!")
     # create the objects for video reading, decision making, and information management
     reader = VideoReader(input_file, args.rtsp)
     edge_globals.sys_info = SysInfo()
@@ -91,14 +94,14 @@ if __name__ == '__main__':
     
         # local processing on the edge
         if task.location == edge_globals.LOCAL:
-
+            logger.info("frame has been delivered to local processor.")
             task_queue.put(task, block=True)
             edge_globals.sys_info.local_pending_task += 1
             
         # offload to the cloud for processing
         elif task.location == edge_globals.OFFLOAD:
            edge_globals.thread = [executor.submit(offload_worker, task)]
-
+           logger.info("frame has been delivered to cloud processor.") 
         t_end = time.time()
 
         if t_end - t_start < INTERVAL:
