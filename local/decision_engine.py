@@ -23,11 +23,10 @@ def always_cloud_lowest_delay(task):
     
     task.location = edge_globals.OFFLOAD
     task.new_size = resolution_list[0]
-    logger.debug("task.serv_type"+str(task.serv_type))
+    
     if task.serv_type == edge_globals.OBJECT_DETECTION:
         #task.selected_model = get_fastest_model(cloud_object_detection_model)
         task.selected_model = 'retinanet_resnet50_fpn'  
-        logger.debug("decision:"+task.selected_model)
     return task
 
 
@@ -39,9 +38,10 @@ def threshold_offload_policy(task):
             task.selected_model = get_fastest_model(edge_object_detection_model)
     else:
         task.location = edge_globals.OFFLOAD
+        task.new_size = resolution_list[0]
         if task.serv_type == edge_globals.OBJECT_DETECTION:
             task.selected_model = get_most_precise_model(cloud_object_detection_model)
-            logger.debug(task.selected_model)
+            
     return task
 
 

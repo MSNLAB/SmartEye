@@ -24,7 +24,7 @@ COCO_INSTANCE_CATEGORY_NAMES = [
 ]
 
 
-def get_prediction(img, threshold, model, img_id):
+def get_prediction(img, threshold, model):
 
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     transform = T.Compose([T.ToTensor()])
@@ -51,9 +51,9 @@ def get_prediction(img, threshold, model, img_id):
         return pred_boxes, pred_class
 
 
-def object_detection_api(img, img_id, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
+def object_detection_api(img, model, rect_th=15, text_th=7, text_size=5, threshold=0.8):
 
-    boxes, pred_cls = get_prediction(img, threshold, model, img_id)
+    boxes, pred_cls = get_prediction(img, threshold, model)
     if boxes is None and pred_cls is None:
         return img
     for i in range(len(boxes)):

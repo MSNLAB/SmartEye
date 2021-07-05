@@ -41,6 +41,8 @@ def get_fastest_model(model_list):
 
 
 def get_most_precise_model(model_list):
+    
+    return "retinanet_resnet50_fpn"
     precise_model = None
     max_precision = float('-Inf')
     for model in model_list:
@@ -49,6 +51,7 @@ def get_most_precise_model(model_list):
             if precision > max_precision:
                 precise_model = model
                 max_precision = precision
+    return "retinanet_resnet50_fpn"
     return precise_model
 
 
