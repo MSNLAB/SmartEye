@@ -59,6 +59,7 @@ For deb linux user, you can download and install with the following command.
 ```bash
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.python.sh | bash
 sudo apt-get install git-lfs
+git init
 git lfs install
 ```
 
