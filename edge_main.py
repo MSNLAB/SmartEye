@@ -74,7 +74,7 @@ if __name__ == '__main__':
         frame = reader.read_frame()
         if frame is None:
             executor.shutdown(wait=True)
-            local_processor.join()
+            local_processor.join(timeout=20)
             cloud_average_process_delay = np.average([p.value for p in edge_globals.sys_info.offload_delay])
             logger.info("Service come over!")
             sys.exit()
