@@ -62,7 +62,7 @@ def local_worker(task_queue):
          
         # get a task from the queue
         try:
-            task = task_queue.get(block=True, timeout=10)
+            task = task_queue.get(block=True)
             edge_globals.sys_info.local_pending_task -= 1
         except Exception:
             average_local_delay = np.average([p.value for p in edge_globals.sys_info.local_delay])
