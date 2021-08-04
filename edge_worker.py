@@ -1,15 +1,19 @@
+import queue
 import sys
 import time
 import string
 import random
-import edge_globals
-from loguru import logger
-from tools.read_config import read_config
-from tools.transfer_files_tool import transfer_array_and_str
-from frontend_server.offloading import send_frame
-from local.preprocessor import preprocess
-from model_manager import object_detection, image_classification
 import numpy as np
+from loguru import logger
+from concurrent import futures
+
+import edge_globals
+
+from tools.read_config import read_config
+from local.preprocessor import preprocess
+from frontend_server.offloading import send_frame
+from tools.transfer_files_tool import transfer_array_and_str
+from model_manager import object_detection, image_classification
 
 
 # the video frame handler of the forwarding server
@@ -19,6 +23,12 @@ frame_handler = read_config("flask-url", "video_frame_url")
 # generate the id for a task
 def id_gen(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+
+class ThreadPoolExecutorWithQueueSizeLimit(futures.ThreadPoolExecutor):
+    def __init__(self, maxsize=50, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._work_queue = queue.Queue(maxsize=maxsize)
 
 
 class Task:
