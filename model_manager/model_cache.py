@@ -16,7 +16,7 @@ def load_models(model_list):
             weight_files_path = os.path.join(weight_folder, model_lib[model_name]['model_path'])
             # load the weight file
             file_load = torch.load(weight_files_path)
-            model = eval(model_name)()
+            model = eval(model_name)(pretrained_backbone=False, pretrained=False)
             model.load_state_dict(file_load, False)
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model.to(device)
